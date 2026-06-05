@@ -8,7 +8,8 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 
 public final class CataclysmMobEffects {
-    public static final Holder<MobEffect> DISPER = register("disper", new DisperMobEffect(MobEffectCategory.HARMFUL, 16776960));
+    public static final Holder<MobEffect> DISPER = register("disper", new DisperMobEffect(MobEffectCategory.HARMFUL, 0xFFFF99));
+    public static final Holder<MobEffect> MORTEM = register("mortem", new MortemEffect(MobEffectCategory.HARMFUL, 0xFFD700));
 
     private CataclysmMobEffects() {}
 

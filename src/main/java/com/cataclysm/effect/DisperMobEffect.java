@@ -16,7 +16,7 @@ import java.util.Set;
 public class DisperMobEffect extends MobEffect {
     private static final Set<Block> BREAK_BYPASS = Set.of(Blocks.SPAWNER, Blocks.CREAKING_HEART);
 
-    protected DisperMobEffect(MobEffectCategory category, int color) {
+    DisperMobEffect(MobEffectCategory category, int color) {
         super(category, color);
     }
 

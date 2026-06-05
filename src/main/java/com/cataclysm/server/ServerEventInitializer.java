@@ -1,14 +1,11 @@
 package com.cataclysm.server;
 
 import com.cataclysm.effect.DisperMobEffect;
-import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -20,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 public final class ServerEventInitializer {
     private ServerEventInitializer() {}
 
-    public static void init() {
+    public static void initialize() {
         PlayerBlockBreakEvents.BEFORE.register(ServerEventInitializer::handleBeforeBlockBreak);
         UseBlockCallback.EVENT.register(ServerEventInitializer::handleUseBlock);
     }

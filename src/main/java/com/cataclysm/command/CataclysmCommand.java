@@ -15,7 +15,7 @@ import net.minecraft.server.level.ServerPlayer;
 public final class CataclysmCommand {
     private CataclysmCommand() {}
 
-    public static void init() {
+    public static void initialize() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
                 dispatcher.register(Commands.literal("cataclysm").requires(source -> source.hasPermission(2))
                         .then(Commands.literal("player")

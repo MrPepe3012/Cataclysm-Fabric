@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "id": "cataclysm",
+  "version": "${version}",
+  "name": "Cataclysm",
+  "description": "Cataclysm SMP, recreated in Fabric",
+  "authors": [],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/cataclysm/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "cardinal-components": [
+      "com.cataclysm.core.CataclysmComponents"
+    ],
+    "fabric-datagen": [
+      "com.cataclysm.CataclysmDataGenerator"
+    ],
+    "client": [
+      "com.cataclysm.CataclysmClient"
+    ],
+    "main": [
+      "com.cataclysm.Cataclysm"
+    ]
+  },
+  "mixins": [
+    "cataclysm.mixins.json",
+    {
+      "config": "cataclysm.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version}"
+  },
+  "custom": {
+    "cardinal-components": [
+      "cataclysm:mortality"
+    ]
+  }
+}

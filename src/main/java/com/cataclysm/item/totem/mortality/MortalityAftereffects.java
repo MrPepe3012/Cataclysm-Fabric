@@ -3,7 +3,6 @@ package com.cataclysm.item.totem.mortality;
 import com.cataclysm.core.CataclysmComponents;
 import com.cataclysm.effect.CataclysmMobEffects;
 import com.cataclysm.item.totem.TotemItem;
-import com.cataclysm.item.totem.UseTotemCallback;
 import net.minecraft.core.Holder;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -12,6 +11,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.DeathProtection;
 import net.minecraft.world.item.consume_effects.ApplyStatusEffectsConsumeEffect;
 import net.minecraft.world.item.consume_effects.ConsumeEffect;
@@ -41,19 +41,13 @@ public final class MortalityAftereffects {
 
     private MortalityAftereffects() {}
 
-    public static void initialize() {
-        UseTotemCallback.EVENT.register((entity, totemStack, deathProtector) -> {
-            if (!(entity instanceof Player player)) {
-                return deathProtector;
-            }
+    public static DeathProtection onResurrect(Player player, ItemStack totemStack, DeathProtection deathProtection) {
+        MortalityComponent mortalityComponent = CataclysmComponents.MORTALITY.get(player);
+        float mortality = mortalityComponent.get();
+        float reduction = TotemItem.findMortalityReduction(totemStack.getItem(), 1).orElse(0.0F);
 
-            MortalityComponent mortalityComponent = CataclysmComponents.MORTALITY.get(player);
-            float mortality = mortalityComponent.get();
-            float reduction = TotemItem.findMortalityReduction(totemStack.getItem(), 1).orElse(0.0F);
-
-            mortalityComponent.set(mortality - reduction);
-            return PENALTY_BUILDER.apply(player, deathProtector, mortality);
-        });
+        mortalityComponent.set(mortality - reduction);
+        return PENALTY_BUILDER.apply(player, deathProtection, mortality);
     }
 
     private static void setMaxHealth(Penalty penalty, DoubleUnaryOperator modifier) {

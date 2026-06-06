@@ -10,11 +10,11 @@ public class MortalityComponent implements Component {
 
     private float mortality = DEFAULT_MORTALITY;
 
-    public void setMortality(float mortality) {
+    public void set(float mortality) {
         this.mortality = Math.clamp(0.0F, mortality, 1.0F);
     }
 
-    public float getMortality() {
+    public float get() {
         return this.mortality;
     }
     @Override

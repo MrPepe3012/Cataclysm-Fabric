@@ -2,6 +2,8 @@ package com.cataclysm.player.mortality;
 
 import com.cataclysm.core.CataclysmComponents;
 import com.cataclysm.effect.CataclysmMobEffects;
+import com.cataclysm.callback.UseTotemCallback;
+import com.cataclysm.item.totem.TotemItem;
 import net.minecraft.core.Holder;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -13,7 +15,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.component.DeathProtection;
 import net.minecraft.world.item.consume_effects.ApplyStatusEffectsConsumeEffect;
 import net.minecraft.world.item.consume_effects.ConsumeEffect;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,8 +29,8 @@ public final class MortalityAftereffects {
             .at(.95F, penalty -> penalty.removeEffect(MobEffects.FIRE_RESISTANCE))
             .at(.93F, penalty -> penalty.applyEffect(MobEffects.WEAKNESS, 1))
             .at(.90F, penalty -> penalty.removeEffect(MobEffects.ABSORPTION))
-            .at(.86F, penalty -> penalty.applyToNearbyMobs(MobEffects.STRENGTH))
-            .at(.83F, penalty -> penalty.applyToNearbyMobs(MobEffects.SPEED))
+            .at(.86F, penalty -> penalty.applyEffectToNearbyMobs(MobEffects.STRENGTH))
+            .at(.83F, penalty -> penalty.applyEffectToNearbyMobs(MobEffects.SPEED))
             .at(.80F, penalty -> penalty.applyEffect(MobEffects.MINING_FATIGUE, 1))
             .at(.75F, penalty -> penalty.applyEffect(MobEffects.BLINDNESS, 0))
             .at(.60F, penalty -> penalty.applyEffect(CataclysmMobEffects.MORTEM, 0))
@@ -41,16 +42,24 @@ public final class MortalityAftereffects {
     private MortalityAftereffects() {}
 
     public static void initialize() {
-        UseTotemCallback.EVENT.register((entity, component) -> {
+        UseTotemCallback.EVENT.register((entity, totemStack, deathProtector) -> {
             if (!(entity instanceof Player player)) {
-                return component;
+                return deathProtector;
             }
-            float mortality = CataclysmComponents.MORTALITY.get(player).getMortality();
-            return PENALTY_BUILDER.apply(player, component, mortality);
+
+            MortalityComponent mortalityComponent = CataclysmComponents.MORTALITY.get(player);
+            float mortality = mortalityComponent.get();
+            Float reduction = TotemItem.getMortalityReduction(totemStack, 1);
+
+            if (reduction != null) {
+                mortalityComponent.set(mortality - reduction);
+            }
+
+            return PENALTY_BUILDER.apply(player, deathProtector, mortality);
         });
     }
 
-    private static void setMaxHealth(@NotNull Penalty penalty, DoubleUnaryOperator modifier) {
+    private static void setMaxHealth(Penalty penalty, DoubleUnaryOperator modifier) {
         penalty.execute(player -> {
             AttributeInstance maxHealth = player.getAttribute(Attributes.MAX_HEALTH);
             if (maxHealth != null) {
@@ -84,11 +93,11 @@ public final class MortalityAftereffects {
 
         private final List<MobEffect> removedEffects = new ArrayList<>();
         private final Player player;
-        private final DeathProtection component;
+        private final DeathProtection deathProtector;
 
-        Penalty(Player player, DeathProtection component) {
+        Penalty(Player player, DeathProtection deathProtector) {
             this.player = player;
-            this.component = component;
+            this.deathProtector = deathProtector;
         }
 
         void execute(Consumer<Player> action) {
@@ -103,13 +112,13 @@ public final class MortalityAftereffects {
             this.removedEffects.add(holder.value());
         }
 
-        void applyToNearbyMobs(Holder<MobEffect> holder) {
+        void applyEffectToNearbyMobs(Holder<MobEffect> holder) {
             this.player.level().getEntitiesOfClass(Monster.class, this.player.getBoundingBox().inflate(NEARBY_ASSUMPTION))
                     .forEach(entity -> entity.addEffect(new MobEffectInstance(holder, EFFECT_DURATION, 1)));
         }
 
         DeathProtection build() {
-            return new DeathProtection(this.component.deathEffects().stream().filter(this::keepEffect).toList());
+            return new DeathProtection(this.deathProtector.deathEffects().stream().filter(this::keepEffect).toList());
         }
 
         private boolean keepEffect(ConsumeEffect effect) {

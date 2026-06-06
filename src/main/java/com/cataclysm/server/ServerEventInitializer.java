@@ -1,6 +1,7 @@
 package com.cataclysm.server;
 
 import com.cataclysm.effect.DisperMobEffect;
+import com.cataclysm.player.mortality.MortalityAftereffects;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.core.BlockPos;
@@ -20,6 +21,7 @@ public final class ServerEventInitializer {
     public static void initialize() {
         PlayerBlockBreakEvents.BEFORE.register(ServerEventInitializer::handleBeforeBlockBreak);
         UseBlockCallback.EVENT.register(ServerEventInitializer::handleUseBlock);
+        MortalityAftereffects.initialize();
     }
 
     private static boolean handleBeforeBlockBreak(Level world, @NotNull Player player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity) {

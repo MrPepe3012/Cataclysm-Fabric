@@ -1,6 +1,6 @@
 package com.cataclysm.mixin;
 
-import com.cataclysm.player.mortality.UseTotemCallback;
+import com.cataclysm.callback.UseTotemCallback;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
@@ -47,7 +47,7 @@ public class LivingEntityMixin {
             return;
         }
 
-        component = UseTotemCallback.EVENT.invoker().resurrect(self, component);
+        component = UseTotemCallback.EVENT.invoker().resurrect(self, totemStack, component);
 
         if (component == null) {
             cir.setReturnValue(false);

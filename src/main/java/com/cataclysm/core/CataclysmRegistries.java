@@ -1,12 +1,14 @@
 package com.cataclysm.core;
 
 import com.cataclysm.effect.CataclysmMobEffects;
+import com.cataclysm.item.CataclysmItems;
 
 import java.util.Set;
 
 public final class CataclysmRegistries {
     private static final Set<Class<?>> LOADERS = Set.of(
-            CataclysmMobEffects.class
+            CataclysmMobEffects.class,
+            CataclysmItems.class
     );
 
     private CataclysmRegistries() {}

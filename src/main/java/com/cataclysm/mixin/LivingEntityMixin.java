@@ -1,6 +1,6 @@
 package com.cataclysm.mixin;
 
-import com.cataclysm.callback.UseTotemCallback;
+import com.cataclysm.item.totem.UseTotemCallback;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;

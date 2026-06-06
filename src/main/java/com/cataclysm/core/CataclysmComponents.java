@@ -1,7 +1,7 @@
 package com.cataclysm.core;
 
 import com.cataclysm.Cataclysm;
-import com.cataclysm.player.mortality.MortalityComponent;
+import com.cataclysm.item.totem.mortality.MortalityComponent;
 import org.ladysnake.cca.api.v3.component.Component;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.ComponentRegistry;

@@ -2,7 +2,7 @@ package com.cataclysm;
 
 import com.cataclysm.command.CataclysmCommand;
 import com.cataclysm.core.CataclysmRegistries;
-import com.cataclysm.player.mortality.MortalityAftereffects;
+import com.cataclysm.item.totem.mortality.MortalityAftereffects;
 import com.cataclysm.server.CataclysmServerManager;
 import com.cataclysm.server.ServerEventInitializer;
 import net.fabricmc.api.ModInitializer;
@@ -26,7 +26,6 @@ public final class Cataclysm implements ModInitializer {
         ServerEventInitializer.initialize();
 
         // Low priority
-        MortalityAftereffects.initialize();
         CataclysmCommand.initialize();
 
         LOGGER.info("Cataclysm initialized!");

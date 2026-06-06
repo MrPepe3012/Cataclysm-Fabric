@@ -1,4 +1,4 @@
-package com.cataclysm.player.mortality;
+package com.cataclysm.item.totem.mortality;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;

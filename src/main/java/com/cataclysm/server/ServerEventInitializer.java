@@ -1,7 +1,7 @@
 package com.cataclysm.server;
 
 import com.cataclysm.effect.DisperMobEffect;
-import com.cataclysm.player.mortality.MortalityAftereffects;
+import com.cataclysm.item.totem.mortality.MortalityAftereffects;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.core.BlockPos;

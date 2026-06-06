@@ -1,9 +1,9 @@
-package com.cataclysm.player.mortality;
+package com.cataclysm.item.totem.mortality;
 
 import com.cataclysm.core.CataclysmComponents;
 import com.cataclysm.effect.CataclysmMobEffects;
-import com.cataclysm.callback.UseTotemCallback;
 import com.cataclysm.item.totem.TotemItem;
+import com.cataclysm.item.totem.UseTotemCallback;
 import net.minecraft.core.Holder;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -49,12 +49,9 @@ public final class MortalityAftereffects {
 
             MortalityComponent mortalityComponent = CataclysmComponents.MORTALITY.get(player);
             float mortality = mortalityComponent.get();
-            Float reduction = TotemItem.getMortalityReduction(totemStack, 1);
+            float reduction = TotemItem.findMortalityReduction(totemStack.getItem(), 1).orElse(0.0F);
 
-            if (reduction != null) {
-                mortalityComponent.set(mortality - reduction);
-            }
-
+            mortalityComponent.set(mortality - reduction);
             return PENALTY_BUILDER.apply(player, deathProtector, mortality);
         });
     }

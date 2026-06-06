@@ -1,35 +1,26 @@
 package com.cataclysm.item.totem;
 
+import com.cataclysm.item.totem.mortality.MortalityTable;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 public class TotemItem extends Item {
-    private static final TotemItem DEFAULT = new TotemItem(new Item.Properties());
+    private final MortalityTable mortalityTable;
 
-    protected TotemItem(Properties properties) {
+    public TotemItem(Properties properties, MortalityTable mortalityTable) {
         super(properties);
+        this.mortalityTable = mortalityTable;
     }
 
     public float getMortalityReduction(int week) {
-        return switch (week) {
-            case 4 -> 2.0F;
-            case 5 -> 10.0F;
-            case 6 -> 100.0F;
-            default -> 1.0F;
-        };
+        return this.mortalityTable.getValue(week);
     }
 
-    public static @Nullable Float getMortalityReduction(ItemStack stack, int week) {
-        Item item = stack.getItem();
-        if (item instanceof TotemItem totem) {
-            return totem.getMortalityReduction(week);
-        }
-        if (item.equals(Items.TOTEM_OF_UNDYING)) {
-            return DEFAULT.getMortalityReduction(week);
-        }
-        return null;
+    public static Optional<Float> findMortalityReduction(Item item, int week) {
+        if (item instanceof TotemItem totem) return Optional.of(totem.getMortalityReduction(week));
+        if (item.equals(Items.TOTEM_OF_UNDYING)) return Optional.of(MortalityTable.VANILLA.getValue(week));
+        return Optional.empty();
     }
 }

@@ -1,12 +1,12 @@
-package com.cataclysm.item.totem.mortality;
+package com.cataclysm.registry.item.totem.mortality;
 
 import java.util.Comparator;
 import java.util.List;
 
 public final class MortalityTable {
-    public static final MortalityTable VANILLA = of(entry(1, 1.0F), entry(4, 2.0F), entry(5, 10.0F), entry(6, 100.0F));
-    public static final MortalityTable ARCANE = of(entry(3, 0.5F), entry(4, 1.0F), entry(5, 5.0F), entry(6, 50.0F));
-    public static final MortalityTable CALAMITY = of(entry(4, 0.5F), entry(5, 2.0F), entry(6, 10.0F));
+    public static final MortalityTable VANILLA = of(entry(1, 0.01F), entry(4, 0.02F), entry(5, 0.10F), entry(6, 1.0F));
+    public static final MortalityTable ARCANE = of(entry(3, 0.005F), entry(4, 0.01F), entry(5, 0.05F), entry(6, 0.5F));
+    public static final MortalityTable CALAMITY = of(entry(4, 0.005F), entry(5, 0.02F), entry(6, 0.10F));
     public static final MortalityTable PARAGON = of();
 
     private final List<Entry> entries;
@@ -26,11 +26,11 @@ public final class MortalityTable {
 
     public record Entry(int fromWeek, float value) {}
 
-    public static MortalityTable of(Entry... entries) {
+    private static MortalityTable of(Entry... entries) {
         return new MortalityTable(entries);
     }
 
-    public static Entry entry(int fromWeek, float value) {
+    private static Entry entry(int fromWeek, float value) {
         return new Entry(fromWeek, value);
     }
 }

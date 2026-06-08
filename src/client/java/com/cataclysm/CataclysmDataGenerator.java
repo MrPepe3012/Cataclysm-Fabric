@@ -1,6 +1,7 @@
 package com.cataclysm;
 
 import com.cataclysm.datagen.CataclysmLanguageProvider;
+import com.cataclysm.datagen.CataclysmModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 
@@ -10,5 +11,6 @@ public class CataclysmDataGenerator implements DataGeneratorEntrypoint {
     public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
         FabricDataGenerator.Pack pack = fabricDataGenerator.createPack();
         pack.addProvider(CataclysmLanguageProvider::new);
+        pack.addProvider(CataclysmModelProvider::new);
     }
 }

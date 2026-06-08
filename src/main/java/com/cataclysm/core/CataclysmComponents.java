@@ -1,7 +1,7 @@
 package com.cataclysm.core;
 
 import com.cataclysm.Cataclysm;
-import com.cataclysm.item.totem.mortality.MortalityComponent;
+import com.cataclysm.registry.item.totem.mortality.MortalityComponent;
 import org.ladysnake.cca.api.v3.component.Component;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.ComponentRegistry;
@@ -18,6 +18,6 @@ public final class CataclysmComponents implements EntityComponentInitializer {
     }
 
     private static <C extends Component> ComponentKey<C> register(String string, Class<C> component) {
-        return ComponentRegistry.getOrCreate(Cataclysm.createResourceLocation(string), component);
+        return ComponentRegistry.getOrCreate(Cataclysm.resourceLocation(string), component);
     }
 }

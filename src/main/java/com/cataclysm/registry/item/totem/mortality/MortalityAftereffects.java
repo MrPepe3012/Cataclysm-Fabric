@@ -1,8 +1,9 @@
-package com.cataclysm.item.totem.mortality;
+package com.cataclysm.registry.item.totem.mortality;
 
+import com.cataclysm.chat.CataclysmBroadcast;
 import com.cataclysm.core.CataclysmComponents;
-import com.cataclysm.effect.CataclysmMobEffects;
-import com.cataclysm.item.totem.TotemItem;
+import com.cataclysm.registry.CataclysmMobEffects;
+import com.cataclysm.registry.item.totem.TotemItem;
 import net.minecraft.core.Holder;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -16,10 +17,7 @@ import net.minecraft.world.item.component.DeathProtection;
 import net.minecraft.world.item.consume_effects.ApplyStatusEffectsConsumeEffect;
 import net.minecraft.world.item.consume_effects.ConsumeEffect;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.DoubleUnaryOperator;
 
@@ -37,7 +35,7 @@ public final class MortalityAftereffects {
             .at(.50F, penalty -> penalty.applyEffect(CataclysmMobEffects.DISPER, 0))
             .at(.25F, penalty -> penalty.removeEffect(MobEffects.REGENERATION))
             .at(.10F, penalty -> setMaxHealth(penalty, health -> health - 1))
-            .at(.0F,  penalty -> setMaxHealth(penalty, health -> 1));
+            .at(.00F, penalty -> setMaxHealth(penalty, health -> 1));
 
     private MortalityAftereffects() {}
 
@@ -45,6 +43,8 @@ public final class MortalityAftereffects {
         MortalityComponent mortalityComponent = CataclysmComponents.MORTALITY.get(player);
         float mortality = mortalityComponent.get();
         float reduction = TotemItem.findMortalityReduction(totemStack.getItem(), 1).orElse(0.0F);
+
+        CataclysmBroadcast.broadcast(CataclysmBroadcast.TOTEM_USE, player.getName().getString(), (mortality * 100));
 
         mortalityComponent.set(mortality - reduction);
         return PENALTY_BUILDER.apply(player, deathProtection, mortality);
@@ -54,13 +54,15 @@ public final class MortalityAftereffects {
         penalty.execute(player -> {
             AttributeInstance maxHealth = player.getAttribute(Attributes.MAX_HEALTH);
             if (maxHealth != null) {
-                maxHealth.setBaseValue(modifier.applyAsDouble(maxHealth.getBaseValue()));
+                double value = modifier.applyAsDouble(maxHealth.getBaseValue());
+                player.setHealth((float) value);
+                maxHealth.setBaseValue(value);
             }
         });
     }
 
     private static final class PenaltyBuilder {
-        private final Map<Float, Consumer<Penalty>> penalties = new HashMap<>();
+        private final Map<Float, Consumer<Penalty>> penalties = new TreeMap<>(Comparator.reverseOrder());
 
         PenaltyBuilder at(float threshold, Consumer<Penalty> action) {
             this.penalties.put(threshold, action);
@@ -69,10 +71,8 @@ public final class MortalityAftereffects {
 
         DeathProtection apply(Player player, DeathProtection component, float mortality) {
             Penalty penalty = new Penalty(player, component);
-            this.penalties.forEach((treshold, action) -> {
-                if (mortality < treshold) {
-                    action.accept(penalty);
-                }
+            this.penalties.forEach((threshold, action) -> {
+                if (mortality < threshold) action.accept(penalty);
             });
             return penalty.build();
         }
@@ -82,6 +82,7 @@ public final class MortalityAftereffects {
         private static final int EFFECT_DURATION = 400;
         private static final float NEARBY_ASSUMPTION = 5.0F;
 
+        private final List<MobEffectInstance> pendingEffects = new ArrayList<>();
         private final List<MobEffect> removedEffects = new ArrayList<>();
         private final Player player;
         private final DeathProtection deathProtector;
@@ -96,7 +97,7 @@ public final class MortalityAftereffects {
         }
 
         void applyEffect(Holder<MobEffect> holder, int amplifier) {
-            this.player.addEffect(new MobEffectInstance(holder, EFFECT_DURATION, amplifier));
+            this.pendingEffects.add(new MobEffectInstance(holder, EFFECT_DURATION, amplifier));
         }
 
         void removeEffect(Holder<MobEffect> holder) {
@@ -109,7 +110,13 @@ public final class MortalityAftereffects {
         }
 
         DeathProtection build() {
-            return new DeathProtection(this.deathProtector.deathEffects().stream().filter(this::keepEffect).toList());
+            List<ConsumeEffect> effects = new ArrayList<>(this.deathProtector.deathEffects().stream().filter(this::keepEffect).toList());
+
+            if (!this.pendingEffects.isEmpty()) {
+                effects.add(new ApplyStatusEffectsConsumeEffect(this.pendingEffects));
+            }
+
+            return new DeathProtection(effects);
         }
 
         private boolean keepEffect(ConsumeEffect effect) {

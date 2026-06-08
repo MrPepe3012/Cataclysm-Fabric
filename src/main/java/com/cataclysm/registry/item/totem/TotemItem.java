@@ -1,8 +1,10 @@
-package com.cataclysm.item.totem;
+package com.cataclysm.registry.item.totem;
 
-import com.cataclysm.item.totem.mortality.MortalityTable;
+import com.cataclysm.registry.item.totem.mortality.MortalityTable;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.DeathProtection;
 
 import java.util.Optional;
 
@@ -10,7 +12,7 @@ public class TotemItem extends Item {
     private final MortalityTable mortalityTable;
 
     public TotemItem(Properties properties, MortalityTable mortalityTable) {
-        super(properties);
+        super(properties.stacksTo(1).component(DataComponents.DEATH_PROTECTION, DeathProtection.TOTEM_OF_UNDYING));
         this.mortalityTable = mortalityTable;
     }
 

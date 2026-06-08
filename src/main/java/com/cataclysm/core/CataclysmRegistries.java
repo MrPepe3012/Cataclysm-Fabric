@@ -1,7 +1,7 @@
 package com.cataclysm.core;
 
-import com.cataclysm.effect.CataclysmMobEffects;
-import com.cataclysm.item.CataclysmItems;
+import com.cataclysm.registry.CataclysmMobEffects;
+import com.cataclysm.registry.CataclysmItems;
 
 import java.util.Set;
 

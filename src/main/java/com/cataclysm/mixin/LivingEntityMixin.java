@@ -1,6 +1,6 @@
 package com.cataclysm.mixin;
 
-import com.cataclysm.item.totem.UseTotemCallback;
+import com.cataclysm.registry.item.totem.UseTotemCallback;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
@@ -63,6 +63,6 @@ public class LivingEntityMixin {
         component.applyEffects(totemStack, self);
         self.setHealth(1.0F);
         self.level().broadcastEntityEvent(self, (byte) 35);
-        cir.setReturnValue(false);
+        cir.setReturnValue(true);
     }
 }

@@ -1,4 +1,4 @@
-package com.cataclysm.item.totem;
+package com.cataclysm.registry.item.totem;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;

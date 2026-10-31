@@ -6,8 +6,7 @@ import team.heather.cataclysm.command.MortalityCommand;
 import team.heather.cataclysm.command.Permission;
 import team.heather.cataclysm.core.CataclysmRegistry;
 import team.heather.cataclysm.core.item.CataclysmItems;
-import team.heather.cataclysm.core.item.armor.ArmorSetBonus;
-import team.heather.cataclysm.core.item.armor.PaleArmorEffects;
+import team.heather.cataclysm.core.item.armor.ArmorSetEffects;
 import team.heather.cataclysm.core.item.totem.TotemResurrection;
 import team.heather.cataclysm.core.item.totem.mortality.MortalityAftereffects;
 import team.heather.cataclysm.effect.status.CataclysmicMobEffects;
@@ -39,8 +38,7 @@ public final class Cataclysm implements ModInitializer {
 
         TotemResurrection.initialize();
         MortalityAftereffects.initialize();
-        ArmorSetBonus.initialize();
-        PaleArmorEffects.initialize();
+        ArmorSetEffects.initialize();
 
         CataclysmCommand.registration()
             .add(Permission.ADMIN, MortalityCommand.ALIAS, MortalityCommand::new)

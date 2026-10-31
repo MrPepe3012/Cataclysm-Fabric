@@ -18,8 +18,8 @@ public final class CataclysmComponents implements EntityComponentInitializer {
         registry.registerForPlayers(MORTALITY, player -> new MortalityComponent(), RespawnCopyStrategy.ALWAYS_COPY);
     }
 
-    private static <C extends Component> ComponentKey<C> register(String string,
-                                                                  Class<C> component) {
-        return ComponentRegistry.getOrCreate(Cataclysm.createNamespacedKey(string), component);
+    private static <C extends Component> ComponentKey<C> register(String path,
+                                                                  Class<C> clazz) {
+        return ComponentRegistry.getOrCreate(Cataclysm.createNamespacedKey(path), clazz);
     }
 }

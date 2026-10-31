@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.List;
 
 public final class MortalityTable {
+
     public static final MortalityTable VANILLA = of(entry(1, 0.01F), entry(4, 0.02F), entry(5, 0.10F), entry(6, 1.0F));
     public static final MortalityTable ARCANE = of(entry(3, 0.005F), entry(4, 0.01F), entry(5, 0.05F), entry(6, 0.5F));
     public static final MortalityTable CALAMITY = of(entry(4, 0.005F), entry(5, 0.02F), entry(6, 0.10F));

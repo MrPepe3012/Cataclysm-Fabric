@@ -2,6 +2,8 @@ package team.heather.cataclysm.core.item.totem;
 
 import team.heather.cataclysm.chat.CataclysmBroadcast;
 import team.heather.cataclysm.core.sound.SoundMashup;
+import net.minecraft.world.entity.LivingEntity;
+import team.heather.cataclysm.effect.event.TotemEvents;
 
 /**
  * Lets each {@link ResurrectingItem} decide whether it works and what it grants. Initialize it before
@@ -17,12 +19,18 @@ public final class TotemResurrection {
             if (totem == null) return protection;
 
             if (!totem.canResurrect(entity)) {
-                CataclysmBroadcast.broadcast(CataclysmBroadcast.TOTEM_FAIL, entity.getName().getString());
-                SoundMashup.MORTEM.playAtEntity(entity);
+                announceFailure(entity);
                 return null;
             }
 
             return totem.resurrect(entity, protection);
         });
+
+        TotemEvents.MORTEM_BLOCKED.register((entity, source, totem, amplifier) -> announceFailure(entity));
+    }
+
+    private static void announceFailure(LivingEntity entity) {
+        CataclysmBroadcast.broadcast(CataclysmBroadcast.TOTEM_FAIL, entity.getName().getString());
+        SoundMashup.MORTEM.playAtEntity(entity);
     }
 }

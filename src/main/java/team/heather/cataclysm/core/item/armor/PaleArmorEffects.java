@@ -6,6 +6,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.LivingEntity;
+import team.heather.cataclysm.effect.status.CataclysmicMobEffects;
 
 import java.util.LinkedHashSet;
 import java.util.Objects;
@@ -23,6 +24,9 @@ public final class PaleArmorEffects {
     private PaleArmorEffects() {}
 
     public static void initialize() {
+        registerImmunity(CataclysmicMobEffects.PALE_CORROSION);
+        registerImmunity(CataclysmicMobEffects.MORTEM);
+
         ServerTickEvents.END_SERVER_TICK.register(server ->
                 server.getPlayerList().getPlayers().forEach(PaleArmorEffects::tick));
     }
@@ -57,6 +61,11 @@ public final class PaleArmorEffects {
     private static void tick(ServerPlayer player) {
         if (!isWearingFullSet(player)) return;
 
-        // TODO(human)
+        // canBeAffected only blocks new applications; purge the ones active before equipping
+        for (var effect : IMMUNITIES) {
+            if (player.hasEffect(effect)) {
+                player.removeEffect(effect);
+            }
+        }
     }
 }

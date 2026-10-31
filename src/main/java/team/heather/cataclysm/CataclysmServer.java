@@ -1,3 +1,4 @@
+
 package team.heather.cataclysm;
 
 import lombok.Getter;
@@ -31,20 +32,25 @@ final class CataclysmServer {
         instance = this;
     }
 
+    public void update(int day,
+                       boolean ragnarok) {
+        var rules = this.level.getGameRules();
+
+        rules.getRule(GameRules.RULE_DOFIRETICK).set(day < 7, this.server);
+        rules.getRule(GameRules.RULE_DAYLIGHT).set(day < 14 && !ragnarok, this.server);
+        rules.getRule(GameRules.RULE_WEATHER_CYCLE).set(!ragnarok, this.server);
+
+        if (day >= 14 || ragnarok) this.level.setDayTime(18000);
+        else this.level.setDayTime(0);
+    }
+
     private void configureWorldBorder(WorldBorder border) {
         border.setCenter(0, 0);
         border.setSize(12_000);
     }
 
     private void configureGameRules(GameRules rules) {
-        this.setGameRule(rules, GameRules.RULE_PLAYERS_SLEEPING_PERCENTAGE, 10);
-    }
-
-    private void setGameRule(GameRules rules, GameRules.Key<GameRules.IntegerValue> key, int value) {
-        rules.getRule(key).set(value, this.server);
-    }
-
-    private void setGameRule(GameRules rules, GameRules.Key<GameRules.BooleanValue> key, boolean value) {
-        rules.getRule(key).set(value, this.server);
+        rules.getRule(GameRules.RULE_PLAYERS_SLEEPING_PERCENTAGE).set(10, this.server);
+        rules.getRule(GameRules.RULE_DO_IMMEDIATE_RESPAWN).set(true, this.server);
     }
 }

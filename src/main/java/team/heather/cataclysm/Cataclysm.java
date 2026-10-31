@@ -10,6 +10,7 @@ import team.heather.cataclysm.core.item.armor.ArmorSetBonus;
 import team.heather.cataclysm.core.item.armor.PaleArmorEffects;
 import team.heather.cataclysm.core.item.totem.TotemResurrection;
 import team.heather.cataclysm.core.item.totem.mortality.MortalityAftereffects;
+import team.heather.cataclysm.effect.status.CataclysmicMobEffects;
 import lombok.Getter;
 import lombok.Setter;
 import net.fabricmc.api.ModInitializer;
@@ -32,8 +33,8 @@ public final class Cataclysm implements ModInitializer {
         CataclysmServer.initialize();
 
         CataclysmRegistry.bootstrapper()
-                .include(CataclysmItems.class)
-                .bootstrap();
+            .include(CataclysmItems.class)
+            .bootstrap();
         CataclysmItems.registerCreativeModeTab();
 
         TotemResurrection.initialize();
@@ -42,8 +43,8 @@ public final class Cataclysm implements ModInitializer {
         PaleArmorEffects.initialize();
 
         CataclysmCommand.registration()
-                .add(Permission.ADMIN, MortalityCommand.ALIAS, MortalityCommand::new)
-                .done();
+            .add(Permission.ADMIN, MortalityCommand.ALIAS, MortalityCommand::new)
+            .done();
 
         LOGGER.info("Done.");
     }

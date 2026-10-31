@@ -1,6 +1,6 @@
 package team.heather.cataclysm.core.item.paragon;
 
-import team.heather.cataclysm.cataclysmiceffects.effect.CataclysmicMobEffects;
+import team.heather.cataclysm.effect.status.CataclysmicMobEffects;
 import net.minecraft.world.effect.MobEffectInstance;
 
 public interface ImmunityGrantingItem {

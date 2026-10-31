@@ -16,10 +16,6 @@ import net.minecraft.world.item.consume_effects.ConsumeEffect;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Works under Mortem, costs no mortality ({@link MortalityTable#PARAGON} is empty) and
- * blesses its holder with immunity and Glowing for {@link ImmunityTable#PARAGON_TOTEM}.
- */
 public class ParagonTotem extends TotemItem implements ImmunityGrantingItem {
 
     public ParagonTotem(Properties properties) {
@@ -31,7 +27,6 @@ public class ParagonTotem extends TotemItem implements ImmunityGrantingItem {
         return ImmunityTable.PARAGON_TOTEM;
     }
 
-    /** The Paragon's blessing outweighs anything that rejects other totems, Mortem included. */
     @Override
     public boolean canResurrect(LivingEntity entity) {
         return true;

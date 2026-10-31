@@ -3,6 +3,7 @@ package team.heather.cataclysm.mixin;
 import team.heather.cataclysm.core.item.armor.CalamityArmorEffects;
 import team.heather.cataclysm.core.item.armor.PaleArmorEffects;
 import team.heather.cataclysm.core.item.totem.UseTotemCallback;
+import team.heather.cataclysm.effect.event.TotemEvents;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
@@ -57,6 +58,12 @@ public class LivingEntityMixin {
             ItemStack handStack = self.getItemInHand(hand);
             component = handStack.get(DataComponents.DEATH_PROTECTION);
             if (component != null) {
+                // Both mods replace this method at HEAD; asking here keeps Mortem working whichever runs first.
+                if (!TotemEvents.ALLOW_ACTIVATION.invoker().allowActivation(self, damageSource, handStack)) {
+                    callback.setReturnValue(false);
+                    return;
+                }
+
                 totemStack = handStack.copy();
                 handStack.shrink(1);
                 break;

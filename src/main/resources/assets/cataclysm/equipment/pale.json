@@ -1,0 +1,14 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "cataclysm:pale"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "cataclysm:pale"
+      }
+    ]
+  }
+}

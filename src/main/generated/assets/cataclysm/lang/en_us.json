@@ -1,13 +1,9 @@
 {
-  "broadcast.cataclysm.totem_fail": "<%s> tried to used a totem with <Mortem>.",
+  "broadcast.cataclysm.totem_fail": "<%s> tried to use a totem with <Mortem>.",
   "broadcast.cataclysm.totem_use": "<%s> used a totem. (%s%%)",
   "commands.cataclysm.mortality.get": "%s's mortality: %s%%",
   "commands.cataclysm.mortality.set": "%s's mortality changed from %s%% to %s%%",
-  "effect.cataclysm.disper": "Disper",
-  "effect.cataclysm.immunity": "Immunity",
-  "effect.cataclysm.mortem": "Mortem",
   "item.cataclysm.arcane_totem": "Arcane Totem",
   "item.cataclysm.calamity_totem": "Calamity Totem",
-  "item.cataclysm.paragon_blessing": "Paragon's Blessing",
   "item.cataclysm.paragon_totem": "Paragon's Totem"
 }

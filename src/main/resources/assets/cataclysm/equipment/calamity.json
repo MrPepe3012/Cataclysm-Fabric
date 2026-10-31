@@ -1,0 +1,14 @@
+﻿{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "cataclysm:calamity"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "cataclysm:calamity"
+      }
+    ]
+  }
+}

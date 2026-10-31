@@ -11,16 +11,16 @@
   "environment": "*",
   "entrypoints": {
     "cardinal-components": [
-      "com.cataclysm.core.CataclysmComponents"
+      "team.heather.cataclysm.core.CataclysmComponents"
     ],
     "fabric-datagen": [
-      "com.cataclysm.CataclysmDataGenerator"
+      "team.heather.cataclysm.CataclysmDataGenerator"
     ],
     "client": [
-      "com.cataclysm.CataclysmClient"
+      "team.heather.cataclysm.CataclysmClient"
     ],
     "main": [
-      "com.cataclysm.Cataclysm"
+      "team.heather.cataclysm.Cataclysm"
     ]
   },
   "mixins": [

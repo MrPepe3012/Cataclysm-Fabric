@@ -1,0 +1,6 @@
+{
+  "parent": "cataclysm:item/arcane/tools/arcane_bow",
+  "textures": {
+    "layer0": "cataclysm:item/cataclysm/arcane/tools/bow/arcane_bow_pulling_1"
+  }
+}

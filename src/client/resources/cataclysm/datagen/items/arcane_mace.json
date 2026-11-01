@@ -1,0 +1,23 @@
+{
+  "model": {
+    "type": "select",
+    "property": "minecraft:display_context",
+    "cases": [
+      {
+        "when": [
+          "gui",
+          "ground",
+          "fixed"
+        ],
+        "model": {
+          "type": "model",
+          "model": "cataclysm:item/arcane/tools/arcane_mace_2d"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "model",
+      "model": "cataclysm:item/arcane/tools/arcane_mace"
+    }
+  }
+}

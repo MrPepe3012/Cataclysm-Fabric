@@ -1,0 +1,19 @@
+{
+  "model": {
+    "type": "minecraft:range_dispatch",
+    "entries": [
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "cataclysm:item/twisted/tools/twisted_pickaxe/fortune"
+        },
+        "threshold": 1.0
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "cataclysm:item/twisted/tools/twisted_pickaxe/silk_touch"
+    },
+    "property": "cataclysm:pickaxe_mode"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "model": {
+    "type": "minecraft:special",
+    "base": "cataclysm:item/golem_head",
+    "model": {
+      "type": "minecraft:head",
+      "kind": "cataclysm:golem"
+    }
+  }
+}

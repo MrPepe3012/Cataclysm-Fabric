@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "cataclysm:item/calamity_totem"
+    "model": "cataclysm:item/calamity/calamity_totem"
   }
 }

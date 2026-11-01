@@ -4,6 +4,9 @@
   "package": "team.heather.cataclysm.mixin.client",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "MinecraftMixin",
+    "WingsLayerMixin",
+    "SkullBlockRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

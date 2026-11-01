@@ -4,7 +4,9 @@
   "package": "team.heather.cataclysm.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "LivingEntityMixin"
+    "LivingEntityMixin",
+    "ItemPropertiesMixin",
+    "FoodDataAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

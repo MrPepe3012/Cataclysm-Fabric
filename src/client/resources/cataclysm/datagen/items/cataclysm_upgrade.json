@@ -1,0 +1,33 @@
+{
+  "model": {
+    "type": "minecraft:range_dispatch",
+    "property": "cataclysm:upgrade_tier",
+    "entries": [
+      {
+        "threshold": 1,
+        "model": {
+          "type": "model",
+          "model": "cataclysm:item/cataclysm/cataclysm_upgrade"
+        }
+      },
+      {
+        "threshold": 2,
+        "model": {
+          "type": "model",
+          "model": "cataclysm:item/cataclysm/cataclysm_upgrade_tier_2"
+        }
+      },
+      {
+        "threshold": 3,
+        "model": {
+          "type": "model",
+          "model": "cataclysm:item/cataclysm/cataclysm_upgrade_tier_3"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "model",
+      "model": "cataclysm:item/cataclysm/cataclysm_upgrade"
+    }
+  }
+}

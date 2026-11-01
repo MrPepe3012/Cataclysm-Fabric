@@ -1,7 +1,7 @@
 
 package team.heather.cataclysm.command;
 
-import team.heather.cataclysm.CataclysmComponents;
+import team.heather.cataclysm.CataclysmCardinalComponents;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -32,7 +32,7 @@ public final class MortalityCommand extends CataclysmCommand {
 
     private int get(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         var player = EntityArgument.getPlayer(context, KEY_PLAYER);
-        var mortality = CataclysmComponents.MORTALITY.get(player).get();
+        var mortality = CataclysmCardinalComponents.MORTALITY.get(player).get();
 
         context.getSource().sendSuccess(() ->
                 withArguments(MESSAGE_GET, player.getName().getString(), mortality * 100), false);
@@ -44,7 +44,7 @@ public final class MortalityCommand extends CataclysmCommand {
         var player = EntityArgument.getPlayer(context, KEY_PLAYER);
         var value = FloatArgumentType.getFloat(context, KEY_VALUE);
 
-        var mortality = CataclysmComponents.MORTALITY.get(player);
+        var mortality = CataclysmCardinalComponents.MORTALITY.get(player);
         var previous = mortality.get();
         mortality.set(value);
 

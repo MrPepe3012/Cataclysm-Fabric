@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "cataclysm:item/paragon_totem"
+    "model": "cataclysm:item/paragon/paragon_totem"
   }
 }

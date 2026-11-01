@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "cataclysm:item/arcane_totem"
+    "model": "cataclysm:item/arcane/tools/arcane_totem"
   }
 }

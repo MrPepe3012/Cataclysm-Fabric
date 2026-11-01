@@ -4,10 +4,11 @@ package team.heather.cataclysm;
 import team.heather.cataclysm.command.CataclysmCommand;
 import team.heather.cataclysm.command.MortalityCommand;
 import team.heather.cataclysm.command.Permission;
-import team.heather.cataclysm.item.CataclysmItems;
-import team.heather.cataclysm.item.armor.ArmorSetEffects;
-import team.heather.cataclysm.item.totem.TotemResurrection;
-import team.heather.cataclysm.item.totem.mortality.MortalityAftereffects;
+import team.heather.cataclysm.registry.item.CataclysmItems;
+import team.heather.cataclysm.registry.item.lemegeton.Lemegeton;
+import team.heather.cataclysm.registry.item.armor.ArmorSetEffects;
+import team.heather.cataclysm.registry.item.totem.TotemResurrection;
+import team.heather.cataclysm.registry.item.totem.mortality.MortalityAftereffects;
 import lombok.Getter;
 import lombok.Setter;
 import net.fabricmc.api.ModInitializer;
@@ -15,24 +16,28 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import team.heather.cataclysm.registry.CataclysmRegistry;
+import team.heather.cataclysm.registry.block.CataclysmBlocks;
 
 public final class Cataclysm implements ModInitializer {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(Cataclysm.class);
     public static final String MOD_ID = "cataclysm";
 
-    @Getter @Setter private static int week;
+    @Getter @Setter private static int week = 1;
 
     @Override
     public void onInitialize() {
         LOGGER.info("Initializing...");
 
         CataclysmServer.initialize();
+        CataclysmBlocks.initialize();
 
         CataclysmRegistry.bootstrapper()
             .include(CataclysmItems.class)
             .bootstrap();
         CataclysmItems.registerCreativeModeTab();
+        Lemegeton.initialize(Cataclysm::getWeek);
 
         TotemResurrection.initialize();
         MortalityAftereffects.initialize();

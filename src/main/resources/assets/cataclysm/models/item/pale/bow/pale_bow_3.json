@@ -1,0 +1,6 @@
+{
+  "parent": "cataclysm:item/pale/bow/pale_bow",
+  "textures": {
+    "layer0": "cataclysm:item/cataclysm/pale/bow/pale_bow_3"
+  }
+}

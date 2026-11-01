@@ -1,7 +1,7 @@
 
 package team.heather.cataclysm.command;
 
-import team.heather.cataclysm.core.CataclysmComponents;
+import team.heather.cataclysm.CataclysmComponents;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;

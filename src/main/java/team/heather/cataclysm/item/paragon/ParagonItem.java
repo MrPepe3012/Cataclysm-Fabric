@@ -1,4 +1,4 @@
-package team.heather.cataclysm.core.item.paragon;
+package team.heather.cataclysm.item.paragon;
 
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.Item;

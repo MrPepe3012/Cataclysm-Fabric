@@ -1,7 +1,7 @@
-package team.heather.cataclysm.core.item.totem;
+package team.heather.cataclysm.item.totem;
 
 import team.heather.cataclysm.chat.CataclysmBroadcast;
-import team.heather.cataclysm.core.sound.SoundMashup;
+import team.heather.cataclysm.sound.SoundMashup;
 import net.minecraft.world.entity.LivingEntity;
 import team.heather.cataclysm.effect.event.TotemEvents;
 

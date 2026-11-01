@@ -1,5 +1,5 @@
 
-package team.heather.cataclysm.core;
+package team.heather.cataclysm;
 
 import team.heather.cataclysm.util.Bootstrapper;
 

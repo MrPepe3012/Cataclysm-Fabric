@@ -1,7 +1,7 @@
 package team.heather.cataclysm.mixin;
 
-import team.heather.cataclysm.core.item.armor.ArmorSetEffects;
-import team.heather.cataclysm.core.item.totem.UseTotemCallback;
+import team.heather.cataclysm.item.armor.ArmorSetEffects;
+import team.heather.cataclysm.item.totem.UseTotemCallback;
 import team.heather.cataclysm.effect.event.TotemEvents;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.component.DataComponents;

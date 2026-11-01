@@ -1,4 +1,4 @@
-package team.heather.cataclysm.core.item.totem;
+package team.heather.cataclysm.item.totem;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;

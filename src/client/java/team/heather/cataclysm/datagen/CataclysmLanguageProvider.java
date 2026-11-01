@@ -2,7 +2,7 @@ package team.heather.cataclysm.datagen;
 
 import team.heather.cataclysm.chat.CataclysmBroadcast;
 import team.heather.cataclysm.command.MortalityCommand;
-import team.heather.cataclysm.core.item.CataclysmItems;
+import team.heather.cataclysm.item.CataclysmItems;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 import net.minecraft.core.HolderLookup;

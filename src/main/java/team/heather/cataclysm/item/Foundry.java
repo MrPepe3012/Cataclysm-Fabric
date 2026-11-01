@@ -1,10 +1,10 @@
-package team.heather.cataclysm.core.item;
+package team.heather.cataclysm.item;
 
 import team.heather.cataclysm.Cataclysm;
-import team.heather.cataclysm.core.item.paragon.ImmunityTable;
-import team.heather.cataclysm.core.item.paragon.ParagonItem;
-import team.heather.cataclysm.core.item.totem.TotemItem;
-import team.heather.cataclysm.core.item.totem.mortality.MortalityTable;
+import team.heather.cataclysm.item.paragon.ImmunityTable;
+import team.heather.cataclysm.item.paragon.ParagonItem;
+import team.heather.cataclysm.item.totem.TotemItem;
+import team.heather.cataclysm.item.totem.mortality.MortalityTable;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;

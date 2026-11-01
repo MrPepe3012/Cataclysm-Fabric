@@ -1,13 +1,13 @@
-package team.heather.cataclysm.core.item;
+package team.heather.cataclysm.item;
 
 import team.heather.cataclysm.Cataclysm;
-import team.heather.cataclysm.core.CataclysmRegistry;
-import team.heather.cataclysm.core.item.material.CataclysmArmorMaterial;
-import team.heather.cataclysm.core.item.material.CataclysmToolMaterial;
-import team.heather.cataclysm.core.item.paragon.ImmunityTable;
-import team.heather.cataclysm.core.item.totem.ParagonTotem;
-import team.heather.cataclysm.core.item.totem.mortality.MortalityTable;
-import team.heather.cataclysm.core.item.pale.PaleWeaponItem;
+import team.heather.cataclysm.CataclysmRegistry;
+import team.heather.cataclysm.item.material.CataclysmArmorMaterial;
+import team.heather.cataclysm.item.material.CataclysmToolMaterial;
+import team.heather.cataclysm.item.paragon.ImmunityTable;
+import team.heather.cataclysm.item.totem.ParagonTotem;
+import team.heather.cataclysm.item.totem.mortality.MortalityTable;
+import team.heather.cataclysm.item.pale.PaleWeaponItem;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;

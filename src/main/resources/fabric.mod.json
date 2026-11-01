@@ -11,7 +11,7 @@
   "environment": "*",
   "entrypoints": {
     "cardinal-components": [
-      "team.heather.cataclysm.core.CataclysmComponents"
+      "team.heather.cataclysm.CataclysmComponents"
     ],
     "fabric-datagen": [
       "team.heather.cataclysm.CataclysmDataGenerator"

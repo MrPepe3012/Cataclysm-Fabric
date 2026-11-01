@@ -1,4 +1,4 @@
-package team.heather.cataclysm.core.item.armor;
+package team.heather.cataclysm.item.armor;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.core.Holder;

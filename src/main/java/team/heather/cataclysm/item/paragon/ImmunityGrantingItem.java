@@ -1,4 +1,4 @@
-package team.heather.cataclysm.core.item.paragon;
+package team.heather.cataclysm.item.paragon;
 
 import team.heather.cataclysm.effect.status.CataclysmicMobEffects;
 import net.minecraft.world.effect.MobEffectInstance;

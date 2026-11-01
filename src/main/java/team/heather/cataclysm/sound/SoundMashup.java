@@ -1,4 +1,4 @@
-package team.heather.cataclysm.core.sound;
+package team.heather.cataclysm.sound;
 
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;

@@ -1,11 +1,11 @@
-package team.heather.cataclysm.core.item.totem;
+package team.heather.cataclysm.item.totem;
 
 import team.heather.cataclysm.Cataclysm;
-import team.heather.cataclysm.core.item.paragon.ImmunityTable;
-import team.heather.cataclysm.core.item.paragon.ImmunityGrantingItem;
-import team.heather.cataclysm.core.item.paragon.ParagonItem;
-import team.heather.cataclysm.core.item.totem.mortality.MortalityTable;
-import team.heather.cataclysm.core.sound.SoundMashup;
+import team.heather.cataclysm.item.paragon.ImmunityTable;
+import team.heather.cataclysm.item.paragon.ImmunityGrantingItem;
+import team.heather.cataclysm.item.paragon.ParagonItem;
+import team.heather.cataclysm.item.totem.mortality.MortalityTable;
+import team.heather.cataclysm.sound.SoundMashup;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;

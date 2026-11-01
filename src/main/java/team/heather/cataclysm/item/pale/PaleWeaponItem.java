@@ -1,4 +1,4 @@
-package team.heather.cataclysm.core.item.pale;
+package team.heather.cataclysm.item.pale;
 
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;

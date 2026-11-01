@@ -1,4 +1,4 @@
-package team.heather.cataclysm.core.item.totem.mortality;
+package team.heather.cataclysm.item.totem.mortality;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;

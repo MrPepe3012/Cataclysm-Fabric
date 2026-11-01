@@ -1,6 +1,6 @@
-package team.heather.cataclysm.core.item.totem;
+package team.heather.cataclysm.item.totem;
 
-import team.heather.cataclysm.core.item.totem.mortality.MortalityTable;
+import team.heather.cataclysm.item.totem.mortality.MortalityTable;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;

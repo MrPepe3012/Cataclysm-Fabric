@@ -1,4 +1,4 @@
-package team.heather.cataclysm.core.item.material;
+package team.heather.cataclysm.item.material;
 
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;

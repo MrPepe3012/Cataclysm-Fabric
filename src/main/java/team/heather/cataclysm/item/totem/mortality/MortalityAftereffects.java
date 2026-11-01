@@ -1,11 +1,11 @@
 
-package team.heather.cataclysm.core.item.totem.mortality;
+package team.heather.cataclysm.item.totem.mortality;
 
 import team.heather.cataclysm.chat.CataclysmBroadcast;
-import team.heather.cataclysm.core.CataclysmComponents;
+import team.heather.cataclysm.CataclysmComponents;
 import team.heather.cataclysm.Cataclysm;
-import team.heather.cataclysm.core.item.totem.ResurrectingItem;
-import team.heather.cataclysm.core.item.totem.UseTotemCallback;
+import team.heather.cataclysm.item.totem.ResurrectingItem;
+import team.heather.cataclysm.item.totem.UseTotemCallback;
 import net.minecraft.core.Holder;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;

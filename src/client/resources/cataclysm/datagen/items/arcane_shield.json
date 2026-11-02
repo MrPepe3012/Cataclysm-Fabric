@@ -8,7 +8,6 @@
       "cases": [
         {
           "when": [
-            "gui",
             "ground",
             "fixed"
           ],
@@ -31,7 +30,7 @@
           "when": "gui",
           "model": {
             "type": "model",
-            "model": "cataclysm:item/arcane/tools/arcane_shield_2d"
+            "model": "cataclysm:item/arcane/tools/arcane_shield"
           }
         }
       ],

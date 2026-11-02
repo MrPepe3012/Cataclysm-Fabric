@@ -5,6 +5,15 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "LivingEntityMixin",
+    "ArcaneArrowMixin",
+    "ArcaneBowMixin",
+    "EquipmentEnchantmentMixin",
+    "ArcaneShieldMixin",
+    "ArcaneTridentMixin",
+    "ParagonPearlMixin",
+    "ParagonTotemMixin",
+    "WeaponHitMixin",
+    "TwistedMiningMixin",
     "ItemPropertiesMixin",
     "FoodDataAccessor"
   ],

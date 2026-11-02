@@ -20,7 +20,6 @@ public final class MortalityTable {
         return this.entries.stream()
                 .filter(entry -> week >= entry.fromWeek())
                 .max(Comparator.comparingInt(Entry::fromWeek))
-                .or(() -> this.entries.stream().min(Comparator.comparingInt(Entry::fromWeek)))
                 .map(Entry::mortality)
                 .orElse(0.0F);
     }

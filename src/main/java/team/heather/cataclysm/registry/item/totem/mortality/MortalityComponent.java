@@ -14,7 +14,7 @@ public final class MortalityComponent implements Component {
     @Override
     public void readFromNbt(CompoundTag tag,
                             HolderLookup.Provider lookup) {
-        this.mortality = tag.getFloatOr(KEY, DEFAULT);
+        set(tag.getFloatOr(KEY, DEFAULT));
     }
 
     @Override
@@ -24,10 +24,10 @@ public final class MortalityComponent implements Component {
     }
 
     public void set(float mortality) {
-        this.mortality = Math.clamp(0.0F, mortality, 1.0F);
+        this.mortality = Math.round(Math.clamp(mortality, 0.0F, 1.0F) * 10000) / 10000.0F;
     }
 
     public float get() {
-        return Math.round(this.mortality * 100) / 100.0F;
+        return this.mortality;
     }
 }

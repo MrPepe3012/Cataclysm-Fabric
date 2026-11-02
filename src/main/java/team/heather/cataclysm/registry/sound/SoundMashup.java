@@ -19,6 +19,31 @@ public final class SoundMashup {
     public static final SoundMashup PARAGON_DAMAGE = new SoundMashup(
         context(SoundEvents.IRON_GOLEM_REPAIR, 0.85F));
 
+    public static final SoundMashup ARCANE_MACE = new SoundMashup(SoundSource.PLAYERS,
+            new SoundContext(SoundEvents.MACE_SMASH_AIR, 0.8F, 0.8F),
+            new SoundContext(SoundEvents.AMETHYST_BLOCK_BREAK, 0.55F, 0.8F));
+
+    public static final SoundMashup ARCANE_BOW = new SoundMashup(SoundSource.PLAYERS,
+            new SoundContext(SoundEvents.AMETHYST_BLOCK_BREAK, 0.65F, 1.2F));
+
+    public static final SoundMashup ARCANE_SHIELD = new SoundMashup(SoundSource.PLAYERS,
+            new SoundContext(SoundEvents.GUARDIAN_DEATH, 0.55F, 1.95F));
+
+    public static final SoundMashup ARCANE_TRIDENT = new SoundMashup(SoundSource.PLAYERS,
+            new SoundContext(SoundEvents.TRIDENT_RIPTIDE_2.value(), 0.55F, 0.8F),
+            new SoundContext(SoundEvents.TRIDENT_RIPTIDE_3.value(), 0.55F, 1.15F));
+
+    public static final SoundMashup MIRAGE_HOOK_MODE = new SoundMashup(SoundSource.PLAYERS,
+            new SoundContext(SoundEvents.END_PORTAL_FRAME_FILL, 0.8F, 0.6F),
+            new SoundContext(SoundEvents.MACE_SMASH_GROUND_HEAVY, 0.5F, 0.6F));
+    public static final SoundMashup MIRAGE_NORMAL_MODE = new SoundMashup(SoundSource.PLAYERS,
+            new SoundContext(SoundEvents.END_PORTAL_FRAME_FILL, 0.8F, 1.55F),
+            new SoundContext(SoundEvents.MACE_SMASH_GROUND_HEAVY, 0.5F, 0.6F));
+    public static final SoundMashup MIRAGE_HOOK = new SoundMashup(SoundSource.PLAYERS,
+            new SoundContext(SoundEvents.FISHING_BOBBER_THROW, 0.85F, 1.15F),
+            new SoundContext(SoundEvents.TRIDENT_RIPTIDE_1.value(), 0.85F, 1.15F),
+            new SoundContext(SoundEvents.MACE_SMASH_AIR, 0.65F, 1.15F));
+
     private final SoundSource source;
     private final SoundContext[] contexts;
 

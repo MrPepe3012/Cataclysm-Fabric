@@ -83,7 +83,7 @@ public class CataclysmLanguageProvider extends FabricLanguageProvider {
         this.addItem(CataclysmItems.LEMEGETON, "Lemegeton", "Deus sacer cataclysmatum");
         this.addItem(CataclysmItems.TECTONITE, "Tectonite");
         this.addItem(CataclysmItems.ONYX, "Onyx");
-        this.addItem(CataclysmItems.VOID_STONE, "Void Stone");
+        this.addItem(CataclysmItems.VOIDSTONE, "Void Stone");
         this.addItem(CataclysmItems.CATACLYSM_UPGRADE, "Cataclysm Upgrade", "Unlock an upgrade by opening the Lemegeton menu while holding this in your off-hand.");
         this.addTwistedTool(CataclysmItems.TWISTED_SWORD, "Twisted Sword");
         this.addTwistedTool(CataclysmItems.TWISTED_PICKAXE, "Twisted Pickaxe");
@@ -107,7 +107,7 @@ public class CataclysmLanguageProvider extends FabricLanguageProvider {
         this.addItem(CataclysmItems.ARCANE_NUGGET, "Arcane Nugget");
         this.addItem(CataclysmItems.ARCANE_INGOT, "Arcane Ingot");
         this.addItem(CataclysmItems.ARCANE_SCUTE, "Arcane Scute");
-        this.addItem(CataclysmItems.VOID_HEART, "Void Heart");
+        this.addItem(CataclysmItems.VOIDHEART, "Void Heart");
         this.addItem(CataclysmItems.TWISTED_RELIC, "Twisted Relic", "Treasure from the depths of the abyss.");
         this.addItem(CataclysmItems.UR_TEAR, "Ur-Tear", "A remnant of an Ur-Ghast's lament.");
         this.addItem(CataclysmItems.TOXIC_MEMBRANE, "Toxic Membrane", "A remnant of something beautiful.");
@@ -146,7 +146,7 @@ public class CataclysmLanguageProvider extends FabricLanguageProvider {
         this.addItem(CataclysmItems.MIRAGE_QUARTZ, "Mirage Quartz");
         this.addItem(CataclysmItems.MIRAGE_ESSENCE, "Mirage Essence");
         this.addItem(CataclysmItems.MIRAGE_AMETHYST, "Mirage Amethyst");
-        this.addItem(CataclysmItems.WHALE_WING, "Whale Wing");
+        this.addItem(CataclysmItems.MIRAGE_WHALE_WING, "Whale Wing");
         this.addItem(CataclysmItems.MIRAGE_BLESSING, "Mirage's Blessing", "An echo of eternity");
         this.addItem(CataclysmItems.PARAGON_PEARL, "Paragon Pearl", "A fragment of the Paragon's grace");
         this.addItem(CataclysmItems.ENDER_BAG, "Ender Bag");
@@ -158,17 +158,15 @@ public class CataclysmLanguageProvider extends FabricLanguageProvider {
         this.addItem(CataclysmItems.MIRAGE_MACE, "Mirage Mace", "Forged with the illusion of a mirage");
         this.addItem(CataclysmItems.MIRAGE_APPLE, "Mirage Apple", "Fruit of an illusion");
         this.addItem(CataclysmItems.PARAGON_TOTEM, "Paragon Totem", "Superstes Numisma");
-        this.addItem(CataclysmItems.PALE_TOKEN, "Pale Token", "Collisio Mundorum");
         this.addItem(CataclysmItems.PALE_SWORD, "Pale Sword", "Ex umbra silvae confectum");
         this.addItem(CataclysmItems.PALE_BOW, "Pale Bow", "Ex umbris silvae confectum");
         this.addPaleArmor(CataclysmItems.PALE_HELMET, "Pale Helmet");
         this.addPaleArmor(CataclysmItems.PALE_CHESTPLATE, "Pale Chestplate");
         this.addPaleArmor(CataclysmItems.PALE_LEGGINGS, "Pale Leggings");
         this.addPaleArmor(CataclysmItems.PALE_BOOTS, "Pale Boots");
-        this.addItem(CataclysmItems.OVERWORLDS_CHALICE, "Overworld's Chalice");
-        this.addItem(CataclysmItems.NETHERS_CHALICE, "Nether's Chalice");
-        this.addItem(CataclysmItems.ENDS_CHALICE, "End's Chalice");
-        this.addItem(CataclysmItems.GRYMPESITO_TOTEM, "Grympesito Totem", "Superstes Numisma");
+        this.addItem(CataclysmItems.CHALICE_OF_THE_OVERWORLD, "Overworld's Chalice");
+        this.addItem(CataclysmItems.CHALICE_OF_THE_NETHER, "Nether's Chalice");
+        this.addItem(CataclysmItems.CHALICE_OF_THE_END, "End's Chalice");
     }
 
     /** An empty description translation produces no lore lines in the tooltip. */

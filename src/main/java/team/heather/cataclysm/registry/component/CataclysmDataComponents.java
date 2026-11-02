@@ -28,6 +28,12 @@ public final class CataclysmDataComponents {
             DataComponentType.<Integer>builder().persistent(Codec.intRange(0, 1))
                     .networkSynchronized(ByteBufCodecs.fromCodec(Codec.intRange(0, 1))).build());
 
+    /** 0 launches wind charges; 1 launches the wielder with the hook. */
+    public static final DataComponentType<Integer> MACE_MODE = Registry.register(
+            BuiltInRegistries.DATA_COMPONENT_TYPE, Cataclysm.createNamespacedKey("mace_mode"),
+            DataComponentType.<Integer>builder().persistent(Codec.intRange(0, 1))
+                    .networkSynchronized(ByteBufCodecs.fromCodec(Codec.intRange(0, 1))).build());
+
     public static final DataComponentType<LemegetonState> LEMEGETON = Registry.register(
             BuiltInRegistries.DATA_COMPONENT_TYPE, Cataclysm.createNamespacedKey("lemegeton"),
             DataComponentType.<LemegetonState>builder().persistent(LemegetonState.CODEC)

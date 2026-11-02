@@ -1,152 +1,138 @@
 package team.heather.cataclysm.registry.item;
 
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.Registry;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.item.equipment.ArmorType;
 import net.minecraft.world.item.equipment.trim.TrimMaterials;
 import net.minecraft.world.item.equipment.trim.TrimPatterns;
 import team.heather.cataclysm.Cataclysm;
 import team.heather.cataclysm.registry.CataclysmRegistry;
 import team.heather.cataclysm.registry.component.CataclysmDataComponents;
-import team.heather.cataclysm.registry.item.material.CataclysmArmorMaterial;
+import team.heather.cataclysm.builder.ItemBase;
+import team.heather.cataclysm.builder.ItemFactory;
+import team.heather.cataclysm.builder.ItemFamily;
+import team.heather.cataclysm.builder.Palette;
+import team.heather.cataclysm.registry.item.lemegeton.CataclysmUpgradeItem;
+import team.heather.cataclysm.material.CataclysmArmorMaterial;
 
 import java.util.List;
 import java.util.ArrayList;
 
 public interface CataclysmItems extends CataclysmRegistry {
 
-    Item PARAGON_BLESSING = Foundry.item("paragons_blessing", item -> item.palette(Palette.PARAGON).glint().build());
-    Item PARAGON_PEARL = Foundry.item("paragon_pearl", item -> item.glint().palette(Palette.PARAGON).build());
-    Item PARAGON_TOTEM = Foundry.item("paragon_totem", item -> item.base(ItemBase.TOTEM).palette(Palette.PARAGON).glint().build());
-    Item PARAGON_QUARTZ = Foundry.item("paragons_quartz", Foundry::build);
+    Item PARAGON_BLESSING = ItemFactory.register("paragon_blessing", item -> item.family(ItemFamily.PARAGON).base(ItemBase.PARAGON_BLESSING));
+    Item PARAGON_PEARL = ItemFactory.register("paragon_pearl", item -> item.family(ItemFamily.PARAGON).base(ItemBase.PARAGON_PEARL));
+    Item PARAGON_TOTEM = ItemFactory.register("paragon_totem", item -> item.family(ItemFamily.PARAGON).base(ItemBase.PARAGON_TOTEM));
+    Item PARAGON_QUARTZ = ItemFactory.register("paragon_quartz");
 
-    Item LEMEGETON = Foundry.item("lemegeton", item -> item.base(ItemBase.LEMEGETON).palette(Palette.LEMEGETON).build());
-    Item CATACLYSM_UPGRADE = Foundry.item("cataclysm_upgrade", CataclysmUpgradeItem::create);
-    Item TECTONITE = Foundry.item("tectonite", Foundry::build);
-    Item ONYX = Foundry.item("onyx", Foundry::build);
-    Item VOID_STONE = Foundry.item("void_stone", Foundry::build);
+    Item LEMEGETON = ItemFactory.register("lemegeton", item -> item.family(ItemFamily.LEMEGETON).base(ItemBase.LEMEGETON));
+    Item CATACLYSM_UPGRADE = ItemFactory.register("cataclysm_upgrade", CataclysmUpgradeItem::create);
+    Item VOIDSTONE = ItemFactory.register("voidstone");
+    Item TECTONITE = ItemFactory.register("tectonite");
+    Item ONYX = ItemFactory.register("onyx");
 
-    // --- Twisted
+    Item TWISTED_RELIC = ItemFactory.register("twisted_relic", item -> item.family(ItemFamily.TWISTED).glint());
+    Item TWISTED_SWORD = ItemFactory.register("twisted_sword", item -> item.family(ItemFamily.TWISTED).base(ItemBase.SWORD.damage(12).speed(-2.4)));
+    Item TWISTED_PICKAXE = ItemFactory.register("twisted_pickaxe", item -> item.family(ItemFamily.TWISTED).base(ItemBase.TWISTED_PICKAXE.damage(8).speed(-3.0)));
+    Item TWISTED_AXE = ItemFactory.register("twisted_axe", item -> item.family(ItemFamily.TWISTED).base(ItemBase.AXE.damage(16).speed(-3.0)));
+    Item TWISTED_SHOVEL = ItemFactory.register("twisted_shovel", item -> item.family(ItemFamily.TWISTED).base(ItemBase.SHOVEL.damage(7.5)));
+    Item TWISTED_HOE = ItemFactory.register("twisted_hoe", item -> item.family(ItemFamily.TWISTED).base(ItemBase.HOE.damage(2)));
+    Item TWISTED_FLESH = ItemFactory.register("twisted_flesh");
+    Item TWISTED_BONE = ItemFactory.register("twisted_bone");
+    Item TWISTED_POWDER = ItemFactory.register("twisted_powder");
+    Item TWISTED_STRING = ItemFactory.register("twisted_string");
+    Item TWISTED_PEARL = ItemFactory.register("twisted_pearl");
+    Item TWISTED_ROD = ItemFactory.register("twisted_rod");
+    Item TWISTED_INGOT = ItemFactory.register("twisted_ingot");
+    Item VOIDHEART = ItemFactory.register("voidheart");
 
-    Item TWISTED_SWORD = twistedTool("twisted_sword", ItemBase.SWORD, 12, -2.4);
-    Item TWISTED_PICKAXE = twistedTool("twisted_pickaxe", ItemBase.TWISTED_PICKAXE, 8, -3.0);
-    Item TWISTED_AXE = twistedTool("twisted_axe", ItemBase.AXE, 16, -3.0);
-    Item TWISTED_SHOVEL = twistedTool("twisted_shovel", ItemBase.SHOVEL, 7.5, null);
-    Item TWISTED_HOE = twistedTool("twisted_hoe", ItemBase.HOE, 2, null);
-    Item TWISTED_FLESH = material("twisted_flesh");
-    Item TWISTED_BONE = material("twisted_bone");
-    Item TWISTED_POWDER = material("twisted_powder");
-    Item TWISTED_STRING = material("twisted_string");
-    Item TWISTED_PEARL = material("twisted_pearl");
-    Item TWISTED_ROD = material("twisted_rod");
-    Item TWISTED_INGOT = material("twisted_ingot");
+    Item ARCANE_MACE = ItemFactory.register("arcane_mace", item -> item.family(ItemFamily.ARCANE).base(ItemBase.ARCANE_MACE.damage(8).speed(0.6)));
+    Item ARCANE_BOW = ItemFactory.register("arcane_bow", item -> item.family(ItemFamily.ARCANE).base(ItemBase.BOW));
+    Item ARCANE_SHIELD = ItemFactory.register("arcane_shield", item -> item.family(ItemFamily.ARCANE).base(ItemBase.SHIELD));
+    Item ARCANE_TRIDENT = ItemFactory.register("arcane_trident", item -> item.family(ItemFamily.ARCANE).base(ItemBase.TRIDENT.damage(12).speed(1.1)));
+    Item ARCANE_TOTEM = ItemFactory.register("arcane_totem", item -> item.family(ItemFamily.ARCANE).base(ItemBase.ARCANE_TOTEM));
+    Item ARCANE_ROD = ItemFactory.register("arcane_rod", item -> item.family(ItemFamily.ARCANE));
+    Item ARCANE_CORE = ItemFactory.register("arcane_core", item -> item.family(ItemFamily.ARCANE).base(ItemBase.ARCANE_CORE));
+    Item ARCANE_NUGGET = ItemFactory.register("arcane_nugget", item -> item.family(ItemFamily.ARCANE));
+    Item ARCANE_INGOT = ItemFactory.register("arcane_ingot", item -> item.family(ItemFamily.ARCANE));
+    Item ARCANE_SCUTE = ItemFactory.register("arcane_scute", item -> item.family(ItemFamily.ARCANE));
 
-    // --- Arcane
+    Item CALAMITY_HELMET = ItemFactory.register("calamity_helmet", item -> item.family(ItemFamily.CALAMITY).armor(CataclysmArmorMaterial.CALAMITY, ArmorType.HELMET));
+    Item CALAMITY_CHESTPLATE = ItemFactory.register("calamity_chestplate", item -> item.family(ItemFamily.CALAMITY).armor(CataclysmArmorMaterial.CALAMITY, ArmorType.CHESTPLATE));
+    Item CALAMITY_LEGGINGS = ItemFactory.register("calamity_leggings", item -> item.family(ItemFamily.CALAMITY).armor(CataclysmArmorMaterial.CALAMITY, ArmorType.LEGGINGS));
+    Item CALAMITY_BOOTS = ItemFactory.register("calamity_boots", item -> item.family(ItemFamily.CALAMITY).armor(CataclysmArmorMaterial.CALAMITY, ArmorType.BOOTS));
+    Item CALAMITY_TOTEM = ItemFactory.register("calamity_totem", item -> item.family(ItemFamily.CALAMITY).base(ItemBase.CALAMITY_TOTEM));
+    Item CALAMITY_APPLE = ItemFactory.register("calamity_apple", item -> item.family(ItemFamily.CALAMITY).base(ItemBase.CALAMITY_APPLE));
+    Item ENCHANTED_CALAMITY_APPLE = ItemFactory.register("enchanted_calamity_apple", item -> item.family(ItemFamily.CALAMITY).base(ItemBase.ENCHANTED_CALAMITY_APPLE));
+    Item CALAMITY_CARROT = ItemFactory.register("calamity_carrot", item -> item.family(ItemFamily.CALAMITY).base(ItemBase.CALAMITY_CARROT));
+    Item CALAMITY_KEY = ItemFactory.register("calamity_key", item -> item.family(ItemFamily.CALAMITY));
+    Item CALAMITY_NUGGET = ItemFactory.register("calamity_nugget", item -> item.family(ItemFamily.CALAMITY));
+    Item CALAMITY_INGOT = ItemFactory.register("calamity_ingot", item -> item.family(ItemFamily.CALAMITY));
 
-    Item ARCANE_MACE = Foundry.item("arcane_mace", item -> item.base(ItemBase.MACE).palette(Palette.ARCANE).description(true).attack(8, 0.6).enchant(Enchantments.DENSITY, 5).enchant(Enchantments.WIND_BURST, 3).unbreakable().build());
-    Item ARCANE_BOW = Foundry.item("arcane_bow", item -> item.base(ItemBase.BOW).palette(Palette.ARCANE).description(true).enchant(Enchantments.POWER, 10).enchant(Enchantments.INFINITY, 1).unbreakable().build());
-    Item ARCANE_SHIELD = Foundry.item("arcane_shield", item -> item.base(ItemBase.SHIELD).palette(Palette.ARCANE).glint().unbreakable().build());
-    Item ARCANE_TRIDENT = Foundry.item("arcane_trident", item -> item.base(ItemBase.TRIDENT).palette(Palette.ARCANE).description(true).attack(12, 1.1).enchant(Enchantments.RIPTIDE, 5).unbreakable().build());
-    Item ARCANE_TOTEM = Foundry.item("arcane_totem", item -> item.base(ItemBase.TOTEM).palette(Palette.ARCANE).glint().build());
-    Item ARCANE_ROD = Foundry.item("arcane_rod", item -> item.glint().build());
-    Item ARCANE_CORE = Foundry.item("arcane_core", item -> item.base(ItemBase.ARCANE_CORE).build());
-    Item ARCANE_NUGGET = Foundry.item("arcane_nugget", item -> item.glint().build());
-    Item ARCANE_INGOT = Foundry.item("arcane_ingot", item -> item.glint().build());
-    Item ARCANE_SCUTE = Foundry.item("arcane_scute", item -> item.glint().build());
-
-    // --- Relics and special materials
-
-    Item VOID_HEART = Foundry.item("void_heart", item -> item.palette(Palette.VOID_HEART)
-        .descriptionArguments(Component.literal("v").withStyle(ChatFormatting.OBFUSCATED), Component.literal("p").withStyle(ChatFormatting.OBFUSCATED))
-        .glint().build());
-    Item TWISTED_RELIC = Foundry.item("twisted_relic", item -> item.palette(Palette.TWISTED).glint().build());
-    Item UR_TEAR = material("ur_tear");
-    Item TOXIC_MEMBRANE = material("toxic_membrane");
-    Item GOLDEN_CREAM = Foundry.item("golden_cream", Foundry::build);
-    Item NIGHTMARE_BONE = Foundry.item("nightmare_bone", Foundry::build);
-    Item CATACLYST_BONE = material("cataclyst_bone");
-    Item GUARDIAN_HEART = material("guardian_heart");
-    Item PALE_BALL = material("pale_ball");
-    Item LLAMA_FUR = material("llama_fur");
-    Item MIDWAY_RELIC = Foundry.item("midway_relic", item -> item.palette(Palette.CALAMITY).glint().build());
-
-    // --- Calamity
-
-    Item CALAMITY_KEY = Foundry.item("calamity_key", item -> item.palette(Palette.CALAMITY).build());
-    Item CALAMITY_NUGGET = Foundry.item("calamity_nugget", Foundry::build);
-    Item CALAMITY_INGOT = Foundry.item("calamity_ingot", Foundry::build);
-    Item CALAMITY_HELMET = calamityArmor("calamity_helmet", ArmorType.HELMET);
-    Item CALAMITY_CHESTPLATE = calamityArmor("calamity_chestplate", ArmorType.CHESTPLATE);
-    Item CALAMITY_LEGGINGS = calamityArmor("calamity_leggings", ArmorType.LEGGINGS);
-    Item CALAMITY_BOOTS = calamityArmor("calamity_boots", ArmorType.BOOTS);
-    Item CALAMITY_TOTEM = Foundry.item("calamity_totem", item -> item.base(ItemBase.TOTEM).palette(Palette.CALAMITY).build());
-    Item CALAMITY_APPLE = Foundry.item("calamity_apple", item -> item.base(ItemBase.GOLDEN_FOOD).palette(Palette.CALAMITY).build());
-    Item ENCHANTED_CALAMITY_APPLE = Foundry.item("enchanted_calamity_apple", item -> item.base(ItemBase.ENCHANTED_FOOD).palette(Palette.CALAMITY).build());
-    Item CALAMITY_CARROT = Foundry.item("calamity_carrot", item -> item.base(ItemBase.CARROT_FOOD).palette(Palette.CALAMITY).build());
+    Item MIDWAY_RELIC = ItemFactory.register("midway_relic", item -> item.family(ItemFamily.MIDWAY).glint());
+    Item UR_TEAR = ItemFactory.register("ur_tear");
+    Item TOXIC_MEMBRANE = ItemFactory.register("toxic_membrane");
+    Item NIGHTMARE_BONE = ItemFactory.register("nightmare_bone");
+    Item CATACLYST_BONE = ItemFactory.register("cataclyst_bone");
+    Item GUARDIAN_HEART = ItemFactory.register("guardian_heart");
+    Item GOLDEN_CREAM = ItemFactory.register("golden_cream");
+    Item PALE_BALL = ItemFactory.register("pale_ball");
+    Item LLAMA_FUR = ItemFactory.register("llama_fur");
 
     // --- Creature remnants
 
-    Item ELDERS_EYE = material("elders_eye");
-    Item GOLEM_HEAD = Foundry.item("golem_head", item -> item.base(ItemBase.GOLEM_HEAD).build());
-    Item DROWNED_CROWN = material("drowned_crown");
-    Item WANDERING_HEART = material("wandering_heart");
-    Item WANDERING_SOUL = material("wandering_soul");
+    Item ELDERS_EYE = ItemFactory.register("elders_eye");
+    Item GOLEM_HEAD = ItemFactory.register("golem_head", item -> item.base(ItemBase.GOLEM_HEAD));
+    Item DROWNED_CROWN = ItemFactory.register("drowned_crown");
+    Item WANDERING_HEART = ItemFactory.register("wandering_heart");
+    Item WANDERING_SOUL = ItemFactory.register("wandering_soul");
 
     // --- Mirage
 
-    Item MIRAGE_SCUTE = material("mirage_scute");
-    Item MIRAGE_HELMET = Foundry.item("mirage_helmet", item -> item.palette(Palette.MIRAGE).armor(CataclysmArmorMaterial.MIRAGE, ArmorType.HELMET).trim(TrimMaterials.IRON, TrimPatterns.DUNE).unbreakable().build());
-    Item MIRAGE_PEARL = material("mirage_pearl");
-    Item MIRAGE_FLESH = material("mirage_flesh");
-    Item MIRAGE_POWDER = material("mirage_powder");
-    Item MIRAGE_BONE = material("mirage_bone");
-    Item MIRAGE_TEAR = material("mirage_tear");
-    Item MIRAGE_INGOT = material("mirage_ingot");
-    Item MIRAGE_EYEBALL = material("mirage_eyeball");
-    Item MIRAGE_QUARTZ = material("mirage_quartz");
-    Item MIRAGE_ESSENCE = material("mirage_essence");
-    Item MIRAGE_AMETHYST = material("mirage_amethyst");
-    Item WHALE_WING = material("whale_wing");
-    Item MIRAGE_BLESSING = Foundry.item("mirages_blessing", item -> item.palette(Palette.MIRAGE).glint().build());
-    Item ENDER_BAG = Foundry.item("ender_bag", item -> item.palette(Palette.ENDER).build());
-    Item OBSCURE_ONYX = Foundry.item("obscure_onyx", item -> item.build());
-    Item MACE_UPGRADE = Foundry.item("mace_upgrade", item -> item.palette(Palette.MIRAGE).build());
-    Item MIRAGE_UPGRADE = Foundry.item("mirage_upgrade", item -> item.palette(Palette.MIRAGE).build());
-    Item BROKEN_ELYTRA = Foundry.item("broken_elytra", item -> item.build());
-    Item MIRAGE_ELYTRA = Foundry.item("mirage_elytra", item -> item.base(ItemBase.GLIDER).palette(Palette.MIRAGE).unbreakable().build());
-    Item MIRAGE_MACE = Foundry.item("mirage_mace_normal", item -> item.base(ItemBase.MACE).palette(Palette.MIRAGE).attack(10, 0.4).enchant(Enchantments.DENSITY, 7).enchant(Enchantments.WIND_BURST, 3).unbreakable().build());
-    Item MIRAGE_APPLE = Foundry.item("mirage_apple", item -> item.palette(Palette.MIRAGE).build());
+    Item ENDER_BAG = ItemFactory.register("ender_bag", item -> item.palette(Palette.ENDER).base(ItemBase.ENDER_BAG));
+    Item OBSCURE_ONYX = ItemFactory.register("obscure_onyx");
+    Item MACE_UPGRADE = ItemFactory.register("mace_upgrade", item -> item.family(ItemFamily.MIRAGE));
+    Item MIRAGE_UPGRADE = ItemFactory.register("mirage_upgrade", item -> item.family(ItemFamily.MIRAGE));
+    Item BROKEN_ELYTRA = ItemFactory.register("broken_elytra");
+    Item MIRAGE_ELYTRA = ItemFactory.register("mirage_elytra", item -> item.family(ItemFamily.MIRAGE).base(ItemBase.GLIDER));
+    Item MIRAGE_MACE = ItemFactory.register("mirage_mace", item -> item.family(ItemFamily.MIRAGE).base(ItemBase.MIRAGE_MACE.damage(10).speed(0.4)));
+    Item MIRAGE_APPLE = ItemFactory.register("mirage_apple", item -> item.family(ItemFamily.MIRAGE));
+    Item MIRAGE_BLESSING = ItemFactory.register("mirage_blessing", item -> item.family(ItemFamily.MIRAGE).base(ItemBase.MIRAGE_BLESSING));
+    Item MIRAGE_HELMET = ItemFactory.register("mirage_helmet", item -> item.family(ItemFamily.MIRAGE).armor(CataclysmArmorMaterial.MIRAGE, ArmorType.HELMET).trim(TrimMaterials.IRON, TrimPatterns.DUNE));
+    Item MIRAGE_SCUTE = ItemFactory.register("mirage_scute", item -> item.family(ItemFamily.MIRAGE));
+    Item MIRAGE_PEARL = ItemFactory.register("mirage_pearl", item -> item.family(ItemFamily.MIRAGE));
+    Item MIRAGE_FLESH = ItemFactory.register("mirage_flesh", item -> item.family(ItemFamily.MIRAGE));
+    Item MIRAGE_POWDER = ItemFactory.register("mirage_powder", item -> item.family(ItemFamily.MIRAGE));
+    Item MIRAGE_BONE = ItemFactory.register("mirage_bone", item -> item.family(ItemFamily.MIRAGE));
+    Item MIRAGE_TEAR = ItemFactory.register("mirage_tear", item -> item.family(ItemFamily.MIRAGE));
+    Item MIRAGE_INGOT = ItemFactory.register("mirage_ingot", item -> item.family(ItemFamily.MIRAGE));
+    Item MIRAGE_EYEBALL = ItemFactory.register("mirage_eyeball", item -> item.family(ItemFamily.MIRAGE));
+    Item MIRAGE_QUARTZ = ItemFactory.register("mirage_quartz", item -> item.family(ItemFamily.MIRAGE));
+    Item MIRAGE_ESSENCE = ItemFactory.register("mirage_essence", item -> item.family(ItemFamily.MIRAGE));
+    Item MIRAGE_AMETHYST = ItemFactory.register("mirage_amethyst", item -> item.family(ItemFamily.MIRAGE));
+    Item MIRAGE_WHALE_WING = ItemFactory.register("mirage_whale_wing", item -> item.family(ItemFamily.MIRAGE));
 
     // --- Paragon Totem and Pale
 
-    Item PALE_TOKEN = Foundry.item("pale_token", item -> item.palette(Palette.PALE).glint().build());
-    Item PALE_SWORD = Foundry.item("pale_sword", item -> item.base(ItemBase.SWORD).palette(Palette.PALE).description(true).attack(20, -2.4).enchant(Enchantments.BREACH, 7).enchant(Enchantments.SHARPNESS, 5).enchant(Enchantments.BANE_OF_ARTHROPODS, 5).enchant(Enchantments.SMITE, 5).enchant(Enchantments.LOOTING, 3).enchant(Enchantments.SWEEPING_EDGE, 3).unbreakable().build());
-    Item PALE_BOW = Foundry.item("pale_bow", item -> item.base(ItemBase.BOW).palette(Palette.PALE).description(true).enchant(Enchantments.POWER, 20).enchant(Enchantments.BREACH, 7).enchant(Enchantments.INFINITY, 1).enchant(Enchantments.PUNCH, 2).enchant(Enchantments.FLAME, 2).unbreakable().build());
-    Item PALE_HELMET = paleArmor("pale_helmet", ArmorType.HELMET);
-    Item PALE_CHESTPLATE = paleArmor("pale_chestplate", ArmorType.CHESTPLATE);
-    Item PALE_LEGGINGS = paleArmor("pale_leggings", ArmorType.LEGGINGS);
-    Item PALE_BOOTS = paleArmor("pale_boots", ArmorType.BOOTS);
+    Item PALE_HELMET = ItemFactory.register("pale_helmet", item -> item.family(ItemFamily.PALE).armor(CataclysmArmorMaterial.PALE, ArmorType.HELMET).description(true));
+    Item PALE_CHESTPLATE = ItemFactory.register("pale_chestplate", item -> item.family(ItemFamily.PALE).armor(CataclysmArmorMaterial.PALE, ArmorType.CHESTPLATE).description(true));
+    Item PALE_LEGGINGS = ItemFactory.register("pale_leggings", item -> item.family(ItemFamily.PALE).armor(CataclysmArmorMaterial.PALE, ArmorType.LEGGINGS).description(true));
+    Item PALE_BOOTS = ItemFactory.register("pale_boots", item -> item.family(ItemFamily.PALE).armor(CataclysmArmorMaterial.PALE, ArmorType.BOOTS).description(true));
+    Item PALE_SWORD = ItemFactory.register("pale_sword", item -> item.family(ItemFamily.PALE).base(ItemBase.SWORD.damage(20).speed(-2.4)).description(true));
+    Item PALE_BOW = ItemFactory.register("pale_bow", item -> item.family(ItemFamily.PALE).base(ItemBase.BOW).description(true));
 
     // --- Administration, Pantheon and exclusive items
 
-    Item OVERWORLDS_CHALICE = Foundry.item("overworlds_chalice", item -> item.palette(Palette.OVERWORLD).build());
-    Item NETHERS_CHALICE = Foundry.item("nethers_chalice", item -> item.palette(Palette.NETHER).glint().build());
-    Item ENDS_CHALICE = Foundry.item("ends_chalice", item -> item.palette(Palette.END).glint().build());
-    Item GRYMPESITO_TOTEM = Foundry.item("grympesito_totem", item -> item.base(ItemBase.TOTEM).palette(Palette.PARAGON).glint().build());
+    Item CHALICE_OF_THE_OVERWORLD = ItemFactory.register("chalice_of_the_overworld", item -> item.palette(Palette.CHALICE));
+    Item CHALICE_OF_THE_NETHER = ItemFactory.register("chalice_of_the_nether", item -> item.palette(Palette.CHALICE));
+    Item CHALICE_OF_THE_END = ItemFactory.register("chalice_of_the_end", item -> item.palette(Palette.CHALICE));
 
     // --- Shared shapes
-
-    private static Item material(String path) {
-        return Foundry.item(path, Foundry::build);
-    }
 
     /** Creates a variant of the same registered item with a tier from 1 through 3. */
     static ItemStack upgrade(int tier) {
@@ -158,26 +144,6 @@ public interface CataclysmItems extends CataclysmRegistry {
         return stack;
     }
 
-    /** {@code speed} is the attack speed modifier; null keeps the player's base speed, as the original did. */
-    private static Item twistedTool(String path, ItemBase base, double damage, Double speed) {
-        return Foundry.item(path, item -> {
-            item.base(base).palette(Palette.TWISTED).unbreakable();
-            return (speed == null ? item.attack(damage) : item.attack(damage, speed)).build();
-        });
-    }
-
-    private static Item calamityArmor(String path, ArmorType type) {
-        return Foundry.item(path, item -> item.armor(CataclysmArmorMaterial.CALAMITY, type)
-            .palette(Palette.CALAMITY)
-            .trim(TrimMaterials.IRON, TrimPatterns.SPIRE).hide(DataComponents.TRIM).unbreakable().build());
-    }
-
-    private static Item paleArmor(String path, ArmorType type) {
-        return Foundry.item(path, item -> item.armor(CataclysmArmorMaterial.PALE, type)
-            .palette(Palette.PALE).description(true)
-            .trim(TrimMaterials.IRON, TrimPatterns.TIDE).hide(DataComponents.TRIM).unbreakable().build());
-    }
-
     static List<Item> getContent() {
         return CataclysmRegistry.contentOf(CataclysmItems.class, Item.class);
     }
@@ -186,7 +152,7 @@ public interface CataclysmItems extends CataclysmRegistry {
         var items = new ArrayList<>(getContent());
         items.remove(CATACLYSM_UPGRADE);
         items.add(items.indexOf(LEMEGETON) + 1, CATACLYSM_UPGRADE);
-        return items.stream().flatMap(item -> Foundry.stacksOf(item, registries).stream()).toList();
+        return items.stream().flatMap(item -> ItemFactory.stacksOf(item, registries).stream()).toList();
     }
 
     static void registerCreativeModeTab() {

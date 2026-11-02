@@ -1,6 +1,15 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "cataclysm:item/paragon/paragon_totem"
+    "type": "minecraft:condition",
+    "name": "Grympesito Totem",
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "cataclysm:item/paragon/paragon_totem"
+    },
+    "on_true": {
+      "type": "minecraft:model",
+      "model": "cataclysm:item/random/grympesito_totem"
+    },
+    "property": "cataclysm:custom_name"
   }
 }

@@ -10,7 +10,6 @@
             "model": "cataclysm:item/arcane/tools/arcane_shield_2d"
           },
           "when": [
-            "gui",
             "ground",
             "fixed"
           ]
@@ -28,7 +27,7 @@
         {
           "model": {
             "type": "minecraft:model",
-            "model": "cataclysm:item/arcane/tools/arcane_shield_2d"
+            "model": "cataclysm:item/arcane/tools/arcane_shield"
           },
           "when": "gui"
         }

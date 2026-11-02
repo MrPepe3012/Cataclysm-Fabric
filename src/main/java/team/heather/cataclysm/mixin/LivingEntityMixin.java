@@ -1,6 +1,7 @@
 package team.heather.cataclysm.mixin;
 
-import team.heather.cataclysm.registry.item.armor.ArmorSetEffects;
+import team.heather.cataclysm.armor.ArmorSetEffects;
+import team.heather.cataclysm.registry.item.PassiveItemEffects;
 import team.heather.cataclysm.registry.item.totem.UseTotemCallback;
 import team.heather.cataclysm.effect.event.TotemEvents;
 import net.minecraft.advancements.CriteriaTriggers;
@@ -27,13 +28,15 @@ public class LivingEntityMixin {
 
     @ModifyVariable(method = "hurtServer", at = @At("HEAD"), argsOnly = true)
     private float hurtServer$0(float amount, ServerLevel level, DamageSource damageSource) {
-        return ArmorSetEffects.modifyDamage((LivingEntity) (Object) this, damageSource, amount);
+        LivingEntity self = (LivingEntity) (Object) this;
+        return PassiveItemEffects.modifyDamage(self, damageSource, ArmorSetEffects.modifyDamage(self, damageSource, amount));
     }
 
     @Inject(method = "canBeAffected", at = @At("HEAD"), cancellable = true)
     private void canBeAffected$0(MobEffectInstance effect,
                                  CallbackInfoReturnable<Boolean> callback) {
-        if (ArmorSetEffects.isImmuneTo((LivingEntity) (Object) this, effect.getEffect())) {
+        if (ArmorSetEffects.isImmuneTo((LivingEntity) (Object) this, effect.getEffect())
+                || PassiveItemEffects.isImmuneTo((LivingEntity) (Object) this, effect.getEffect())) {
             callback.setReturnValue(false);
         }
     }

@@ -25,9 +25,9 @@ public final class MortalityCommand extends CataclysmCommand {
     @Override
     protected void defineSyntax(LiteralArgumentBuilder<CommandSourceStack> literal) {
         literal.then(Commands.argument(KEY_PLAYER, EntityArgument.player())
-                .executes(this::get)
-                .then(Commands.argument(KEY_VALUE, FloatArgumentType.floatArg(0.0F, 1.0F))
-                        .executes(this::set)));
+            .executes(this::get)
+            .then(Commands.argument(KEY_VALUE, FloatArgumentType.floatArg(0.0F, 1.0F))
+                .executes(this::set)));
     }
 
     private int get(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
@@ -35,7 +35,7 @@ public final class MortalityCommand extends CataclysmCommand {
         var mortality = CataclysmCardinalComponents.MORTALITY.get(player).get();
 
         context.getSource().sendSuccess(() ->
-                withArguments(MESSAGE_GET, player.getName().getString(), mortality * 100), false);
+            withArguments(MESSAGE_GET, player.getName().getString(), mortality * 100), false);
 
         return Command.SINGLE_SUCCESS;
     }
@@ -49,7 +49,7 @@ public final class MortalityCommand extends CataclysmCommand {
         mortality.set(value);
 
         context.getSource().sendSuccess(() ->
-                withArguments(MESSAGE_SET, player.getName().getString(), previous * 100, value * 100), false);
+            withArguments(MESSAGE_SET, player.getName().getString(), previous * 100, value * 100), false);
 
         return Command.SINGLE_SUCCESS;
     }

@@ -13,13 +13,13 @@ import java.util.Objects;
 public final class CataclysmToolMaterial {
 
     public static final ToolMaterial PALE = of()
-            .durability(500)
-            .enchantability(12)
-            .repair(ItemTags.IRON_TOOL_MATERIALS)
-            .incorrectBlocks(BlockTags.INCORRECT_FOR_IRON_TOOL)
-            .speed(6.0F)
-            .damage(2.5F)
-            .build();
+        .durability(500)
+        .enchantability(12)
+        .repair(ItemTags.IRON_TOOL_MATERIALS)
+        .incorrectBlocks(BlockTags.INCORRECT_FOR_IRON_TOOL)
+        .speed(6.0F)
+        .damage(2.5F)
+        .build();
 
     private int durability;
     private int enchantability;
@@ -68,11 +68,11 @@ public final class CataclysmToolMaterial {
 
     public ToolMaterial build() {
         return new ToolMaterial(
-                Objects.requireNonNull(this.incorrectBlocks),
-                this.durability,
-                this.speed,
-                this.damage,
-                this.enchantability,
-                Objects.requireNonNull(this.repair));
+            Objects.requireNonNull(this.incorrectBlocks),
+            this.durability,
+            this.speed,
+            this.damage,
+            this.enchantability,
+            Objects.requireNonNull(this.repair));
     }
 }

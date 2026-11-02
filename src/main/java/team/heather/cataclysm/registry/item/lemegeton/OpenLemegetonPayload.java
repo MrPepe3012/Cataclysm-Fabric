@@ -12,5 +12,8 @@ public record OpenLemegetonPayload() implements CustomPacketPayload {
     public static final StreamCodec<RegistryFriendlyByteBuf, OpenLemegetonPayload> CODEC = StreamCodec.unit(INSTANCE);
 
     @Override
-    public Type<OpenLemegetonPayload> type() { return TYPE; }
+    public Type<OpenLemegetonPayload> type() {
+        return TYPE;
+    }
+
 }

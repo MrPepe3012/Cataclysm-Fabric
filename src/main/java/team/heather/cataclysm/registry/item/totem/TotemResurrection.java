@@ -16,7 +16,9 @@ public final class TotemResurrection {
     public static void initialize() {
         UseTotemCallback.EVENT.register((entity, stack, protection) -> {
             var totem = ResurrectingItem.of(stack.getItem()).orElse(null);
-            if (totem == null) return protection;
+            if (totem == null) {
+                return protection;
+            }
 
             if (!totem.canResurrect(entity)) {
                 announceFailure(entity);

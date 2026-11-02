@@ -3,17 +3,21 @@ package team.heather.cataclysm.registry.item.paragon;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import team.heather.cataclysm.Cataclysm;
+import team.heather.cataclysm.registry.item.effect.PassiveItemEffects;
 import team.heather.cataclysm.registry.sound.SoundMashup;
-import team.heather.cataclysm.mixin.FoodDataAccessor;
 
 public final class BlessingItem extends Item implements ImmunityGrantingItem {
+
+    private static final int COOLDOWN_TICKS = 20;
+    private static final double MIRAGE_RADIUS_SQUARED = 25;
+
     private final boolean mirage;
 
     public BlessingItem(Properties properties, boolean mirage) {
@@ -28,39 +32,48 @@ public final class BlessingItem extends Item implements ImmunityGrantingItem {
 
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
-        var stack = player.getItemInHand(hand);
-        if (player.isSpectator() || player.getCooldowns().isOnCooldown(stack)) return InteractionResult.FAIL;
+        ItemStack stack = player.getItemInHand(hand);
+        if (player.isSpectator() || player.getCooldowns().isOnCooldown(stack)) {
+            return InteractionResult.FAIL;
+        }
         if (player instanceof ServerPlayer serverPlayer) {
             if (this.mirage) {
-                for (var recipient : serverPlayer.serverLevel().players()) {
-                    if (recipient.distanceToSqr(player) <= 25) applyMirage(recipient);
-                }
+                this.blessNearby(serverPlayer);
             } else {
-                int duration = ParagonEffects.protect(player, getImmunityTable());
-                if (Cataclysm.getWeek() >= 4) {
-                    ParagonEffects.reduceMortality(serverPlayer, Cataclysm.getWeek() >= 5 ? 0.01F : 0.0025F);
-                    player.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, duration, 2));
-                    player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, duration, 1));
-                }
+                this.blessSelf(serverPlayer);
             }
-            player.getCooldowns().addCooldown(stack, 20);
+            player.getCooldowns().addCooldown(stack, COOLDOWN_TICKS);
             stack.consume(1, player);
             SoundMashup.PARAGON_BLESSING.playAtEntity(player);
         }
         return InteractionResult.SUCCESS;
     }
 
+    private void blessSelf(ServerPlayer player) {
+        int duration = ParagonEffects.protect(player, this.getImmunityTable());
+        int week = Cataclysm.getWeek();
+        if (week >= 4) {
+            ParagonEffects.reduceMortality(player, week >= 5 ? 0.01F : 0.0025F);
+            player.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, duration, 2));
+            player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, duration, 1));
+        }
+    }
+
+    private void blessNearby(ServerPlayer caster) {
+        for (ServerPlayer recipient : caster.serverLevel().players()) {
+            if (recipient.distanceToSqr(caster) <= MIRAGE_RADIUS_SQUARED) {
+                this.applyMirage(recipient);
+            }
+        }
+    }
+
     private void applyMirage(ServerPlayer player) {
         // Cleanse before granting protection so the old negative effects cannot survive the blessing.
-        player.getActiveEffects().stream().filter(effect -> effect.getEffect().value().getCategory() == MobEffectCategory.HARMFUL)
-                .map(MobEffectInstance::getEffect).toList().forEach(player::removeEffect);
-        int duration = ParagonEffects.protect(player, getImmunityTable());
+        PassiveItemEffects.cleanse(player);
+        int duration = ParagonEffects.protect(player, this.getImmunityTable());
         player.addEffect(new MobEffectInstance(MobEffects.SPEED, duration, 2));
         player.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING, 600));
         player.addEffect(new MobEffectInstance(MobEffects.SATURATION, 40, 10));
-        player.clearFire();
-        player.setTicksFrozen(0);
-        player.setAirSupply(player.getMaxAirSupply());
-        ((FoodDataAccessor) player.getFoodData()).cataclysm$setExhaustion(0);
+        PassiveItemEffects.restoreVitals(player);
     }
 }

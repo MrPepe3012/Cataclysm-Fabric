@@ -14,10 +14,6 @@ import java.util.function.Supplier;
 
 public abstract class CataclysmCommand {
 
-    public static CommandRegistration registration() {
-        return new CommandRegistration();
-    }
-
     protected abstract void defineSyntax(LiteralArgumentBuilder<CommandSourceStack> literal);
 
     protected static Component withArguments(Component template,
@@ -29,20 +25,25 @@ public abstract class CataclysmCommand {
         throw new IllegalArgumentException("Expected a translatable component");
     }
 
+    public static CommandRegistration registration() {
+        return new CommandRegistration();
+    }
+
     public static final class CommandRegistration {
 
         private final List<Runnable> pendingRegistrations = new ArrayList<>();
 
         private CommandRegistration() {}
 
-        public CommandRegistration add(Permission permission,
-                                    String name,
-                                    Supplier<? extends CataclysmCommand> commandSupplier) {
-            pendingRegistrations.add(() -> CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-                var literal = Commands.literal(name)
-                        .requires(source -> source.hasPermission(permission.getLevel()));
+        public CommandRegistration add(int permission,
+                                       String name,
+                                       Supplier<? extends CataclysmCommand> commandSupplier) {
+            this.pendingRegistrations.add(() -> CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+                LiteralArgumentBuilder<CommandSourceStack> literal = Commands.literal(name)
+                    .requires(source -> source.hasPermission(permission));
 
                 commandSupplier.get().defineSyntax(literal);
+
                 dispatcher.register(literal);
             }));
 
@@ -50,8 +51,8 @@ public abstract class CataclysmCommand {
         }
 
         public void done() {
-            pendingRegistrations.forEach(Runnable::run);
-            pendingRegistrations.clear();
+            this.pendingRegistrations.forEach(Runnable::run);
+            this.pendingRegistrations.clear();
         }
     }
 }

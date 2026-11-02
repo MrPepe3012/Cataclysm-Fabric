@@ -19,7 +19,9 @@ public class ArcaneMaceItem extends MaceItem {
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (player.getCooldowns().isOnCooldown(stack)) return InteractionResult.FAIL;
+        if (player.getCooldowns().isOnCooldown(stack)) {
+            return InteractionResult.FAIL;
+        }
 
         if (level instanceof ServerLevel serverLevel) {
             var charge = new WindCharge(player, serverLevel, player.getX(), player.getEyeY(), player.getZ());

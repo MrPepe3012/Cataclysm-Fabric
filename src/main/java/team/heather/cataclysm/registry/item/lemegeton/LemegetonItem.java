@@ -32,7 +32,9 @@ public final class LemegetonItem extends Item {
 
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
-        if (!(player instanceof ServerPlayer serverPlayer)) return InteractionResult.SUCCESS;
+        if (!(player instanceof ServerPlayer serverPlayer)) {
+            return InteractionResult.SUCCESS;
+        }
         var stack = player.getItemInHand(hand);
         if (player.isSpectator() || !LemegetonEvents.ALLOW_USE.invoker().allow(serverPlayer, stack)) {
             return InteractionResult.FAIL;

@@ -22,34 +22,34 @@ import java.util.Objects;
 public final class CataclysmArmorMaterial {
 
     public static final ArmorMaterial CALAMITY = of("calamity")
-            .durability(37)
-            .enchantability(15)
-            .toughness(3.0F)
-            .knockbackResistance(0.1F)
-            .repair(ItemTags.REPAIRS_NETHERITE_ARMOR)
-            .sound(SoundEvents.ARMOR_EQUIP_NETHERITE)
-            .defense(3, 8, 6, 3)
-            .build();
+        .durability(37)
+        .enchantability(15)
+        .toughness(3.0F)
+        .knockbackResistance(0.1F)
+        .repair(ItemTags.REPAIRS_NETHERITE_ARMOR)
+        .sound(SoundEvents.ARMOR_EQUIP_NETHERITE)
+        .defense(3, 8, 6, 3)
+        .build();
 
     public static final ArmorMaterial PALE = of("pale")
-            .durability(37)
-            .enchantability(15)
-            .toughness(3.0F)
-            .knockbackResistance(0.1F)
-            .repair(ItemTags.REPAIRS_NETHERITE_ARMOR)
-            .sound(SoundEvents.ARMOR_EQUIP_NETHERITE)
-            .defense(3, 8, 6, 3)
-            .build();
+        .durability(37)
+        .enchantability(15)
+        .toughness(3.0F)
+        .knockbackResistance(0.1F)
+        .repair(ItemTags.REPAIRS_NETHERITE_ARMOR)
+        .sound(SoundEvents.ARMOR_EQUIP_NETHERITE)
+        .defense(3, 8, 6, 3)
+        .build();
 
     public static final ArmorMaterial MIRAGE = of("mirage")
-            .durability(25)
-            .enchantability(9)
-            .toughness(0.0F)
-            .knockbackResistance(0.0F)
-            .repair(ItemTags.REPAIRS_TURTLE_HELMET)
-            .sound(SoundEvents.ARMOR_EQUIP_TURTLE)
-            .defense(1, 0, 0, 0)
-            .build();
+        .durability(25)
+        .enchantability(9)
+        .toughness(0.0F)
+        .knockbackResistance(0.0F)
+        .repair(ItemTags.REPAIRS_TURTLE_HELMET)
+        .sound(SoundEvents.ARMOR_EQUIP_TURTLE)
+        .defense(1, 0, 0, 0)
+        .build();
 
     private final String asset;
 
@@ -102,22 +102,22 @@ public final class CataclysmArmorMaterial {
 
     public CataclysmArmorMaterial defense(int helmet, int chestplate, int leggings, int boots) {
         this.defense = Map.of(
-                ArmorType.HELMET, helmet,
-                ArmorType.CHESTPLATE, chestplate,
-                ArmorType.LEGGINGS, leggings,
-                ArmorType.BOOTS, boots);
+            ArmorType.HELMET, helmet,
+            ArmorType.CHESTPLATE, chestplate,
+            ArmorType.LEGGINGS, leggings,
+            ArmorType.BOOTS, boots);
         return this;
     }
 
     public ArmorMaterial build() {
         return new ArmorMaterial(
-                this.durability,
-                this.defense,
-                this.enchantability,
-                Objects.requireNonNull(this.sound),
-                this.toughness,
-                this.knockbackResistance,
-                Objects.requireNonNull(this.repair),
-                ResourceKey.create(EquipmentAssets.ROOT_ID, Cataclysm.createNamespacedKey(this.asset)));
+            this.durability,
+            this.defense,
+            this.enchantability,
+            Objects.requireNonNull(this.sound),
+            this.toughness,
+            this.knockbackResistance,
+            Objects.requireNonNull(this.repair),
+            ResourceKey.create(EquipmentAssets.ROOT_ID, Cataclysm.createNamespacedKey(this.asset)));
     }
 }

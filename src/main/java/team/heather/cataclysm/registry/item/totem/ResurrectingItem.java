@@ -14,8 +14,12 @@ public interface ResurrectingItem {
     ResurrectingItem VANILLA = MortalityTable.VANILLA::getValue;
 
     static Optional<ResurrectingItem> of(Item item) {
-        if (item instanceof ResurrectingItem totem) return Optional.of(totem);
-        if (item == Items.TOTEM_OF_UNDYING) return Optional.of(VANILLA);
+        if (item instanceof ResurrectingItem totem) {
+            return Optional.of(totem);
+        }
+        if (item == Items.TOTEM_OF_UNDYING) {
+            return Optional.of(VANILLA);
+        }
         return Optional.empty();
     }
 

@@ -44,7 +44,9 @@ public final class MortalityAftereffects {
 
     public static void initialize() {
         UseTotemCallback.EVENT.register((entity, stack, protection) -> {
-            if (!(entity instanceof Player player)) return protection;
+            if (!(entity instanceof Player player)) {
+                return protection;
+            }
 
             var component = CataclysmCardinalComponents.MORTALITY.get(player);
             var mortality = component.get();
@@ -115,19 +117,16 @@ public final class MortalityAftereffects {
         }
 
         void affectNearbyMonsters(Holder<MobEffect> effect) {
-            try (var level = this.player.level()) {
-                var box = this.player.getBoundingBox().inflate(MONSTER_RADIUS);
-                var effectInstance = new MobEffectInstance(effect, EFFECT_DURATION, 1);
-
-                level.getEntitiesOfClass(Monster.class, box).forEach(monster -> monster.addEffect(effectInstance));
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            var box = this.player.getBoundingBox().inflate(MONSTER_RADIUS);
+            var effectInstance = new MobEffectInstance(effect, EFFECT_DURATION, 1);
+            this.player.level().getEntitiesOfClass(Monster.class, box).forEach(monster -> monster.addEffect(effectInstance));
         }
 
         void adjustMaxHealth(DoubleUnaryOperator modifier) {
             var attribute = this.player.getAttribute(Attributes.MAX_HEALTH);
-            if (attribute == null) return;
+            if (attribute == null) {
+                return;
+            }
 
             var health = modifier.applyAsDouble(attribute.getBaseValue());
             this.player.setHealth((float) health);

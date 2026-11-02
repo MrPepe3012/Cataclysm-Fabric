@@ -14,20 +14,27 @@ import team.heather.cataclysm.registry.item.CataclysmItems;
 
 @Mixin(WingsLayer.class)
 public abstract class WingsLayerMixin {
-    @Unique private ElytraModel cataclysm$mirage;
-    @Unique private ElytraModel cataclysm$mirageBaby;
+
+    @Unique private ElytraModel mirageModel$0;
+    @Unique private ElytraModel mirageBabyModel$0;
 
     @ModifyVariable(method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/client/renderer/entity/state/HumanoidRenderState;FF)V",
             at = @At("STORE"), ordinal = 0)
-    private ElytraModel cataclysm$selectWings(ElytraModel vanilla, PoseStack pose, MultiBufferSource buffers,
-                                             int light, HumanoidRenderState state, float yaw, float pitch) {
-        if (!state.chestEquipment.is(CataclysmItems.MIRAGE_ELYTRA)) return vanilla;
-        if (state.isBaby) {
-            if (this.cataclysm$mirageBaby == null) this.cataclysm$mirageBaby = new ElytraModel(
-                    MirageElytraModel.createLayer().apply(ElytraModel.BABY_TRANSFORMER).bakeRoot());
-            return this.cataclysm$mirageBaby;
+    private ElytraModel render$0(ElytraModel vanilla, PoseStack pose, MultiBufferSource buffers, int light,
+                                 HumanoidRenderState state, float yaw, float pitch) {
+        if (!state.chestEquipment.is(CataclysmItems.MIRAGE_ELYTRA)) {
+            return vanilla;
         }
-        if (this.cataclysm$mirage == null) this.cataclysm$mirage = new ElytraModel(MirageElytraModel.createLayer().bakeRoot());
-        return this.cataclysm$mirage;
+        if (state.isBaby) {
+            if (this.mirageBabyModel$0 == null) {
+                this.mirageBabyModel$0 = new ElytraModel(
+                        MirageElytraModel.createLayer().apply(ElytraModel.BABY_TRANSFORMER).bakeRoot());
+            }
+            return this.mirageBabyModel$0;
+        }
+        if (this.mirageModel$0 == null) {
+            this.mirageModel$0 = new ElytraModel(MirageElytraModel.createLayer().bakeRoot());
+        }
+        return this.mirageModel$0;
     }
 }

@@ -14,13 +14,16 @@ import team.heather.cataclysm.Cataclysm;
 
 @Mixin(Item.Properties.class)
 public abstract class ItemPropertiesMixin {
+
     @Shadow @Final private DataComponentMap.Builder components;
     @Shadow private ResourceKey<Item> id;
 
     /** 1.21.5 replaces ITEM_NAME with its default translation during construction. */
     @ModifyVariable(method = "buildAndValidateComponents", at = @At("HEAD"), argsOnly = true)
-    private Component cataclysm$preserveConfiguredName(Component defaultName) {
-        if (this.id == null || !this.id.location().getNamespace().equals(Cataclysm.MOD_ID)) return defaultName;
+    private Component buildAndValidateComponents$0(Component defaultName) {
+        if (this.id == null || !this.id.location().getNamespace().equals(Cataclysm.MOD_ID)) {
+            return defaultName;
+        }
         Component configured = this.components.build().get(DataComponents.ITEM_NAME);
         return configured == null ? defaultName : configured;
     }

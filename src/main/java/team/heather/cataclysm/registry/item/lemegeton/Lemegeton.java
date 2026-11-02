@@ -59,7 +59,9 @@ public final class Lemegeton {
         if (result.isPresent()) {
             player.playNotifySound(SoundEvents.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, SoundSource.PLAYERS, 1, 1.25F);
             player.playNotifySound(SoundEvents.SHULKER_BOX_OPEN, SoundSource.PLAYERS, 0.6F, 2);
-            if (canPay) player.playNotifySound(SoundEvents.ANVIL_USE, SoundSource.PLAYERS, 1, 1.75F);
+            if (canPay) {
+                player.playNotifySound(SoundEvents.ANVIL_USE, SoundSource.PLAYERS, 1, 1.75F);
+            }
         }
     }
 

@@ -21,7 +21,9 @@ public interface UseTotemCallback {
             listeners -> (entity, totemStack, deathProtection) -> {
                 for (UseTotemCallback listener : listeners) {
                     deathProtection = listener.resurrect(entity, totemStack, deathProtection);
-                    if (deathProtection == null) return null;
+                    if (deathProtection == null) {
+                        return null;
+                    }
                 }
 
                 return deathProtection;

@@ -5,17 +5,16 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "LivingEntityMixin",
-    "ArcaneArrowMixin",
-    "ArcaneBowMixin",
-    "EquipmentEnchantmentMixin",
-    "ArcaneShieldMixin",
-    "ArcaneTridentMixin",
-    "ParagonPearlMixin",
-    "ParagonTotemMixin",
-    "WeaponHitMixin",
-    "TwistedMiningMixin",
+    "AbstractArrowMixin",
+    "BowItemMixin",
+    "EnchantmentHelperMixin",
+    "TridentItemMixin",
+    "ThrownEnderpearlMixin",
+    "MortemMobEffectMixin",
+    "PlayerMixin",
+    "BlockMixin",
     "ItemPropertiesMixin",
-    "FoodDataAccessor"
+    "FoodDataMixin"
   ],
   "injectors": {
     "defaultRequire": 1

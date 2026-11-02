@@ -14,16 +14,24 @@ public final class TwistedMining {
     private TwistedMining() {}
 
     public static int level(ItemStack stack, Holder<Enchantment> enchantment, int stored) {
-        if (!stack.is(CataclysmItems.TWISTED_PICKAXE)) return stored;
+        if (!stack.is(CataclysmItems.TWISTED_PICKAXE)) {
+            return stored;
+        }
         boolean silk = stack.getOrDefault(CataclysmDataComponents.PICKAXE_MODE, 0) == 1;
-        if (enchantment.is(Enchantments.FORTUNE)) return silk ? 0 : 5;
-        if (enchantment.is(Enchantments.SILK_TOUCH)) return silk ? 1 : 0;
+        if (enchantment.is(Enchantments.FORTUNE)) {
+            return silk ? 0 : 5;
+        }
+        if (enchantment.is(Enchantments.SILK_TOUCH)) {
+            return silk ? 1 : 0;
+        }
         return stored;
     }
 
     /** Loot predicates inspect the enchantment component directly; enchant only a temporary copy. */
     public static ItemStack lootTool(ItemStack stack, HolderLookup.Provider registries) {
-        if (!stack.is(CataclysmItems.TWISTED_PICKAXE)) return stack;
+        if (!stack.is(CataclysmItems.TWISTED_PICKAXE)) {
+            return stack;
+        }
         var copy = stack.copy();
         boolean silk = stack.getOrDefault(CataclysmDataComponents.PICKAXE_MODE, 0) == 1;
         var enchantments = registries.lookupOrThrow(Registries.ENCHANTMENT);

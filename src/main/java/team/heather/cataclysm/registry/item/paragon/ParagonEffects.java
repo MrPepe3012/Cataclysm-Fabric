@@ -15,7 +15,9 @@ public final class ParagonEffects {
     public static int protect(LivingEntity entity, ImmunityTable table) {
         int duration = table.getTicks(Cataclysm.getWeek());
         var current = entity.getEffect(CataclysmicMobEffects.IMMORTALITY);
-        if (current != null) duration += current.getDuration();
+        if (current != null) {
+            duration += current.getDuration();
+        }
         entity.addEffect(new MobEffectInstance(CataclysmicMobEffects.IMMORTALITY, duration));
         entity.addEffect(new MobEffectInstance(MobEffects.GLOWING, duration));
         return duration;
@@ -29,7 +31,9 @@ public final class ParagonEffects {
     public static void onPearlTeleport(ServerPlayer player) {
         protect(player, ImmunityTable.PARAGON_PEARL);
         int week = Cataclysm.getWeek();
-        if (week >= 5) reduceMortality(player, week >= 6 ? 0.1F : 0.005F);
+        if (week >= 5) {
+            reduceMortality(player, week >= 6 ? 0.1F : 0.005F);
+        }
         if (week >= 6) {
             player.addEffect(new MobEffectInstance(CataclysmicMobEffects.PALE_CORROSION, 2400));
             player.addEffect(new MobEffectInstance(CataclysmicMobEffects.MORTEM, 2400));

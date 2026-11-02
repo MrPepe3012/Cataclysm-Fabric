@@ -3,11 +3,11 @@ package team.heather.cataclysm;
 
 import team.heather.cataclysm.command.CataclysmCommand;
 import team.heather.cataclysm.command.MortalityCommand;
-import team.heather.cataclysm.command.Permission;
 import team.heather.cataclysm.registry.item.CataclysmItems;
-import team.heather.cataclysm.registry.item.PassiveItemEffects;
+import team.heather.cataclysm.registry.sound.CataclysmSoundEvents;
+import team.heather.cataclysm.registry.item.effect.PassiveItemEffects;
 import team.heather.cataclysm.registry.item.lemegeton.Lemegeton;
-import team.heather.cataclysm.armor.ArmorSetEffects;
+import team.heather.cataclysm.registry.item.armor.ArmorSetEffects;
 import team.heather.cataclysm.registry.item.totem.TotemResurrection;
 import team.heather.cataclysm.registry.item.totem.mortality.MortalityAftereffects;
 import lombok.Getter;
@@ -35,18 +35,19 @@ public final class Cataclysm implements ModInitializer {
         CataclysmBlocks.initialize();
 
         CataclysmRegistry.bootstrapper()
+            .include(CataclysmSoundEvents.class)
             .include(CataclysmItems.class)
             .bootstrap();
         CataclysmItems.registerCreativeModeTab();
-        Lemegeton.initialize(Cataclysm::getWeek);
 
+        Lemegeton.initialize(Cataclysm::getWeek);
         TotemResurrection.initialize();
         MortalityAftereffects.initialize();
         ArmorSetEffects.initialize();
         PassiveItemEffects.initialize();
 
         CataclysmCommand.registration()
-            .add(Permission.ADMIN, MortalityCommand.ALIAS, MortalityCommand::new)
+            .add(4, MortalityCommand.ALIAS, MortalityCommand::new)
             .done();
 
         LOGGER.info("Done.");

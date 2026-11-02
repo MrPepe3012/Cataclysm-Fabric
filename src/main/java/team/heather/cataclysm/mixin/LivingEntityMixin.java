@@ -1,9 +1,8 @@
 package team.heather.cataclysm.mixin;
 
-import team.heather.cataclysm.armor.ArmorSetEffects;
-import team.heather.cataclysm.registry.item.PassiveItemEffects;
-import team.heather.cataclysm.registry.item.totem.UseTotemCallback;
-import team.heather.cataclysm.effect.event.TotemEvents;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
@@ -15,16 +14,24 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.BlocksAttacks;
 import net.minecraft.world.item.component.DeathProtection;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import team.heather.cataclysm.effect.event.TotemEvents;
+import team.heather.cataclysm.registry.item.arcane.ArcaneTools;
+import team.heather.cataclysm.registry.item.armor.ArmorSetEffects;
+import team.heather.cataclysm.registry.item.effect.PassiveItemEffects;
+import team.heather.cataclysm.registry.item.totem.UseTotemCallback;
 
 @Mixin(LivingEntity.class)
-public class LivingEntityMixin {
+public abstract class LivingEntityMixin {
 
     @ModifyVariable(method = "hurtServer", at = @At("HEAD"), argsOnly = true)
     private float hurtServer$0(float amount, ServerLevel level, DamageSource damageSource) {
@@ -33,64 +40,73 @@ public class LivingEntityMixin {
     }
 
     @Inject(method = "canBeAffected", at = @At("HEAD"), cancellable = true)
-    private void canBeAffected$0(MobEffectInstance effect,
-                                 CallbackInfoReturnable<Boolean> callback) {
-        if (ArmorSetEffects.isImmuneTo((LivingEntity) (Object) this, effect.getEffect())
-                || PassiveItemEffects.isImmuneTo((LivingEntity) (Object) this, effect.getEffect())) {
+    private void canBeAffected$0(MobEffectInstance effect, CallbackInfoReturnable<Boolean> callback) {
+        LivingEntity self = (LivingEntity) (Object) this;
+        if (ArmorSetEffects.isImmuneTo(self, effect.getEffect()) || PassiveItemEffects.isImmuneTo(self, effect.getEffect())) {
             callback.setReturnValue(false);
         }
     }
 
+    @WrapOperation(method = "applyItemBlocking", at = @At(value = "INVOKE",
+            target = "Lnet/minecraft/world/item/component/BlocksAttacks;hurtBlockingItem(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/InteractionHand;F)V"))
+    private void applyItemBlocking$0(BlocksAttacks blocking, Level level, ItemStack stack, LivingEntity defender,
+                                     InteractionHand hand, float blocked, Operation<Void> original,
+                                     @Local(argsOnly = true) DamageSource source) {
+        original.call(blocking, level, stack, defender, hand, blocked);
+        ArcaneTools.onBlockedDamage(defender, stack, source, blocked);
+    }
+
     @Inject(method = "checkTotemDeathProtection", at = @At("HEAD"), cancellable = true)
-    private void checkTotemDeathProtection$0(DamageSource damageSource,
-                                             CallbackInfoReturnable<Boolean> callback) {
+    private void checkTotemDeathProtection$0(DamageSource damageSource, CallbackInfoReturnable<Boolean> callback) {
+        callback.setReturnValue(this.useTotem$0(damageSource));
+    }
+
+    @Unique
+    private boolean useTotem$0(DamageSource damageSource) {
         LivingEntity self = (LivingEntity) (Object) this;
-
         if (damageSource.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
-            callback.setReturnValue(false);
-            return;
+            return false;
         }
-
-        ItemStack totemStack = null;
-        DeathProtection component = null;
-
-        for (InteractionHand hand : InteractionHand.values()) {
-            ItemStack handStack = self.getItemInHand(hand);
-            component = handStack.get(DataComponents.DEATH_PROTECTION);
-            if (component != null) {
-                // Both mods replace this method at HEAD; asking here keeps Mortem working whichever runs first.
-                if (!TotemEvents.ALLOW_ACTIVATION.invoker().allowActivation(self, damageSource, handStack)) {
-                    callback.setReturnValue(false);
-                    return;
-                }
-
-                totemStack = handStack.copy();
-                handStack.shrink(1);
-                break;
-            }
+        ItemStack totem = this.takeTotem$0(damageSource);
+        if (totem == null) {
+            return false;
         }
-
-        if (totemStack == null) {
-            callback.setReturnValue(false);
-            return;
+        DeathProtection protection = UseTotemCallback.EVENT.invoker()
+                .resurrect(self, totem, totem.get(DataComponents.DEATH_PROTECTION));
+        if (protection == null) {
+            return false;
         }
-
-        component = UseTotemCallback.EVENT.invoker().resurrect(self, totemStack, component);
-
-        if (component == null) {
-            callback.setReturnValue(false);
-            return;
-        }
-
         if (self instanceof ServerPlayer player) {
-            player.awardStat(Stats.ITEM_USED.get(totemStack.getItem()));
-            CriteriaTriggers.USED_TOTEM.trigger(player, totemStack);
+            player.awardStat(Stats.ITEM_USED.get(totem.getItem()));
+            CriteriaTriggers.USED_TOTEM.trigger(player, totem);
             self.gameEvent(GameEvent.ITEM_INTERACT_FINISH);
         }
-
-        component.applyEffects(totemStack, self);
+        protection.applyEffects(totem, self);
         self.setHealth(1.0F);
         self.level().broadcastEntityEvent(self, (byte) 35);
-        callback.setReturnValue(true);
+        return true;
+    }
+
+    /**
+     * Consumes one totem from the first hand holding one and returns a copy of it, or {@code null} when none
+     * is held or activation is denied. Both mods replace the vanilla method at HEAD; asking here keeps Mortem
+     * working whichever runs first.
+     */
+    @Unique
+    private ItemStack takeTotem$0(DamageSource damageSource) {
+        LivingEntity self = (LivingEntity) (Object) this;
+        for (InteractionHand hand : InteractionHand.values()) {
+            ItemStack held = self.getItemInHand(hand);
+            if (held.get(DataComponents.DEATH_PROTECTION) == null) {
+                continue;
+            }
+            if (!TotemEvents.ALLOW_ACTIVATION.invoker().allowActivation(self, damageSource, held)) {
+                return null;
+            }
+            ItemStack totem = held.copy();
+            held.shrink(1);
+            return totem;
+        }
+        return null;
     }
 }

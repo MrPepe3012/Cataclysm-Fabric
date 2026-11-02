@@ -27,7 +27,9 @@ public record LemegetonState(Map<LemegetonUpgrade, Integer> upgrades, long coold
 
     public LemegetonState {
         upgrades = Map.copyOf(upgrades);
-        if (cooldownUntil < 0 || bonusSlots < 0) throw new IllegalArgumentException("Negative Lemegeton state");
+        if (cooldownUntil < 0 || bonusSlots < 0) {
+            throw new IllegalArgumentException("Negative Lemegeton state");
+        }
         for (var entry : upgrades.entrySet()) {
             if (entry.getValue() < 1 || entry.getValue() > entry.getKey().maxLevel()) {
                 throw new IllegalArgumentException("Invalid upgrade level");
@@ -35,14 +37,28 @@ public record LemegetonState(Map<LemegetonUpgrade, Integer> upgrades, long coold
         }
     }
 
-    public int level(LemegetonUpgrade upgrade) { return this.upgrades.getOrDefault(upgrade, 0); }
-    public int totalLevels() { return this.upgrades.values().stream().mapToInt(Integer::intValue).sum(); }
-    public boolean hasUpgrades() { return !this.upgrades.isEmpty(); }
-    public long remainingCooldown(long gameTime) { return Math.max(0, this.cooldownUntil - gameTime); }
+    public int level(LemegetonUpgrade upgrade) {
+        return this.upgrades.getOrDefault(upgrade, 0);
+    }
+
+    public int totalLevels() {
+        return this.upgrades.values().stream().mapToInt(Integer::intValue).sum();
+    }
+
+    public boolean hasUpgrades() {
+        return !this.upgrades.isEmpty();
+    }
+
+    public long remainingCooldown(long gameTime) {
+        return Math.max(0, this.cooldownUntil - gameTime);
+    }
+
 
     public LemegetonState upgrade(LemegetonUpgrade upgrade) {
         int next = this.level(upgrade) + 1;
-        if (next > upgrade.maxLevel()) throw new IllegalStateException("Upgrade is already maxed");
+        if (next > upgrade.maxLevel()) {
+            throw new IllegalStateException("Upgrade is already maxed");
+        }
         var levels = new EnumMap<LemegetonUpgrade, Integer>(LemegetonUpgrade.class);
         levels.putAll(this.upgrades);
         levels.put(upgrade, next);

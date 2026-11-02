@@ -114,7 +114,8 @@ tasks.named("test") {
 }
 
 // Minecraft 1.21.5 ships with Java 21; keep its native LWJGL runtime off newer JNI versions.
-tasks.withType(JavaExec).configureEach {
+// Only Loom's own run tasks: IDE launches set their own executable, and mixing both fails the toolchain check.
+tasks.withType(JavaExec).matching { it.name.startsWith("run") }.configureEach {
     javaLauncher = javaToolchains.launcherFor {
         languageVersion = JavaLanguageVersion.of(21)
     }

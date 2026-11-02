@@ -50,7 +50,9 @@ public final class LemegetonMenu extends ChestMenu {
             }
         }
         var state = LemegetonItem.stateOf(this.book);
-        for (var upgrade : LemegetonUpgrade.values()) container.setItem(upgrade.slot(), upgrade.menuIcon(state));
+        for (var upgrade : LemegetonUpgrade.values()) {
+            container.setItem(upgrade.slot(), upgrade.menuIcon(state));
+        }
         var cost = new ItemStack(CataclysmItems.CATACLYSM_UPGRADE);
         cost.set(CataclysmDataComponents.UPGRADE_TIER, this.requiredTier.getAsInt());
         cost.set(DataComponents.LORE, new ItemLore(List.of(
@@ -69,12 +71,19 @@ public final class LemegetonMenu extends ChestMenu {
     }
 
     @Override
-    public ItemStack quickMoveStack(Player player, int index) { return ItemStack.EMPTY; }
+    public ItemStack quickMoveStack(Player player, int index) {
+        return ItemStack.EMPTY;
+    }
+
 
     @Override
     public void clicked(int slot, int button, ClickType clickType, Player player) {
-        if (player != this.owner || this.owner.containerMenu != this || !this.stillValid(player)) return;
-        if (clickType != ClickType.PICKUP || button != 0) return;
+        if (player != this.owner || this.owner.containerMenu != this || !this.stillValid(player)) {
+            return;
+        }
+        if (clickType != ClickType.PICKUP || button != 0) {
+            return;
+        }
         for (var upgrade : LemegetonUpgrade.values()) {
             if (upgrade.slot() == slot) {
                 this.purchase(upgrade);

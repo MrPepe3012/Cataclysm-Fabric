@@ -2,41 +2,12 @@
   "model": {
     "type": "minecraft:condition",
     "on_false": {
-      "type": "minecraft:select",
-      "cases": [
-        {
-          "model": {
-            "type": "minecraft:model",
-            "model": "cataclysm:item/arcane/tools/arcane_shield_2d"
-          },
-          "when": [
-            "ground",
-            "fixed"
-          ]
-        }
-      ],
-      "fallback": {
-        "type": "minecraft:model",
-        "model": "cataclysm:item/arcane/tools/arcane_shield"
-      },
-      "property": "minecraft:display_context"
+      "type": "minecraft:model",
+      "model": "cataclysm:item/arcane/tools/arcane_shield"
     },
     "on_true": {
-      "type": "minecraft:select",
-      "cases": [
-        {
-          "model": {
-            "type": "minecraft:model",
-            "model": "cataclysm:item/arcane/tools/arcane_shield"
-          },
-          "when": "gui"
-        }
-      ],
-      "fallback": {
-        "type": "minecraft:model",
-        "model": "cataclysm:item/arcane/tools/arcane_shield_blocking"
-      },
-      "property": "minecraft:display_context"
+      "type": "minecraft:model",
+      "model": "cataclysm:item/arcane/tools/arcane_shield_blocking"
     },
     "property": "minecraft:using_item"
   }

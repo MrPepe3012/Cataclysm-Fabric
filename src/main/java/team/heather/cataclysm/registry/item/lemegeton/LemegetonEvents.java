@@ -9,7 +9,11 @@ import net.minecraft.world.item.ItemStack;
 public final class LemegetonEvents {
     public static final Event<AllowUse> ALLOW_USE = EventFactory.createArrayBacked(AllowUse.class,
             listeners -> (player, book) -> {
-                for (var listener : listeners) if (!listener.allow(player, book)) return false;
+                for (var listener : listeners) {
+                    if (!listener.allow(player, book)) {
+                        return false;
+                    }
+                }
                 return true;
             });
 

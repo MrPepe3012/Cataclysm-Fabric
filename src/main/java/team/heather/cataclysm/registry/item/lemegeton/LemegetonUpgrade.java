@@ -7,13 +7,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ItemLore;
+import team.heather.cataclysm.registry.item.effect.PassiveItemEffects;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -48,11 +48,26 @@ public enum LemegetonUpgrade implements StringRepresentable {
     }
 
     @Override
-    public String getSerializedName() { return this.name().toLowerCase(Locale.ROOT); }
-    public String translationKey() { return "upgrade.cataclysm." + this.getSerializedName(); }
-    public int slot() { return this.slot; }
-    public int maxLevel() { return this.amplifiers.length; }
-    public int effectLevel(int purchasedLevel) { return this.amplifiers[purchasedLevel - 1] + 1; }
+    public String getSerializedName() {
+        return this.name().toLowerCase(Locale.ROOT);
+    }
+
+    public String translationKey() {
+        return "upgrade.cataclysm." + this.getSerializedName();
+    }
+
+    public int slot() {
+        return this.slot;
+    }
+
+    public int maxLevel() {
+        return this.amplifiers.length;
+    }
+
+    public int effectLevel(int purchasedLevel) {
+        return this.amplifiers[purchasedLevel - 1] + 1;
+    }
+
 
     public ItemStack menuIcon(LemegetonState state) {
         var stack = new ItemStack(this.icon);
@@ -73,29 +88,30 @@ public enum LemegetonUpgrade implements StringRepresentable {
     }
 
     public void apply(ServerPlayer player, int purchasedLevel, int duration) {
-        if (purchasedLevel < 1 || purchasedLevel > this.maxLevel()) return;
-        int amplifier = this.amplifiers[purchasedLevel - 1];
-        if (this == CLEANSING) {
-            var harmful = player.getActiveEffects().stream()
-                    .filter(effect -> effect.getEffect().value().getCategory() == MobEffectCategory.HARMFUL)
-                    .map(MobEffectInstance::getEffect).toList();
-            harmful.forEach(player::removeEffect);
-            if (purchasedLevel >= 2) {
-                player.clearFire();
-                player.setTicksFrozen(0);
-                player.setAirSupply(player.getMaxAirSupply());
-                ((team.heather.cataclysm.mixin.FoodDataAccessor) player.getFoodData()).cataclysm$setExhaustion(0);
-                player.invulnerableTime = Math.max(player.invulnerableTime, 20);
-                player.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING, duration, 0, false, false));
-                player.addEffect(new MobEffectInstance(MobEffects.SATURATION, duration, 10, false, false));
-            }
+        if (purchasedLevel < 1 || purchasedLevel > this.maxLevel()) {
             return;
         }
+        if (this == CLEANSING) {
+            this.cleanse(player, purchasedLevel, duration);
+            return;
+        }
+        int amplifier = this.amplifiers[purchasedLevel - 1];
         player.addEffect(new MobEffectInstance(this.effect, duration, amplifier));
         if (this == DOLPHIN_GRACE) {
             player.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING, duration, amplifier));
         } else if (this == HEALTH_BLESSING) {
             player.addEffect(new MobEffectInstance(MobEffects.INSTANT_HEALTH, 1, amplifier));
         }
+    }
+
+    private void cleanse(ServerPlayer player, int purchasedLevel, int duration) {
+        PassiveItemEffects.cleanse(player);
+        if (purchasedLevel < 2) {
+            return;
+        }
+        PassiveItemEffects.restoreVitals(player);
+        player.invulnerableTime = Math.max(player.invulnerableTime, 20);
+        player.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING, duration, 0, false, false));
+        player.addEffect(new MobEffectInstance(MobEffects.SATURATION, duration, 10, false, false));
     }
 }

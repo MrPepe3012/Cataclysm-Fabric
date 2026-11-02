@@ -3,7 +3,6 @@ package team.heather.cataclysm.registry.item.totem;
 import team.heather.cataclysm.Cataclysm;
 import team.heather.cataclysm.registry.item.paragon.ImmunityTable;
 import team.heather.cataclysm.registry.item.paragon.ImmunityGrantingItem;
-import team.heather.cataclysm.registry.item.paragon.ParagonItem;
 import team.heather.cataclysm.registry.item.totem.mortality.MortalityTable;
 import team.heather.cataclysm.registry.sound.SoundMashup;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -19,7 +18,7 @@ import java.util.List;
 public class ParagonTotem extends TotemItem implements ImmunityGrantingItem {
 
     public ParagonTotem(Properties properties) {
-        super(ParagonItem.applyProperties(properties), MortalityTable.PARAGON);
+        super(properties, MortalityTable.PARAGON);
     }
 
     @Override

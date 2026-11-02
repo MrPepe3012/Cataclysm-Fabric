@@ -59,7 +59,7 @@ public final class SoundMashup {
 
     public void playAtEntity(Entity entity) {
         for (SoundContext context : this.contexts) {
-            SoundHelper.playAtEntity(entity, context.sound(), source, context.volume(), context.pitch());
+            entity.level().playSound(null, entity.blockPosition(), context.sound(), this.source, context.volume(), context.pitch());
         }
     }
 

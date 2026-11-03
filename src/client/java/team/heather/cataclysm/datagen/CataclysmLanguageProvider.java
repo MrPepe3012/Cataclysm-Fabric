@@ -153,7 +153,6 @@ public class CataclysmLanguageProvider extends FabricLanguageProvider {
         this.addItem(CataclysmItems.OBSCURE_ONYX, "Obscure Onyx", "Forged with the illusion of the abyss");
         this.addItem(CataclysmItems.MACE_UPGRADE, "Mace Upgrade");
         this.addItem(CataclysmItems.MIRAGE_UPGRADE, "Mirage Upgrade");
-        this.addItem(CataclysmItems.BROKEN_ELYTRA, "Broken Elytra");
         this.addItem(CataclysmItems.MIRAGE_ELYTRA, "Mirage Elytra", "Woven with the illusion of a mirage.");
         this.addItem(CataclysmItems.MIRAGE_MACE, "Mirage Mace", "Forged with the illusion of a mirage");
         this.addItem(CataclysmItems.MIRAGE_APPLE, "Mirage Apple", "Fruit of an illusion");

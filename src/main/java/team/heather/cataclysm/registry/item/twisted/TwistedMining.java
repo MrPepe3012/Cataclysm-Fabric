@@ -13,10 +13,10 @@ import team.heather.cataclysm.registry.item.CataclysmItems;
 public final class TwistedMining {
     private TwistedMining() {}
 
-    public static int level(ItemStack stack, Holder<Enchantment> enchantment, int stored) {
-        if (!stack.is(CataclysmItems.TWISTED_PICKAXE)) {
-            return stored;
-        }
+    public static int level(ItemStack stack,
+                            Holder<Enchantment> enchantment,
+                            int stored) {
+        if (!stack.is(CataclysmItems.TWISTED_PICKAXE)) return stored;
         boolean silk = stack.getOrDefault(CataclysmDataComponents.PICKAXE_MODE, 0) == 1;
         if (enchantment.is(Enchantments.FORTUNE)) {
             return silk ? 0 : 5;

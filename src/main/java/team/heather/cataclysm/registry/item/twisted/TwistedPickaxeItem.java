@@ -8,6 +8,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 import team.heather.cataclysm.registry.component.CataclysmDataComponents;
 
 /** A mining tool with two persistent modes, toggled by sneak-use. */
@@ -20,7 +21,9 @@ public final class TwistedPickaxeItem extends Item {
     }
 
     @Override
-    public InteractionResult use(Level level, Player player, InteractionHand hand) {
+    public @NotNull InteractionResult use(Level level,
+                                          Player player,
+                                          InteractionHand hand) {
         if (!player.isShiftKeyDown()) {
             return super.use(level, player, hand);
         }

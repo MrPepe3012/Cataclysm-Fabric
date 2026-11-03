@@ -9,6 +9,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 import team.heather.cataclysm.Cataclysm;
 import team.heather.cataclysm.registry.item.effect.PassiveItemEffects;
 import team.heather.cataclysm.registry.sound.SoundMashup;
@@ -20,28 +21,33 @@ public final class BlessingItem extends Item implements ImmunityGrantingItem {
 
     private final boolean mirage;
 
-    public BlessingItem(Properties properties, boolean mirage) {
+    public BlessingItem(Properties properties,
+                        boolean mirage) {
         super(properties);
         this.mirage = mirage;
     }
 
     @Override
     public ImmunityTable getImmunityTable() {
-        return this.mirage ? ImmunityTable.MIRAGE_BLESSING : ImmunityTable.PARAGON_BLESSING;
+        return this.mirage
+            ? ImmunityTable.MIRAGE_BLESSING
+            : ImmunityTable.PARAGON_BLESSING;
     }
 
     @Override
-    public InteractionResult use(Level level, Player player, InteractionHand hand) {
+    public @NotNull InteractionResult use(Level level,
+                                          Player player,
+                                          InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
+
         if (player.isSpectator() || player.getCooldowns().isOnCooldown(stack)) {
             return InteractionResult.FAIL;
         }
+
         if (player instanceof ServerPlayer serverPlayer) {
-            if (this.mirage) {
-                this.blessNearby(serverPlayer);
-            } else {
-                this.blessSelf(serverPlayer);
-            }
+            if (this.mirage) this.blessNearby(serverPlayer);
+            else this.blessSelf(serverPlayer);
+
             player.getCooldowns().addCooldown(stack, COOLDOWN_TICKS);
             stack.consume(1, player);
             SoundMashup.PARAGON_BLESSING.playAtEntity(player);

@@ -13,16 +13,17 @@ import team.heather.cataclysm.registry.item.effect.WeaponHitEffects;
 @Mixin(AbstractArrow.class)
 public abstract class AbstractArrowMixin {
 
-    @Inject(method = "onHitEntity", at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/world/entity/projectile/AbstractArrow;doPostHurtEffects(Lnet/minecraft/world/entity/LivingEntity;)V"))
-    private void onHitEntity$0(EntityHitResult hit, CallbackInfo callback) {
-        if (!(hit.getEntity() instanceof LivingEntity target)) {
-            return;
-        }
-        AbstractArrow arrow = (AbstractArrow) (Object) this;
-        ArcaneTools.onArrowHit(arrow, target);
-        if (arrow.getOwner() instanceof LivingEntity attacker) {
-            WeaponHitEffects.afterHit(arrow.getWeaponItem(), target, attacker);
+    @Inject(method = "onHitEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/projectile/AbstractArrow;doPostHurtEffects(Lnet/minecraft/world/entity/LivingEntity;)V"))
+    private void onHitEntity$0(EntityHitResult hit,
+                               CallbackInfo callback) {
+        if (!(hit.getEntity() instanceof LivingEntity target)) return;
+
+        AbstractArrow self = (AbstractArrow) (Object) this;
+
+        ArcaneTools.onArrowHit(self, target);
+
+        if (self.getOwner() instanceof LivingEntity attacker) {
+            WeaponHitEffects.afterHit(self.getWeaponItem(), target, attacker);
         }
     }
 }

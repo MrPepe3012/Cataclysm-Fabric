@@ -32,6 +32,7 @@ public final class Cataclysm implements ModInitializer {
         LOGGER.info("Initializing...");
 
         CataclysmServer.initialize();
+
         CataclysmBlocks.initialize();
 
         CataclysmRegistry.bootstrapper()

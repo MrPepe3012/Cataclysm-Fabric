@@ -21,14 +21,10 @@ import java.util.stream.IntStream;
 
 public interface CataclysmItems extends CataclysmRegistry {
 
-    // --- Paragon
-
     Item PARAGON_BLESSING = ItemFactory.register("paragon_blessing", item -> item.family(ItemFamily.PARAGON).base(ItemBase.PARAGON_BLESSING));
     Item PARAGON_PEARL = ItemFactory.register("paragon_pearl", item -> item.family(ItemFamily.PARAGON).base(ItemBase.PARAGON_PEARL));
     Item PARAGON_TOTEM = ItemFactory.register("paragon_totem", item -> item.family(ItemFamily.PARAGON).base(ItemBase.PARAGON_TOTEM));
     Item PARAGON_QUARTZ = ItemFactory.register("paragon_quartz");
-
-    // --- Lemegeton
 
     Item LEMEGETON = ItemFactory.register("lemegeton", item -> item.family(ItemFamily.LEMEGETON).base(ItemBase.LEMEGETON));
     Item CATACLYSM_UPGRADE = ItemFactory.register("cataclysm_upgrade", item -> item
@@ -41,8 +37,6 @@ public interface CataclysmItems extends CataclysmRegistry {
     Item VOIDSTONE = ItemFactory.register("voidstone");
     Item TECTONITE = ItemFactory.register("tectonite");
     Item ONYX = ItemFactory.register("onyx");
-
-    // --- Twisted
 
     Item TWISTED_RELIC = ItemFactory.register("twisted_relic", item -> item.family(ItemFamily.TWISTED).glint());
     Item TWISTED_SWORD = ItemFactory.register("twisted_sword", item -> item.family(ItemFamily.TWISTED).base(ItemBase.SWORD.damage(12).speed(-2.4)));
@@ -59,8 +53,6 @@ public interface CataclysmItems extends CataclysmRegistry {
     Item TWISTED_INGOT = ItemFactory.register("twisted_ingot");
     Item VOIDHEART = ItemFactory.register("voidheart");
 
-    // --- Arcane
-
     Item ARCANE_MACE = ItemFactory.register("arcane_mace", item -> item.family(ItemFamily.ARCANE).base(ItemBase.ARCANE_MACE.damage(8).speed(0.6)));
     Item ARCANE_BOW = ItemFactory.register("arcane_bow", item -> item.family(ItemFamily.ARCANE).base(ItemBase.BOW));
     Item ARCANE_SHIELD = ItemFactory.register("arcane_shield", item -> item.family(ItemFamily.ARCANE).base(ItemBase.SHIELD));
@@ -71,8 +63,6 @@ public interface CataclysmItems extends CataclysmRegistry {
     Item ARCANE_NUGGET = ItemFactory.register("arcane_nugget", item -> item.family(ItemFamily.ARCANE));
     Item ARCANE_INGOT = ItemFactory.register("arcane_ingot", item -> item.family(ItemFamily.ARCANE));
     Item ARCANE_SCUTE = ItemFactory.register("arcane_scute", item -> item.family(ItemFamily.ARCANE));
-
-    // --- Calamity
 
     Item CALAMITY_HELMET = ItemFactory.register("calamity_helmet", item -> item.family(ItemFamily.CALAMITY).armor(CataclysmArmorMaterial.CALAMITY, ArmorType.HELMET));
     Item CALAMITY_CHESTPLATE = ItemFactory.register("calamity_chestplate", item -> item.family(ItemFamily.CALAMITY).armor(CataclysmArmorMaterial.CALAMITY, ArmorType.CHESTPLATE));
@@ -86,8 +76,6 @@ public interface CataclysmItems extends CataclysmRegistry {
     Item CALAMITY_NUGGET = ItemFactory.register("calamity_nugget", item -> item.family(ItemFamily.CALAMITY));
     Item CALAMITY_INGOT = ItemFactory.register("calamity_ingot", item -> item.family(ItemFamily.CALAMITY));
 
-    // --- Midway and boss drops
-
     Item MIDWAY_RELIC = ItemFactory.register("midway_relic", item -> item.family(ItemFamily.MIDWAY).glint());
     Item UR_TEAR = ItemFactory.register("ur_tear");
     Item TOXIC_MEMBRANE = ItemFactory.register("toxic_membrane");
@@ -98,13 +86,11 @@ public interface CataclysmItems extends CataclysmRegistry {
     Item PALE_BALL = ItemFactory.register("pale_ball");
     Item LLAMA_FUR = ItemFactory.register("llama_fur");
 
-    // --- Mirage
-
     Item ENDER_BAG = ItemFactory.register("ender_bag", item -> item.palette(Palette.ENDER).base(ItemBase.ENDER_BAG));
     Item MIRAGE_ELYTRA = ItemFactory.register("mirage_elytra", item -> item.family(ItemFamily.MIRAGE).base(ItemBase.GLIDER));
     Item MIRAGE_MACE = ItemFactory.register("mirage_mace", item -> item.family(ItemFamily.MIRAGE).base(ItemBase.MIRAGE_MACE.damage(10).speed(0.4)));
     Item MIRAGE_BLESSING = ItemFactory.register("mirage_blessing", item -> item.family(ItemFamily.MIRAGE).base(ItemBase.MIRAGE_BLESSING));
-    Item MIRAGE_HELMET = ItemFactory.register("mirage_helmet", item -> item.family(ItemFamily.MIRAGE).armor(CataclysmArmorMaterial.MIRAGE, ArmorType.HELMET).trim(TrimMaterials.IRON, TrimPatterns.DUNE));
+    Item MIRAGE_HELMET = ItemFactory.register("mirage_helmet", item -> item.family(ItemFamily.MIRAGE).armor(CataclysmArmorMaterial.MIRAGE, ArmorType.HELMET));
     Item MIRAGE_APPLE = ItemFactory.register("mirage_apple", item -> item.family(ItemFamily.MIRAGE));
     Item MACE_UPGRADE = ItemFactory.register("mace_upgrade", item -> item.family(ItemFamily.MIRAGE));
     Item MIRAGE_UPGRADE = ItemFactory.register("mirage_upgrade", item -> item.family(ItemFamily.MIRAGE));
@@ -127,16 +113,12 @@ public interface CataclysmItems extends CataclysmRegistry {
     Item GOLEM_HEAD = ItemFactory.register("golem_head", item -> item.base(ItemBase.GOLEM_HEAD));
     Item DROWNED_CROWN = ItemFactory.register("drowned_crown");
 
-    // --- Pale
-
-    Item PALE_HELMET = ItemFactory.register("pale_helmet", item -> item.family(ItemFamily.PALE).armor(CataclysmArmorMaterial.PALE, ArmorType.HELMET).description(true));
-    Item PALE_CHESTPLATE = ItemFactory.register("pale_chestplate", item -> item.family(ItemFamily.PALE).armor(CataclysmArmorMaterial.PALE, ArmorType.CHESTPLATE).description(true));
-    Item PALE_LEGGINGS = ItemFactory.register("pale_leggings", item -> item.family(ItemFamily.PALE).armor(CataclysmArmorMaterial.PALE, ArmorType.LEGGINGS).description(true));
-    Item PALE_BOOTS = ItemFactory.register("pale_boots", item -> item.family(ItemFamily.PALE).armor(CataclysmArmorMaterial.PALE, ArmorType.BOOTS).description(true));
-    Item PALE_SWORD = ItemFactory.register("pale_sword", item -> item.family(ItemFamily.PALE).base(ItemBase.SWORD.damage(20).speed(-2.4)).description(true));
-    Item PALE_BOW = ItemFactory.register("pale_bow", item -> item.family(ItemFamily.PALE).base(ItemBase.BOW).description(true));
-
-    // --- Pantheon & Finale
+    Item PALE_HELMET = ItemFactory.register("pale_helmet", item -> item.family(ItemFamily.PALE).armor(CataclysmArmorMaterial.PALE, ArmorType.HELMET));
+    Item PALE_CHESTPLATE = ItemFactory.register("pale_chestplate", item -> item.family(ItemFamily.PALE).armor(CataclysmArmorMaterial.PALE, ArmorType.CHESTPLATE));
+    Item PALE_LEGGINGS = ItemFactory.register("pale_leggings", item -> item.family(ItemFamily.PALE).armor(CataclysmArmorMaterial.PALE, ArmorType.LEGGINGS));
+    Item PALE_BOOTS = ItemFactory.register("pale_boots", item -> item.family(ItemFamily.PALE).armor(CataclysmArmorMaterial.PALE, ArmorType.BOOTS));
+    Item PALE_SWORD = ItemFactory.register("pale_sword", item -> item.family(ItemFamily.PALE).base(ItemBase.SWORD.damage(20).speed(-2.4)));
+    Item PALE_BOW = ItemFactory.register("pale_bow", item -> item.family(ItemFamily.PALE).base(ItemBase.BOW));
 
     Item CHALICE_OF_THE_OVERWORLD = ItemFactory.register("chalice_of_the_overworld", item -> item.palette(Palette.CHALICE));
     Item CHALICE_OF_THE_NETHER = ItemFactory.register("chalice_of_the_nether", item -> item.palette(Palette.CHALICE));
@@ -160,8 +142,7 @@ public interface CataclysmItems extends CataclysmRegistry {
             FabricItemGroup.builder()
                 .title(Component.literal("Cataclysm"))
                 .icon(() -> new ItemStack(CataclysmItems.PARAGON_PEARL))
-                .displayItems((params, output) ->
-                    CataclysmItems.getCreativeContent(params.holders()).forEach(output::accept))
+                .displayItems((params, output) -> CataclysmItems.getCreativeContent(params.holders()).forEach(output::accept))
                 .build()
         );
     }

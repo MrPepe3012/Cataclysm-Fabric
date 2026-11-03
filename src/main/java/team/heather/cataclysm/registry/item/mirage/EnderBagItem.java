@@ -11,14 +11,18 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 
 public final class EnderBagItem extends Item {
+
     public EnderBagItem(Properties properties) {
         super(properties);
     }
 
     @Override
-    public InteractionResult use(Level level, Player player, InteractionHand hand) {
+    public @NotNull InteractionResult use(Level level,
+                                          Player player,
+                                          InteractionHand hand) {
         var stack = player.getItemInHand(hand);
         if (player.getCooldowns().isOnCooldown(stack)) {
             return InteractionResult.FAIL;

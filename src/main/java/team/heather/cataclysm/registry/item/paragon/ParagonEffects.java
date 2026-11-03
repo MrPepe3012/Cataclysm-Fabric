@@ -10,34 +10,38 @@ import team.heather.cataclysm.effect.status.CataclysmicMobEffects;
 import team.heather.cataclysm.registry.sound.SoundMashup;
 
 public final class ParagonEffects {
+
     private ParagonEffects() {}
 
-    public static int protect(LivingEntity entity, ImmunityTable table) {
-        int duration = table.getTicks(Cataclysm.getWeek());
+    public static int protect(LivingEntity entity,
+                              ImmunityTable table) {
         var current = entity.getEffect(CataclysmicMobEffects.IMMORTALITY);
-        if (current != null) {
-            duration += current.getDuration();
-        }
+        int duration = table.getTicks(Cataclysm.getWeek());
+
+        if (current != null) duration += current.getDuration();
+
         entity.addEffect(new MobEffectInstance(CataclysmicMobEffects.IMMORTALITY, duration));
         entity.addEffect(new MobEffectInstance(MobEffects.GLOWING, duration));
+
         return duration;
     }
 
-    public static void reduceMortality(ServerPlayer player, float reduction) {
+    public static void reduceMortality(ServerPlayer player,
+                                       float reduction) {
         var mortality = CataclysmCardinalComponents.MORTALITY.get(player);
         mortality.set(mortality.get() - reduction);
     }
 
     public static void onPearlTeleport(ServerPlayer player) {
         protect(player, ImmunityTable.PARAGON_PEARL);
+
         int week = Cataclysm.getWeek();
-        if (week >= 5) {
-            reduceMortality(player, week >= 6 ? 0.1F : 0.005F);
-        }
+        if (week >= 5) reduceMortality(player, week >= 6 ? 0.1F : 0.005F);
         if (week >= 6) {
             player.addEffect(new MobEffectInstance(CataclysmicMobEffects.PALE_CORROSION, 2400));
             player.addEffect(new MobEffectInstance(CataclysmicMobEffects.MORTEM, 2400));
         }
+
         SoundMashup.PARAGON_BLESSING.playAtEntity(player);
     }
 }

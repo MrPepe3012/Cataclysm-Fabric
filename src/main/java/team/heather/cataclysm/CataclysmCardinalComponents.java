@@ -1,5 +1,6 @@
 package team.heather.cataclysm;
 
+import team.heather.cataclysm.registry.item.CataclysmItems;
 import team.heather.cataclysm.registry.item.totem.mortality.MortalityComponent;
 import org.ladysnake.cca.api.v3.component.Component;
 import org.ladysnake.cca.api.v3.component.ComponentKey;

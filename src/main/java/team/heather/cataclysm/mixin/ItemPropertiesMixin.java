@@ -24,6 +24,7 @@ public abstract class ItemPropertiesMixin {
         if (this.id == null || !this.id.location().getNamespace().equals(Cataclysm.MOD_ID)) {
             return defaultName;
         }
+
         Component configured = this.components.build().get(DataComponents.ITEM_NAME);
         return configured == null ? defaultName : configured;
     }

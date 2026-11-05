@@ -7,17 +7,18 @@
   "authors": [],
   "contact": {},
   "license": "MIT",
+  "accessWidener": "cataclysm.accesswidener",
   "icon": "assets/cataclysm/icon.png",
   "environment": "*",
   "entrypoints": {
     "cardinal-components": [
-      "team.heather.cataclysm.CataclysmCardinalComponents"
+      "team.heather.cataclysm.component.CataclysmCardinalComponents"
     ],
     "fabric-datagen": [
-      "team.heather.cataclysm.CataclysmDataGenerator"
+      "team.heather.cataclysm.datagen.CataclysmDataGenerator"
     ],
     "client": [
-      "team.heather.cataclysm.CataclysmClient"
+      "team.heather.cataclysm.client.CataclysmClient"
     ],
     "main": [
       "team.heather.cataclysm.Cataclysm"

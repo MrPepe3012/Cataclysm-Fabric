@@ -7,13 +7,13 @@
         "threshold": 1,
         "model": {
           "type": "minecraft:model",
-          "model": "cataclysm:item/twisted/tools/twisted_pickaxe/fortune"
+          "model": "cataclysm:item/twisted/tools/twisted_pickaxe/silk_touch"
         }
       }
     ],
     "fallback": {
       "type": "minecraft:model",
-      "model": "cataclysm:item/twisted/tools/twisted_pickaxe/silk_touch"
+      "model": "cataclysm:item/twisted/tools/twisted_pickaxe/fortune"
     }
   }
 }

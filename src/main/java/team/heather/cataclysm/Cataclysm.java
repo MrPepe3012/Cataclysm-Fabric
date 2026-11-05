@@ -3,13 +3,12 @@ package team.heather.cataclysm;
 
 import team.heather.cataclysm.command.CataclysmCommand;
 import team.heather.cataclysm.command.MortalityCommand;
-import team.heather.cataclysm.registry.item.CataclysmItems;
-import team.heather.cataclysm.registry.sound.CataclysmSoundEvents;
-import team.heather.cataclysm.registry.item.effect.PassiveItemEffects;
-import team.heather.cataclysm.registry.item.lemegeton.Lemegeton;
-import team.heather.cataclysm.registry.item.armor.ArmorSetEffects;
-import team.heather.cataclysm.registry.item.totem.TotemResurrection;
-import team.heather.cataclysm.registry.item.totem.mortality.MortalityAftereffects;
+import team.heather.cataclysm.item.effect.PassiveItemEffects;
+import team.heather.cataclysm.item.effect.PersistentItemCooldowns;
+import team.heather.cataclysm.item.lemegeton.LemegetonEffects;
+import team.heather.cataclysm.item.armor.ArmorSetEffects;
+import team.heather.cataclysm.item.totem.TotemEffects;
+import team.heather.cataclysm.component.cardinal.mortality.MortalityEffects;
 import lombok.Getter;
 import lombok.Setter;
 import net.fabricmc.api.ModInitializer;
@@ -18,7 +17,6 @@ import net.minecraft.server.MinecraftServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import team.heather.cataclysm.registry.CataclysmRegistry;
-import team.heather.cataclysm.registry.block.CataclysmBlocks;
 
 public final class Cataclysm implements ModInitializer {
 
@@ -33,19 +31,14 @@ public final class Cataclysm implements ModInitializer {
 
         CataclysmServer.initialize();
 
-        CataclysmBlocks.initialize();
+        CataclysmRegistry.bootstrap();
 
-        CataclysmRegistry.bootstrapper()
-            .include(CataclysmSoundEvents.class)
-            .include(CataclysmItems.class)
-            .bootstrap();
-        CataclysmItems.registerCreativeModeTab();
-
-        Lemegeton.initialize(Cataclysm::getWeek);
-        TotemResurrection.initialize();
-        MortalityAftereffects.initialize();
+        LemegetonEffects.initialize(Cataclysm::getWeek);
+        TotemEffects.initialize();
+        MortalityEffects.initialize();
         ArmorSetEffects.initialize();
         PassiveItemEffects.initialize();
+        PersistentItemCooldowns.initialize();
 
         CataclysmCommand.registration()
             .add(4, MortalityCommand.ALIAS, MortalityCommand::new)

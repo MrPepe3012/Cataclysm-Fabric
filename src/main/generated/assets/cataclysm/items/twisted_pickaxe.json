@@ -5,14 +5,14 @@
       {
         "model": {
           "type": "minecraft:model",
-          "model": "cataclysm:item/twisted/tools/twisted_pickaxe/fortune"
+          "model": "cataclysm:item/twisted/tools/twisted_pickaxe/silk_touch"
         },
         "threshold": 1.0
       }
     ],
     "fallback": {
       "type": "minecraft:model",
-      "model": "cataclysm:item/twisted/tools/twisted_pickaxe/silk_touch"
+      "model": "cataclysm:item/twisted/tools/twisted_pickaxe/fortune"
     },
     "property": "cataclysm:pickaxe_mode"
   }

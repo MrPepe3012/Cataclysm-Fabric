@@ -1,12 +1,13 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "team.heather.cataclysm.mixin.client",
+  "package": "team.heather.cataclysm.client.mixin",
   "compatibilityLevel": "JAVA_21",
   "client": [
     "MinecraftMixin",
     "WingsLayerMixin",
-    "SkullBlockRendererMixin"
+    "SkullBlockRendererMixin",
+    "GuiGraphicsMixin"
   ],
   "injectors": {
     "defaultRequire": 1

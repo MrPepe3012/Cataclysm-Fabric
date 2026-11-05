@@ -7,8 +7,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import team.heather.cataclysm.registry.item.arcane.ArcaneTools;
-import team.heather.cataclysm.registry.item.effect.WeaponHitEffects;
+import team.heather.cataclysm.item.arcane.ArcaneEffects;
+import team.heather.cataclysm.item.effect.WeaponHitEffects;
 
 @Mixin(AbstractArrow.class)
 public abstract class AbstractArrowMixin {
@@ -20,7 +20,7 @@ public abstract class AbstractArrowMixin {
 
         AbstractArrow self = (AbstractArrow) (Object) this;
 
-        ArcaneTools.onArrowHit(self, target);
+        ArcaneEffects.onArrowHit(self, target);
 
         if (self.getOwner() instanceof LivingEntity attacker) {
             WeaponHitEffects.afterHit(self.getWeaponItem(), target, attacker);

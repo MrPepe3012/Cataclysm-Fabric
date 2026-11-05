@@ -7,20 +7,21 @@ import net.minecraft.world.entity.projectile.ThrownEnderpearl;
 import net.minecraft.world.level.portal.TeleportTransition;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import team.heather.cataclysm.registry.item.CataclysmItems;
-import team.heather.cataclysm.registry.item.paragon.ParagonEffects;
+import team.heather.cataclysm.registry.CataclysmRegistry;
+import team.heather.cataclysm.item.paragon.ParagonEffects;
 
 @Mixin(ThrownEnderpearl.class)
 public abstract class ThrownEnderpearlMixin {
 
-    @WrapOperation(method = "onHit", at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/server/level/ServerPlayer;teleport(Lnet/minecraft/world/level/portal/TeleportTransition;)Lnet/minecraft/server/level/ServerPlayer;"))
-    private ServerPlayer onHit$0(ServerPlayer player, TeleportTransition transition, Operation<ServerPlayer> original) {
-        ServerPlayer teleported = original.call(player, transition);
+    @WrapOperation(method = "onHit", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;teleport(Lnet/minecraft/world/level/portal/TeleportTransition;)Lnet/minecraft/server/level/ServerPlayer;"))
+    private ServerPlayer onHit$0(ServerPlayer player,
+                                 TeleportTransition transition,
+                                 Operation<ServerPlayer> original) {
         ThrownEnderpearl pearl = (ThrownEnderpearl) (Object) this;
-        if (teleported != null && pearl.getItem().is(CataclysmItems.PARAGON_PEARL)) {
-            ParagonEffects.onPearlTeleport(teleported);
-        }
+        ServerPlayer teleported = original.call(player, transition);
+
+        if (teleported != null && pearl.getItem().is(CataclysmRegistry.ITEMS.PARAGON_PEARL)) ParagonEffects.onPearlTeleport(teleported);
+
         return teleported;
     }
 }

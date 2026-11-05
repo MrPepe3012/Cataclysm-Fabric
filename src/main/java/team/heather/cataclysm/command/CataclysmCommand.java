@@ -16,17 +16,17 @@ public abstract class CataclysmCommand {
 
     protected abstract void defineSyntax(LiteralArgumentBuilder<CommandSourceStack> literal);
 
-    protected static Component withArguments(Component template,
-                                             Object... arguments) {
+    public static CommandRegistration registration() {
+        return new CommandRegistration();
+    }
+
+    static Component withArguments(Component template,
+                                   Object... arguments) {
         if (template.getContents() instanceof TranslatableContents contents) {
             return Component.translatable(contents.getKey(), arguments).withStyle(template.getStyle());
         }
 
         throw new IllegalArgumentException("Expected a translatable component");
-    }
-
-    public static CommandRegistration registration() {
-        return new CommandRegistration();
     }
 
     public static final class CommandRegistration {
@@ -40,7 +40,7 @@ public abstract class CataclysmCommand {
                                        Supplier<? extends CataclysmCommand> commandSupplier) {
             this.pendingRegistrations.add(() -> CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
                 LiteralArgumentBuilder<CommandSourceStack> literal = Commands.literal(name)
-                    .requires(source -> source.hasPermission(permission));
+                        .requires(source -> source.hasPermission(permission));
 
                 commandSupplier.get().defineSyntax(literal);
 

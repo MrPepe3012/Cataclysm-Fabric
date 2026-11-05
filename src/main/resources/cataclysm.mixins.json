@@ -10,11 +10,11 @@
     "EnchantmentHelperMixin",
     "TridentItemMixin",
     "ThrownEnderpearlMixin",
-    "MortemMobEffectMixin",
     "PlayerMixin",
     "BlockMixin",
     "ItemPropertiesMixin",
-    "FoodDataMixin"
+    "FoodDataMixin",
+    "ItemCooldownsMixin"
   ],
   "injectors": {
     "defaultRequire": 1

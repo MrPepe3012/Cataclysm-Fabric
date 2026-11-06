@@ -1,69 +1,121 @@
-# Páginas del diario del Lemegeton
+# Cómo editar el Lemegeton
 
-Cada archivo `.json` de esta carpeta es una página. Se ordenan por nombre, así que
-el número del principio decide su lugar en el libro. Para añadir una página basta
-con crear un archivo nuevo; el libro hace sitio solo, dos páginas por doble hoja.
+Cada página del libro es un archivo de esta carpeta. No hace falta saber programar.
 
-Estas páginas van después de los sellos, que son la primera doble página del libro.
-El texto de `05_torn_page` está dibujado en su imagen y no se edita aquí, para que
-los archivos del mod no digan de qué trata esa página.
+## Cambiar un texto
 
-## Página de ejemplo
+1. Abre el archivo de la página, por ejemplo `030_twisted_warden.json`.
+2. Cambia las frases que están entre comillas.
+3. Guarda el archivo.
+4. En el juego, cierra el libro y vuelve a abrirlo. Ya está.
 
-```json
-{
-  "art": "twisted_warden",
-  "title": "Twisted Warden",
-  "subtitle": "God of Beasts. Twisted Nest.",
-  "notes": [
-    {
-      "x": 8, "y": 29, "width": 70,
-      "lines": [
-        "Una nota normal.",
-        "!Una nota en rojo.",
-        "NOMBRE: un ataque, en letra pequeña y con el nombre en rojo."
-      ]
-    }
-  ]
-}
+Esto funciona con el juego abierto desde el proyecto. No hay que reiniciar nada.
+
+## Añadir una página
+
+1. Copia `_plantilla.json`.
+2. Ponle un nombre con número, por ejemplo `090_mi_pagina.json`.
+3. Escribe tu texto, guarda y abre el libro.
+
+## El orden de las páginas
+
+El número del principio del nombre decide el orden. Van de 10 en 10 para dejar huecos.
+¿Quieres una página entre la `030` y la `040`? Llámala `035_lo_que_sea.json`.
+
+El libro enseña dos páginas a la vez, una a cada lado. Si añades una sola página en
+medio, todas las siguientes cambian de lado. Por eso conviene añadirlas de dos en dos,
+sobre todo antes de `050_pale_king`, `060_void_lord` y `070_torn_page`, que están
+pensadas para verse juntas.
+
+La página `020_en_blanco` está ahí justo para eso: mantiene cada página en su lado.
+Puedes escribir en ella sin mover nada.
+
+## Página y entrada no son lo mismo
+
+- La **página** es el numerito de abajo. Se cuenta sola, según el orden de los archivos.
+- La **entrada** es lo que tú escribes en `subtitle`, como `Entrada I`. No se cuenta sola.
+
+Así, la Entrada I puede estar en la página 3, y no pasa nada.
+
+## Qué significa cada cosa en un archivo
+
+| Palabra | Para qué sirve |
+|---|---|
+| `art` | La imagen de fondo. Si no la pones, la hoja queda vacía. |
+| `title` | El título rojo. |
+| `subtitle` | La línea gris de debajo del título. |
+| `title_size` | Pon `2` para un título el doble de grande. |
+| `dark` | Pon `true` para una página negra con letras claras. |
+| `behind` | Otra página que se ve debajo de esta, como en la hoja arrancada. |
+| `notes` | Los trozos de texto de la página. |
+
+Cada trozo de texto de `notes` tiene:
+
+| Palabra | Para qué sirve |
+|---|---|
+| `y` | A qué altura empieza. `0` es arriba del todo y `158` es casi abajo. |
+| `x` | A qué distancia del borde izquierdo. Si no la pones, es `8`. |
+| `width` | Cuánto ocupa de ancho. Si no la pones, es `144`, la hoja entera. |
+| `centered` | Pon `true` para centrar el texto. |
+| `lines` | Las frases, de arriba abajo. |
+
+## Trucos para escribir
+
+- Una frase que empieza por `!` sale en rojo.
+- Una frase con `:` sale en letra pequeña y lo que hay antes de `:` en rojo.
+  Sirve para los ataques, así que no uses `:` en una frase normal.
+- No uses mayúsculas con tilde, como `Á`. Las fuentes no las tienen.
+
+## Si algo sale mal
+
+Si un archivo tiene un error, el libro enseña una página roja que dice qué archivo es.
+Casi siempre es una de estas tres cosas:
+
+- Falta una coma entre dos frases.
+- Sobra una coma después de la última frase.
+- Falta una comilla.
+
+## Poner una imagen nueva
+
+1. Dibuja una imagen de **312 × 392** píxeles con fondo transparente.
+   Lo transparente deja ver el papel del libro. Deja libres 24 píxeles arriba y abajo:
+   son los márgenes de la hoja.
+2. Guárdala en `textures/gui/lemegeton/journal/`, con el nombre en minúsculas.
+3. Escribe ese nombre sin `.png` en `art`.
+
+Las imágenes nuevas sí necesitan reiniciar el juego.
+
+Ojo: el texto de `torn_page.png` está dibujado dentro de la imagen, para que nadie
+pueda leerlo en los archivos del mod.
+
+## Cambiar los sellos
+
+Esto ya es código, pero son pocas líneas. Después hay que reiniciar el juego.
+
+**Añadir un sello.** Abre `LemegetonComponent.java` y añade una línea a la lista `Upgrade`:
+
+```java
+LUCK(MobEffects.LUCK, 0, 1),
 ```
 
-## Campos de la página
+Primero va el efecto. Luego, un número por cada nivel: `0, 1` son dos niveles.
+El orden de la lista es el orden en el círculo, y el círculo se reparte solo.
+El dibujo del sello sale solo del icono del efecto.
 
-| Campo | Obligatorio | Qué hace |
-|---|---|---|
-| `art` | sí | Imagen de `textures/gui/lemegeton/journal/`, sin `.png`. Mide 156×172. |
-| `title` | no | Título centrado, siempre en mayúsculas. |
-| `subtitle` | no | Línea gris centrada bajo el título. |
-| `title_size` | no | Tamaño del título: `1` por defecto, `2` para el doble. |
-| `dark` | no | `true` para una página negra: la tinta pasa a ser clara. |
-| `behind` | no | Nombre de otra página sin `.json`. Se ve debajo, y `art` se dibuja encima de ella. |
-| `notes` | no | Lista de bloques de texto. |
+Después abre `CataclysmLanguageProvider.java`, añade su nombre y su descripción, y
+ejecuta la tarea `runDatagen` de Gradle:
 
-## Campos de cada bloque de `notes`
+```java
+this.addUpgrade(LemegetonComponent.Upgrade.LUCK, "Luck", "Better loot.");
+```
 
-| Campo | Por defecto | Qué hace |
-|---|---|---|
-| `y` | obligatorio | Altura donde empieza el bloque. |
-| `x` | `8` | Distancia desde el borde izquierdo de la página. |
-| `width` | `144` | Ancho del bloque. El texto salta de línea solo. |
-| `centered` | `false` | Centra cada línea dentro del bloque. |
-| `lines` | obligatorio | Las notas, de arriba abajo. No hace falta colocarlas una a una. |
+**Cambiar las reglas.** Están al principio de `LemegetonProcessor.java`:
 
-## Cómo se escribe cada línea
+| Qué quieres cambiar | Dónde |
+|---|---|
+| Cuántos pactos da cada fase | `LEVELS_PER_PHASE` |
+| En qué fase se pide el pago de grado 2 | `SECOND_TIER_PHASE` |
+| En qué fase se pide el pago de grado 3 | `THIRD_TIER_PHASE` |
 
-- Una línea normal va en tinta negra.
-- Una línea que empieza por `!` va en rojo.
-- Una línea con `:` es un ataque: va en letra pequeña y lo que hay antes de `:` va en rojo.
-  Hoy el diario solo lleva notas de un superviviente, así que no uses `:` en una nota normal.
-  El formato sigue disponible para cuando quieras mostrar los ataques.
-- Una línea también puede ser una clave de traducción del lang.
-
-## Probar un cambio sin reiniciar el juego
-
-1. Guarda el archivo y ejecuta la tarea `processResources` de Gradle.
-2. Pulsa F3+T en el juego.
-3. Vuelve a abrir el libro.
-
-Si un archivo tiene un error, esa página no aparece y el log lo avisa con
-`Could not read journal page`. El resto del libro sigue funcionando.
+**Cambiar la velocidad al pasar página.** Es `TURN_MILLIS` en `LemegetonJournal.java`.
+Son milésimas de segundo: un número más bajo pasa más rápido.

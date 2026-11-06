@@ -4,6 +4,7 @@ import com.google.gson.JsonParser;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -15,27 +16,37 @@ import net.minecraft.util.Mth;
 import team.heather.cataclysm.Cataclysm;
 
 import java.io.IOException;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
+import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 
 /**
  * The journal half of the Lemegeton. Its pages are data, not code: each one is a
  * JSON file in {@code assets/cataclysm/lemegeton_journal}, read in filename order
  * every time the book opens. The readme in that folder explains the format. They follow
- * the seals, which are the book's first spread.
+ * the seals, which are the book's first spread. While developing, pages are read straight
+ * from the source folder, so saving a file and reopening the book is enough to see it.
  */
 final class LemegetonJournal {
 
     private static final String FOLDER = "lemegeton_journal";
+    private static final String SOURCE_FOLDER = "src/main/resources/assets/cataclysm/" + FOLDER;
+    private static final String PAGE_EXTENSION = ".json";
+    private static final String IGNORED_PREFIX = "_";
     private static final int PAGES_PER_SPREAD = 2;
     private static final int[] PAGE_X = {10, 186};
     private static final int[] PAGE_NUMBER_X = {137, 10};
-    private static final int PAGE_Y = 10;
+    private static final int PLATE_Y = 10;
+    private static final int PAGE_Y = 22;
     private static final int PAGE_CENTER_X = 78;
     private static final int PAGE_NUMBER_Y = 161;
     private static final int TITLE_Y = 3;
@@ -47,6 +58,7 @@ final class LemegetonJournal {
     private static final int ATTACK_GAP = 2;
     private static final int PLATE_COLOR = 0xFFFFFFFF;
     private static final String RED_MARK = "!";
+    private static final int ERROR_NOTE_Y = 40;
 
     private static final float TURN_MILLIS = 260;
     private static final int SPINE_X = 176;
@@ -54,7 +66,7 @@ final class LemegetonJournal {
     private static final int[] LEAF_X = {8, 182};
     private static final int LEAF_Y = 8;
     private static final int LEAF_WIDTH = 162;
-    private static final int LEAF_HEIGHT = 176;
+    private static final int LEAF_HEIGHT = 200;
     private static final int LEAF_STRIPS = 18;
     private static final float LEAF_BEND = 1.1F;
     private static final float LEAF_PERSPECTIVE = 0.16F;
@@ -62,7 +74,8 @@ final class LemegetonJournal {
     private static final int SHADOW_STEPS = 5;
     private static final int SHADOW_REACH = 26;
     private static final float SHADOW_STRENGTH = 0.28F;
-    private static final int SHEETS_PER_SPREAD = 2;
+    private static final int MOST_EXTRA_SHEETS = 6;
+    private static final int SHEETS_PER_DROP = 3;
     private static final int SHEET_LIGHT = 0xFFCFBF9A;
     private static final int SHEET_DARK = 0xFF8F7D5C;
 
@@ -75,17 +88,49 @@ final class LemegetonJournal {
 
     LemegetonJournal(Consumer<GuiGraphics> sealPage) {
         this.sealPage = sealPage;
-        var files = Minecraft.getInstance().getResourceManager()
-            .listResources(FOLDER, file -> file.getPath().endsWith(".json"));
-        for (var file : new TreeMap<>(files).entrySet()) {
-            try (var reader = file.getValue().openAsReader()) {
-                var page = Page.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseReader(reader)).getOrThrow();
-                String path = file.getKey().getPath();
-                this.pages.add(page);
-                this.pagesById.put(path.substring(path.lastIndexOf('/') + 1, path.length() - ".json".length()), page);
-            } catch (IOException | RuntimeException exception) {
-                Cataclysm.LOGGER.warn("Could not read journal page {}", file.getKey(), exception);
+        for (var file : pageFiles().entrySet()) {
+            String id = file.getKey();
+            if (id.startsWith(IGNORED_PREFIX)) {
+                continue;
             }
+            var page = readPage(id, file.getValue());
+            this.pages.add(page);
+            this.pagesById.put(id, page);
+        }
+    }
+
+    /** Maps each page's file name to a way of opening it, in the order the pages appear in the book. */
+    private static TreeMap<String, Callable<Reader>> pageFiles() {
+        var files = new TreeMap<String, Callable<Reader>>();
+        var loader = FabricLoader.getInstance();
+        var source = loader.getGameDir().toAbsolutePath().getParent().resolve(SOURCE_FOLDER);
+        if (loader.isDevelopmentEnvironment() && Files.isDirectory(source)) {
+            try (var paths = Files.list(source)) {
+                paths.filter(path -> path.toString().endsWith(PAGE_EXTENSION)).forEach(path ->
+                    files.put(pageId(path.getFileName().toString()), () -> Files.newBufferedReader(path, StandardCharsets.UTF_8)));
+            } catch (IOException exception) {
+                Cataclysm.LOGGER.warn("Could not list journal pages in {}", source, exception);
+            }
+            return files;
+        }
+        Minecraft.getInstance().getResourceManager().listResources(FOLDER, file -> file.getPath().endsWith(PAGE_EXTENSION))
+            .forEach((location, resource) -> files.put(pageId(location.getPath()), resource::openAsReader));
+        return files;
+    }
+
+    private static String pageId(String path) {
+        return path.substring(path.lastIndexOf('/') + 1, path.length() - PAGE_EXTENSION.length());
+    }
+
+    /** A page that cannot be read still shows up in the book, saying which file needs fixing. */
+    private static Page readPage(String id, Callable<Reader> file) {
+        try (var reader = file.call()) {
+            return Page.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseReader(reader)).getOrThrow();
+        } catch (Exception exception) {
+            Cataclysm.LOGGER.warn("Could not read journal page {}", id, exception);
+            var advice = new Block(Block.DEFAULT_X, ERROR_NOTE_Y, Block.DEFAULT_WIDTH, true, List.of(
+                "!Este archivo tiene un error.", "Revisa las comas, las comillas y las llaves."));
+            return new Page(Optional.empty(), Optional.of("Error"), Optional.of(id.replace('_', ' ')), 1, false, Optional.empty(), List.of(advice));
         }
     }
 
@@ -152,8 +197,9 @@ final class LemegetonJournal {
         }
         boolean landed = !this.isTurning() || Util.getMillis() - this.turnStartedAt > TURN_MILLIS / 2;
         int read = landed ? this.spread : this.turningFrom;
-        drawSheets(graphics, bookX, bookY, 1 + read * SHEETS_PER_SPREAD, -1);
-        drawSheets(graphics, bookX, bookY, 1 + (this.lastSpread() - read) * SHEETS_PER_SPREAD, 1);
+        int readSheets = this.lastSpread() == 0 ? 0 : Math.round(MOST_EXTRA_SHEETS * (float) read / this.lastSpread());
+        drawSheets(graphics, bookX, bookY, 1 + readSheets, -1);
+        drawSheets(graphics, bookX, bookY, 1 + MOST_EXTRA_SHEETS - readSheets, 1);
     }
 
     /** Draws the edges of a pile of sheets, each one lying a little further out and lower than the last. */
@@ -163,8 +209,9 @@ final class LemegetonJournal {
         for (int sheet = 0; sheet < sheets; sheet++) {
             int color = sheet % 2 == 0 ? SHEET_LIGHT : SHEET_DARK;
             int x = bookX + outer + direction * sheet;
-            int bottom = bookY + LEAF_Y + LEAF_HEIGHT + sheet;
-            graphics.fill(x, bookY + LEAF_Y + sheet, x + 1, bottom + 1, color);
+            int drop = sheet / SHEETS_PER_DROP;
+            int bottom = bookY + LEAF_Y + LEAF_HEIGHT + drop;
+            graphics.fill(x, bookY + LEAF_Y + drop, x + 1, bottom + 1, color);
             graphics.fill(Math.min(x, bookX + inner), bottom, Math.max(x + 1, bookX + inner), bottom + 1, color);
         }
     }
@@ -176,7 +223,7 @@ final class LemegetonJournal {
             if (open[side] >= 0 && open[side] < this.pages.size()) {
                 var page = this.pages.get(open[side]);
                 var bottom = page.behind.map(this.pagesById::get).orElse(page);
-                drawPlate(graphics, bottom, bookX + PAGE_X[side], bookY + PAGE_Y, ink);
+                drawPlate(graphics, bottom, bookX + PAGE_X[side], bookY + PLATE_Y, ink);
             }
         }
     }
@@ -200,7 +247,8 @@ final class LemegetonJournal {
         var below = page.behind.map(this.pagesById::get);
         if (below.isPresent()) {
             drawWriting(graphics, font, below.get(), this.pages.indexOf(below.get()), side, ink);
-            drawPlate(graphics, page, PAGE_X[side], PAGE_Y, ink);
+            drawPlate(graphics, page, PAGE_X[side], PLATE_Y, ink);
+            drawPageNumber(graphics, font, index, side, LemegetonTheme.faded(LemegetonTheme.PENCIL, ink));
         } else {
             drawWriting(graphics, font, page, index, side, ink);
         }
@@ -274,12 +322,12 @@ final class LemegetonJournal {
             return true;
         }
         if (index < this.pages.size() && this.pages.get(index).behind.isPresent()) {
-            drawPlate(graphics, this.pages.get(index), PAGE_X[side], PAGE_Y, 1);
+            drawPlate(graphics, this.pages.get(index), PAGE_X[side], PLATE_Y, 1);
             return false;
         }
         LemegetonTheme.drawJournalPage(graphics, LEAF_X[side], LEAF_Y, LEAF_X[side], LEAF_Y, LEAF_WIDTH, LEAF_HEIGHT);
         if (index < this.pages.size()) {
-            drawPlate(graphics, this.pages.get(index), PAGE_X[side], PAGE_Y, 1);
+            drawPlate(graphics, this.pages.get(index), PAGE_X[side], PLATE_Y, 1);
             drawWriting(graphics, font, this.pages.get(index), index, side, 1);
         }
         return true;
@@ -299,8 +347,8 @@ final class LemegetonJournal {
     }
 
     private static void drawPlate(GuiGraphics graphics, Page page, int x, int y, float ink) {
-        var plate = Cataclysm.resourceLocation("textures/gui/lemegeton/journal/" + page.art + ".png");
-        LemegetonTheme.drawPlate(graphics, plate, x, y, LemegetonTheme.faded(PLATE_COLOR, ink));
+        page.art.ifPresent(art -> LemegetonTheme.drawPlate(graphics, Cataclysm.resourceLocation("textures/gui/lemegeton/journal/" + art + ".png"),
+            x, y, LemegetonTheme.faded(PLATE_COLOR, ink)));
     }
 
     private static void drawWriting(GuiGraphics graphics, Font font, Page page, int index, int side, float ink) {
@@ -318,9 +366,14 @@ final class LemegetonJournal {
             drawBlock(graphics, font, block, x, black, red);
         }
         if (page.title.isPresent()) {
-            var number = LemegetonTheme.written(Component.literal(String.valueOf(index + 1)));
-            graphics.drawString(font, number, x + PAGE_NUMBER_X[side], PAGE_Y + PAGE_NUMBER_Y, pencil, false);
+            drawPageNumber(graphics, font, index, side, pencil);
         }
+    }
+
+    /** Page numbers count every sheet in the book, whatever the entries written on them are called. */
+    private static void drawPageNumber(GuiGraphics graphics, Font font, int index, int side, int color) {
+        var number = LemegetonTheme.written(Component.literal(String.valueOf(index + 1)));
+        graphics.drawString(font, number, PAGE_X[side] + PAGE_NUMBER_X[side], PAGE_Y + PAGE_NUMBER_Y, color, false);
     }
 
     private static void drawTitle(GuiGraphics graphics, Font font, String title, int centerX, int size, int color) {
@@ -370,11 +423,11 @@ final class LemegetonJournal {
     }
 
     /** One page of the journal, exactly as its JSON file spells it. */
-    private record Page(String art, Optional<String> title, Optional<String> subtitle, int titleSize,
+    private record Page(Optional<String> art, Optional<String> title, Optional<String> subtitle, int titleSize,
                         boolean dark, Optional<String> behind, List<Block> notes) {
 
         private static final Codec<Page> CODEC = RecordCodecBuilder.create(page -> page.group(
-            Codec.STRING.fieldOf("art").forGetter(Page::art),
+            Codec.STRING.optionalFieldOf("art").forGetter(Page::art),
             Codec.STRING.optionalFieldOf("title").forGetter(Page::title),
             Codec.STRING.optionalFieldOf("subtitle").forGetter(Page::subtitle),
             Codec.INT.optionalFieldOf("title_size", 1).forGetter(Page::titleSize),

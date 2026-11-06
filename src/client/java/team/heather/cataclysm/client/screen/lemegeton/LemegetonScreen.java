@@ -38,33 +38,35 @@ public final class LemegetonScreen extends AbstractContainerScreen<LemegetonMenu
     private static final LemegetonComponent.Upgrade[] UPGRADES = LemegetonComponent.Upgrade.values();
 
     private static final int BOOK_WIDTH = 352;
-    private static final int BOOK_HEIGHT = 192;
+    private static final int BOOK_HEIGHT = 216;
 
     private static final int CIRCLE_X = 90;
-    private static final int CIRCLE_Y = 96;
+    private static final int CIRCLE_Y = 108;
     private static final int ORBIT_RADIUS = 60;
     private static final long SEAL_APPEAR_DELAY_MILLIS = 35;
 
     private static final int PAGE_X = 262;
-    private static final int TITLE_Y = 16;
-    private static final int LARGE_SEAL_Y = 36;
-    private static final int LEVELS_Y = 84;
+    private static final int TITLE_Y = 28;
+    private static final int LARGE_SEAL_Y = 48;
+    private static final int LEVELS_Y = 96;
     private static final int LEVEL_LINE_HEIGHT = 11;
     private static final int MAX_LEVEL_LINES = 3;
     private static final int LEVEL_MARK_SIZE = 4;
     private static final int LEVEL_MARK_GAP = 4;
-    private static final int DESCRIPTION_Y = 120;
+    private static final int DESCRIPTION_Y = 132;
     private static final int TEXT_WIDTH = 140;
-    private static final int PACT_Y = 140;
-    private static final int HINT_CENTER_Y = 169;
+    private static final int PACT_Y = 152;
+    private static final int HINT_CENTER_Y = 181;
     private static final int HINT_WIDTH = 132;
     private static final int ICON_SIZE = 16;
     private static final int ICON_GAP = 4;
     private static final float PAGE_FADE_MILLIS = 250;
+    private static final float WINDOW_FILL = 0.98F;
+    private static final float ZOOM_STEP = 0.5F;
 
     private static final int PREVIOUS_X = 14;
     private static final int NEXT_X = 326;
-    private static final int TURN_Y = 170;
+    private static final int TURN_Y = 182;
     private static final int PREVIOUS_ICON = 0;
     private static final int NEXT_ICON = 1;
 
@@ -81,6 +83,7 @@ public final class LemegetonScreen extends AbstractContainerScreen<LemegetonMenu
     private PactButton pactButton;
     private IconButton previousButton;
     private IconButton nextButton;
+    private float zoom = 1;
 
     public LemegetonScreen(LemegetonMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
@@ -97,6 +100,10 @@ public final class LemegetonScreen extends AbstractContainerScreen<LemegetonMenu
 
     @Override
     protected void init() {
+        var window = this.minecraft.getWindow();
+        this.zoom = this.zoomToFit();
+        this.width = (int) (window.getGuiScaledWidth() / this.zoom);
+        this.height = (int) (window.getGuiScaledHeight() / this.zoom);
         super.init();
         this.seals.clear();
         for (var upgrade : UPGRADES) {
@@ -110,6 +117,37 @@ public final class LemegetonScreen extends AbstractContainerScreen<LemegetonMenu
         this.nextButton = this.addRenderableWidget(new IconButton(this.leftPos + NEXT_X, this.topPos + TURN_Y,
             () -> NEXT_ICON, () -> this.turnPage(1)));
         this.refreshWidgets();
+    }
+
+    /**
+     * Grows the whole book to fill the window. Screen pixels per book pixel move in half steps, so
+     * the pixel art stays as even as it can, and everything inside just works in zoomed coordinates.
+     */
+    private float zoomToFit() {
+        var window = this.minecraft.getWindow();
+        float fit = Math.min(window.getWidth() / (float) BOOK_WIDTH, window.getHeight() / (float) BOOK_HEIGHT) * WINDOW_FILL;
+        float pixels = (float) Math.floor(fit / ZOOM_STEP) * ZOOM_STEP;
+        return Math.max(1, pixels / (float) window.getGuiScale());
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        return super.mouseClicked(mouseX / this.zoom, mouseY / this.zoom, button);
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        return super.mouseReleased(mouseX / this.zoom, mouseY / this.zoom, button);
+    }
+
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        return super.mouseDragged(mouseX / this.zoom, mouseY / this.zoom, button, dragX / this.zoom, dragY / this.zoom);
+    }
+
+    @Override
+    public void mouseMoved(double mouseX, double mouseY) {
+        super.mouseMoved(mouseX / this.zoom, mouseY / this.zoom);
     }
 
     @Override
@@ -146,8 +184,11 @@ public final class LemegetonScreen extends AbstractContainerScreen<LemegetonMenu
         if (this.journal.isOnSeals()) {
             this.showPage(this.hoveredUpgrade());
         }
-        super.render(graphics, mouseX, mouseY, partialTick);
+        graphics.pose().pushPose();
+        graphics.pose().scale(this.zoom, this.zoom, 1);
+        super.render(graphics, (int) (mouseX / this.zoom), (int) (mouseY / this.zoom), partialTick);
         this.embers.render(graphics);
+        graphics.pose().popPose();
     }
 
     @Override

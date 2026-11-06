@@ -35,9 +35,9 @@ final class LemegetonTheme {
     private static final ResourceLocation SMALL_SCRIPT = Cataclysm.resourceLocation("journal_small");
     private static final ResourceLocation LETTERING = Cataclysm.resourceLocation("journal_title");
     private static final int BOOK_WIDTH = 352;
-    private static final int BOOK_HEIGHT = 192;
+    private static final int BOOK_HEIGHT = 216;
     private static final int PLATE_WIDTH = 156;
-    private static final int PLATE_HEIGHT = 172;
+    private static final int PLATE_HEIGHT = 196;
     private static final int ICON_COUNT = 4;
     static final int ICON_SIZE = 12;
     private static final int SEALS_WIDTH = 124;

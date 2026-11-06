@@ -1,0 +1,24 @@
+// PLANTILLA. Este archivo no sale en el libro porque su nombre empieza por "_".
+// Copia este archivo, ponle un nombre como 090_mi_pagina.json y cambia lo que quieras.
+// Las líneas que empiezan por // son notas para ti: el juego las ignora.
+{
+  // La imagen de fondo. plain_page es una hoja limpia. Si borras esta línea, la hoja queda vacía.
+  "art": "plain_page",
+
+  // El título grande y rojo.
+  "title": "Mi Página",
+
+  // La línea gris de debajo del título.
+  "subtitle": "Entrada VI. Lo que sea",
+
+  "notes": [
+    {
+      // y es la altura donde empieza el texto. 29 es justo debajo del título.
+      "y": 29,
+      "lines": [
+        "Cada línea es un párrafo. El texto salta de renglón solo.",
+        "!Si empieza por exclamación, sale en rojo."
+      ]
+    }
+  ]
+}

@@ -6,7 +6,7 @@ import net.minecraft.sounds.SoundEvent;
 import team.heather.cataclysm.Cataclysm;
 import team.heather.cataclysm.registry.CataclysmRegistry;
 
-public interface CataclysmSoundEvents extends CataclysmRegistry<SoundEvent> {
+public interface CataclysmSoundEvents extends CataclysmRegistry {
 
     SoundEvent RAGNAROK = register("ragnarok");
 

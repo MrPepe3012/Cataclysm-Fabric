@@ -9,7 +9,7 @@ import team.heather.cataclysm.Cataclysm;
 import team.heather.cataclysm.item.lemegeton.LemegetonMenu;
 import team.heather.cataclysm.registry.CataclysmRegistry;
 
-public interface CataclysmMenuTypes extends CataclysmRegistry<MenuType<?>> {
+public interface CataclysmMenuTypes extends CataclysmRegistry {
 
     MenuType<LemegetonMenu> LEMEGETON = register("lemegeton", LemegetonMenu::new);
 

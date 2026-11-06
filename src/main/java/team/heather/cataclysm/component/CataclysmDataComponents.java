@@ -12,7 +12,7 @@ import team.heather.cataclysm.Cataclysm;
 import team.heather.cataclysm.registry.CataclysmRegistry;
 
 /** Persistent, network-synchronized item stack components. */
-public interface CataclysmDataComponents extends CataclysmRegistry<DataComponentType<?>> {
+public interface CataclysmDataComponents extends CataclysmRegistry {
 
     int MIN_UPGRADE_TIER = 1;
     int MAX_UPGRADE_TIER = 3;

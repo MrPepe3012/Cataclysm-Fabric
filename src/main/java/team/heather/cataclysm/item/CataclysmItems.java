@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-public interface CataclysmItems extends CataclysmRegistry<Item> {
+public interface CataclysmItems extends CataclysmRegistry {
 
     Item PARAGON_BLESSING = ItemFactory.register("paragon_blessing", properties -> new ParagonBlessingItem(properties, false), ItemFamily.PARAGON);
     Item PARAGON_PEARL = ItemFactory.register("paragon_pearl", EnderpearlItem::new, ItemFamily.PARAGON, item -> item.props(properties -> properties.stacksTo(16)));
@@ -145,6 +145,13 @@ public interface CataclysmItems extends CataclysmRegistry<Item> {
     Item CHALICE_OF_THE_OVERWORLD = ItemFactory.register("chalice_of_the_overworld", item -> item.palette(ItemPalette.CHALICE));
     Item CHALICE_OF_THE_NETHER = ItemFactory.register("chalice_of_the_nether", item -> item.palette(ItemPalette.CHALICE));
     Item CHALICE_OF_THE_END = ItemFactory.register("chalice_of_the_end", item -> item.palette(ItemPalette.CHALICE));
+
+    /** Every item of this mod, in registration order. */
+    default List<Item> contentOf() {
+        return BuiltInRegistries.ITEM.stream()
+            .filter(item -> BuiltInRegistries.ITEM.getKey(item).getNamespace().equals(Cataclysm.MOD_ID))
+            .toList();
+    }
 
     default List<ItemStack> getCreativeContent(HolderLookup.Provider registries) {
         var items = new ArrayList<>(this.contentOf());

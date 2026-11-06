@@ -19,7 +19,7 @@ import team.heather.cataclysm.registry.CataclysmRegistry;
 
 import java.util.function.Function;
 
-public interface CataclysmBlocks extends CataclysmRegistry<Block> {
+public interface CataclysmBlocks extends CataclysmRegistry {
 
     Block ARCANE_CORE = register("arcane_core", HeavyCoreBlock::new, BlockBehaviour.Properties.of()
         .mapColor(MapColor.METAL)

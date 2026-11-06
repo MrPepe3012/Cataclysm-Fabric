@@ -45,6 +45,10 @@ public final class PersistentItemCooldowns {
         }
     }
 
+    public static void reset(ServerPlayer player) {
+        remainingTicks(player).keySet().forEach(player.getCooldowns()::removeCooldown);
+    }
+
     private static Map<ResourceLocation, Integer> remainingTicks(ServerPlayer player) {
         var cooldowns = (ItemCooldownsMixin) player.getCooldowns();
         var remaining = new HashMap<ResourceLocation, Integer>();

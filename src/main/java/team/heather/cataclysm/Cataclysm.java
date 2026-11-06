@@ -5,6 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import team.heather.cataclysm.command.CataclysmCommand;
+import team.heather.cataclysm.command.ItemCooldownCommand;
 import team.heather.cataclysm.command.LemegetonCommand;
 import team.heather.cataclysm.command.MortalityCommand;
 import team.heather.cataclysm.command.PhaseCommand;
@@ -57,6 +58,7 @@ public final class Cataclysm implements ModInitializer {
         CataclysmCommand.registration()
             .add(4, "mortality", MortalityCommand::new)
             .add(4, "lemegeton", LemegetonCommand::new)
+            .add(4, "cooldown", ItemCooldownCommand::new)
             .add(4, "phase", PhaseCommand::new)
             .add(4, "ragnarok", RagnarokCommand::new)
             .done();

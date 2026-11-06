@@ -9,7 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
+/** Every command runs as /cataclysm <name>, and /<name> is its shortcut. */
 public abstract class CataclysmCommand {
+
+    private static final String ROOT = "cataclysm";
 
     protected abstract void defineSyntax(LiteralArgumentBuilder<CommandSourceStack> literal);
 
@@ -33,6 +36,9 @@ public abstract class CataclysmCommand {
                 commandSupplier.get().defineSyntax(literal);
 
                 dispatcher.register(literal);
+                dispatcher.register(Commands.literal(ROOT)
+                        .requires(source -> source.hasPermission(permission))
+                        .then(literal));
             }));
 
             return this;

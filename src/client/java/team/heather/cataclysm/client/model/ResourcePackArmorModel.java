@@ -6,7 +6,7 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 
-/** Calamity and Pale geometry ported from the resource pack's player armor models, with their 64x64 UVs. */
+/** Calamity, Pale and Mirage geometry ported from the resource pack's player armor models, with their 64x64 UVs. */
 public final class ResourcePackArmorModel {
     private ResourcePackArmorModel() {}
 
@@ -58,6 +58,26 @@ public final class ResourcePackArmorModel {
                 .texOffs(0, 16).addBox(0F, -12F, -2F, 4F, 12F, 4F, new CubeDeformation(0.8F)), PartPose.offsetAndRotation(-2F, 12F, 0F, 0F, 0F, 0F));
         root.getChild("right_leg").addOrReplaceChild("right_leg", CubeListBuilder.create()
                 .texOffs(0, 16).addBox(-4F, -12F, -2F, 4F, 12F, 4F, new CubeDeformation(0.8F)), PartPose.offsetAndRotation(2F, 12F, 0F, 0F, 0F, 0F));
+        return LayerDefinition.create(mesh, 64, 64);
+    }
+
+    public static LayerDefinition mirageLayer() {
+        var mesh = skeleton();
+        var helmet = mesh.getRoot().getChild("head").addOrReplaceChild("head", CubeListBuilder.create()
+                .texOffs(0, 0).addBox(-4F, -31F, -4F, 8F, 8F, 8F, new CubeDeformation(0.8F)), PartPose.offset(0F, 23F, 0F));
+        helmet.addOrReplaceChild("layer2", CubeListBuilder.create()
+                .texOffs(32, 0).addBox(-4F, -4F, -4F, 8F, 8F, 8F, new CubeDeformation(1F)), PartPose.offset(0F, -27F, 0F));
+        helmet.addOrReplaceChild("crest", CubeListBuilder.create()
+                .texOffs(0, 53).addBox(-1F, -35F, -4F, 2F, 3F, 8F, new CubeDeformation(0F)), PartPose.offset(0F, 1F, 0F));
+        var mirage = helmet.addOrReplaceChild("mirage_helmet", CubeListBuilder.create()
+                .texOffs(8, 32).addBox(-5.9F, -3.5F, -6.2F, 12F, 3F, 4F, new CubeDeformation(0F))
+                .texOffs(8, 45).addBox(-5.9F, -2.5F, -2.2F, 2F, 2F, 4F, new CubeDeformation(0F))
+                .texOffs(50, 38).addBox(-1.9F, -7.5F, -6.2F, 4F, 4F, 3F, new CubeDeformation(0F))
+                .texOffs(8, 39).addBox(-5.9F, 1.5F, -6.2F, 2F, 2F, 12F, new CubeDeformation(0F))
+                .texOffs(25, 39).addBox(-3.9F, 1.5F, 4.8F, 8F, 2F, 1F, new CubeDeformation(0F)), PartPose.offset(-0.1F, -27.5F, 0.2F));
+        mirage.addOrReplaceChild("mirrored", CubeListBuilder.create().mirror()
+                .texOffs(8, 45).addBox(4.1F, -2.5F, -2.2F, 2F, 2F, 4F, new CubeDeformation(0F))
+                .texOffs(8, 39).addBox(4.1F, 1.5F, -6.2F, 2F, 2F, 12F, new CubeDeformation(0F)), PartPose.ZERO);
         return LayerDefinition.create(mesh, 64, 64);
     }
 

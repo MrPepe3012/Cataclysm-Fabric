@@ -17,13 +17,13 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import team.heather.cataclysm.registry.CataclysmRegistry;
 import team.heather.cataclysm.Cataclysm;
 import team.heather.cataclysm.client.model.ResourcePackArmorModel;
+import team.heather.cataclysm.item.CataclysmItems;
 
 import java.util.function.Supplier;
 
-/** Shared renderer for Calamity and Pale; vanilla poses animate the custom resource-pack geometry. */
+/** Shared renderer for Calamity, Pale and Mirage; vanilla poses animate the custom resource-pack geometry. */
 public final class ResourcePackArmorRenderer implements ArmorRenderer, SimpleSynchronousResourceReloadListener {
     private final String name;
     private final ModelLayerLocation outerLayer;
@@ -39,8 +39,8 @@ public final class ResourcePackArmorRenderer implements ArmorRenderer, SimpleSyn
         this.innerLayer = layer("inner");
         this.outerBabyLayer = layer("outer_baby");
         this.innerBabyLayer = layer("inner_baby");
-        this.outerTexture = Cataclysm.createNamespacedKey("textures/entity/equipment/humanoid/" + name + ".png");
-        this.innerTexture = Cataclysm.createNamespacedKey("textures/entity/equipment/humanoid_leggings/" + name + ".png");
+        this.outerTexture = Cataclysm.resourceLocation("textures/entity/equipment/humanoid/" + name + ".png");
+        this.innerTexture = Cataclysm.resourceLocation("textures/entity/equipment/humanoid_leggings/" + name + ".png");
     }
 
     private HumanoidModel<HumanoidRenderState> outer;
@@ -50,17 +50,18 @@ public final class ResourcePackArmorRenderer implements ArmorRenderer, SimpleSyn
 
     public static void register() {
         register("calamity", ResourcePackArmorModel::calamityLayer,
-                CataclysmRegistry.ITEMS.CALAMITY_HELMET,
-                CataclysmRegistry.ITEMS.CALAMITY_CHESTPLATE,
-                CataclysmRegistry.ITEMS.CALAMITY_LEGGINGS,
-                CataclysmRegistry.ITEMS.CALAMITY_BOOTS
+                CataclysmItems.CALAMITY_HELMET,
+                CataclysmItems.CALAMITY_CHESTPLATE,
+                CataclysmItems.CALAMITY_LEGGINGS,
+                CataclysmItems.CALAMITY_BOOTS
         );
         register("pale", ResourcePackArmorModel::paleLayer,
-                CataclysmRegistry.ITEMS.PALE_HELMET,
-                CataclysmRegistry.ITEMS.PALE_CHESTPLATE,
-                CataclysmRegistry.ITEMS.PALE_LEGGINGS,
-                CataclysmRegistry.ITEMS.PALE_BOOTS
+                CataclysmItems.PALE_HELMET,
+                CataclysmItems.PALE_CHESTPLATE,
+                CataclysmItems.PALE_LEGGINGS,
+                CataclysmItems.PALE_BOOTS
         );
+        register("mirage", ResourcePackArmorModel::mirageLayer, CataclysmItems.MIRAGE_HELMET);
     }
 
     private static void register(String name,
@@ -123,7 +124,7 @@ public final class ResourcePackArmorRenderer implements ArmorRenderer, SimpleSyn
 
     @Override
     public ResourceLocation getFabricId() {
-        return Cataclysm.createNamespacedKey(this.name + "_armor_renderer");
+        return Cataclysm.resourceLocation(this.name + "_armor_renderer");
     }
 
     @Override
@@ -132,6 +133,6 @@ public final class ResourcePackArmorRenderer implements ArmorRenderer, SimpleSyn
     }
 
     private ModelLayerLocation layer(String name) {
-        return new ModelLayerLocation(Cataclysm.createNamespacedKey(this.name + "_armor"), name);
+        return new ModelLayerLocation(Cataclysm.resourceLocation(this.name + "_armor"), name);
     }
 }

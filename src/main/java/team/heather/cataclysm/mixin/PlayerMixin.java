@@ -9,8 +9,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import team.heather.cataclysm.item.effect.PersistentItemCooldowns;
-import team.heather.cataclysm.item.effect.WeaponHitEffects;
+import team.heather.cataclysm.item.behavior.PersistentItemCooldowns;
+import team.heather.cataclysm.item.behavior.WeaponHitProcessor;
 
 @Mixin(Player.class)
 public abstract class PlayerMixin {
@@ -19,7 +19,7 @@ public abstract class PlayerMixin {
     private void attack$0(Entity target, CallbackInfo callback) {
         Player attacker = (Player) (Object) this;
         if (target instanceof LivingEntity living) {
-            WeaponHitEffects.afterHit(attacker.getMainHandItem(), living, attacker);
+            WeaponHitProcessor.afterHit(attacker.getMainHandItem(), living, attacker);
         }
     }
 

@@ -7,31 +7,31 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.HoeItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.ShovelItem;
 import net.minecraft.world.item.ToolMaterial;
+import net.minecraft.world.item.TridentItem;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.minecraft.world.item.component.Weapon;
 import net.minecraft.world.item.equipment.ArmorMaterial;
 import net.minecraft.world.item.equipment.ArmorType;
 import net.minecraft.world.item.equipment.trim.ArmorTrim;
 import net.minecraft.world.item.equipment.trim.TrimMaterial;
 import net.minecraft.world.item.equipment.trim.TrimPattern;
-import org.jetbrains.annotations.Nullable;
 import team.heather.cataclysm.Cataclysm;
 
 import java.util.ArrayList;
@@ -58,7 +58,6 @@ public final class ItemFactory {
 
     private Item.Properties props = new Item.Properties();
     private Function<Item.Properties, Item> constructor = Item::new;
-    private @Nullable ItemPalette palette;
     private boolean hasAttributes;
 
     private ItemFactory(String path) {
@@ -71,6 +70,14 @@ public final class ItemFactory {
 
     public static Item register(String path, ItemFamily family) {
         return new ItemFactory(path).family(family).build();
+    }
+
+    public static Item register(String path, Rarity rarity) {
+        return new ItemFactory(path).rarity(rarity).build();
+    }
+
+    public static Item register(String path, ItemFamily family, Rarity rarity) {
+        return new ItemFactory(path).family(family).rarity(rarity).build();
     }
 
     public static Item register(String path, UnaryOperator<ItemFactory> configure) {
@@ -120,7 +127,6 @@ public final class ItemFactory {
     }
 
     private ItemFactory family(ItemFamily family) {
-        this.palette = family.palette();
         this.props = family.apply(this.props);
         return this;
     }
@@ -157,12 +163,23 @@ public final class ItemFactory {
         return this;
     }
 
-    public <T> ItemFactory variants(DataComponentType<T> component, List<T> values) {
-        if (values.isEmpty()) {
+    public ItemFactory trident(double damage, double speed) {
+        this.constructor = TridentItem::new;
+        return props(properties -> properties.stacksTo(1).enchantable(1)
+                .component(DataComponents.TOOL, TridentItem.createToolProperties())
+                .component(DataComponents.WEAPON, new Weapon(1)))
+                .damage(damage)
+                .speed(speed);
+    }
+
+    /** The first value is also the item's default. */
+    public <T> ItemFactory variants(DataComponentType<T> component, T[] values) {
+        if (values.length == 0) {
             throw new IllegalArgumentException("A template must declare at least one variant");
         }
+        this.props.component(component, values[0]);
         this.creativeVariants.clear();
-        for (T value : List.copyOf(values)) {
+        for (T value : values) {
             this.creativeVariants.add(stack -> {
                 stack.set(component, value);
                 return stack;
@@ -171,9 +188,8 @@ public final class ItemFactory {
         return this;
     }
 
-    public ItemFactory palette(ItemPalette palette) {
-        this.palette = palette;
-        return this;
+    public ItemFactory rarity(Rarity rarity) {
+        return props(properties -> properties.rarity(rarity));
     }
 
     public ItemFactory glint() {
@@ -188,8 +204,7 @@ public final class ItemFactory {
     }
 
     public Item build() {
-        var key = ResourceKey.create(Registries.ITEM, Cataclysm.createNamespacedKey(this.path));
-        applyDisplay(key.location());
+        var key = ResourceKey.create(Registries.ITEM, Cataclysm.resourceLocation(this.path));
         if (this.hasAttributes) {
             this.props.component(DataComponents.ATTRIBUTE_MODIFIERS, this.attributes.build());
         }
@@ -214,17 +229,7 @@ public final class ItemFactory {
         return this;
     }
 
-    private void applyDisplay(ResourceLocation id) {
-        var nameStyle = this.palette != null ? plain(this.palette.base()) : Style.EMPTY.withItalic(false);
-        this.props.component(DataComponents.ITEM_NAME,
-                Component.empty().append(Component.translatable(id.toLanguageKey("item")).withStyle(nameStyle)));
-    }
-
     private static float toolDamage(double damage) {
         return (float) damage - TOOL_MATERIAL.attackDamageBonus();
-    }
-
-    private static Style plain(int rgb) {
-        return Style.EMPTY.withColor(rgb).withItalic(false);
     }
 }

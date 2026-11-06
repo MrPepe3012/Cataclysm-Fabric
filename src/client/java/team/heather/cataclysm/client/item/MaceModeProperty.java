@@ -6,20 +6,20 @@ import net.minecraft.client.renderer.item.properties.numeric.RangeSelectItemMode
 import net.minecraft.client.renderer.item.properties.numeric.RangeSelectItemModelProperty;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import team.heather.cataclysm.registry.CataclysmRegistry;
 import team.heather.cataclysm.Cataclysm;
-import team.heather.cataclysm.component.data.MirageMaceMode;
+import team.heather.cataclysm.item.data.CataclysmDataComponents;
+import team.heather.cataclysm.item.data.MirageMaceComponent;
 
 public record MaceModeProperty() implements RangeSelectItemModelProperty {
     public static final MapCodec<MaceModeProperty> CODEC = MapCodec.unit(new MaceModeProperty());
 
     public static void register() {
-        RangeSelectItemModelProperties.ID_MAPPER.put(Cataclysm.createNamespacedKey("mace_mode"), CODEC);
+        RangeSelectItemModelProperties.ID_MAPPER.put(Cataclysm.resourceLocation("mace_mode"), CODEC);
     }
 
     @Override
     public float get(ItemStack stack, ClientLevel level, LivingEntity entity, int seed) {
-        return stack.getOrDefault(CataclysmRegistry.DATA_COMPONENTS.MACE_MODE, MirageMaceMode.WIND).ordinal();
+        return stack.getOrDefault(CataclysmDataComponents.MIRAGE_MACE, MirageMaceComponent.WIND).ordinal();
     }
 
     @Override

@@ -4,6 +4,7 @@ import net.minecraft.client.model.SkullModelBase;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.geom.ModelPart;
+
 import java.util.List;
 import java.util.Map;
 
@@ -14,8 +15,8 @@ public final class GolemSkullModel extends SkullModelBase {
     }
 
     private static ModelPart normalize(ModelPart head) {
-        // Vanilla head: body z=-5.5..2.5, nose bottom y=-1. Center the body and rest the nose at y=0.
-        head.setPos(0, 1, 1.5F);
+        // Vanilla head: body z=-5.5..2.5, nose bottom y=-1. Center the body and sink the nose one pixel below y=0.
+        head.setPos(0, 2, 1.5F);
         // Rotate around the normalized skull origin, not the golem's original off-center pivot.
         return new ModelPart(List.of(), Map.of("head", head));
     }

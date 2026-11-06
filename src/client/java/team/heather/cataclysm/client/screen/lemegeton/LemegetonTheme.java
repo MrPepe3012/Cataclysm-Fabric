@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import team.heather.cataclysm.Cataclysm;
-import team.heather.cataclysm.component.data.lemegeton.LemegetonUpgrade;
+import team.heather.cataclysm.item.data.LemegetonComponent;
 
 import java.io.IOException;
 
@@ -22,8 +22,8 @@ final class LemegetonTheme {
     static final int RUBRIC = 0xFF8E1F1A;
     static final int BRIGHT_RUBRIC = 0xFFB02A22;
 
-    private static final ResourceLocation BOOK = Cataclysm.createNamespacedKey("textures/gui/lemegeton/book.png");
-    private static final ResourceLocation SEALS = Cataclysm.createNamespacedKey("textures/gui/lemegeton/seals.png");
+    private static final ResourceLocation BOOK = Cataclysm.resourceLocation("textures/gui/lemegeton/book.png");
+    private static final ResourceLocation SEALS = Cataclysm.resourceLocation("textures/gui/lemegeton/seals.png");
     private static final int BOOK_WIDTH = 352;
     private static final int BOOK_HEIGHT = 192;
     private static final int SEALS_WIDTH = 124;
@@ -63,10 +63,10 @@ final class LemegetonTheme {
      * Redraws the mob effect's own sprite as a white ink engraving, ready to be tinted.
      * It reads the live resource, so resource packs and sprites from other mods are respected.
      */
-    static ResourceLocation engrave(LemegetonUpgrade upgrade) {
+    static ResourceLocation engrave(LemegetonComponent.Upgrade upgrade) {
         var effect = upgrade.effect().unwrapKey().orElseThrow().location();
         var sprite = effect.withPath(path -> "textures/mob_effect/" + path + ".png");
-        var engraving = Cataclysm.createNamespacedKey("lemegeton_engraving/" + upgrade.getSerializedName());
+        var engraving = Cataclysm.resourceLocation("lemegeton_engraving/" + upgrade.getSerializedName());
         var client = Minecraft.getInstance();
         try (var stream = client.getResourceManager().open(sprite);
              var source = NativeImage.read(stream);

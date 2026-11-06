@@ -11,8 +11,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
-import team.heather.cataclysm.component.data.lemegeton.LemegetonUpgrade;
-import team.heather.cataclysm.item.lemegeton.LemegetonMenu;
+import team.heather.cataclysm.item.data.LemegetonComponent;
+import team.heather.cataclysm.menu.lemegeton.LemegetonMenu;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
@@ -35,16 +35,16 @@ final class SealButton extends AbstractButton {
     private static final float APPEAR_MILLIS = 300;
     private static final float FLASH_MILLIS = 800;
 
-    @Getter private final LemegetonUpgrade upgrade;
+    @Getter private final LemegetonComponent.Upgrade upgrade;
     private final LemegetonMenu menu;
     private final ResourceLocation engraving;
     private final long appearsAt;
     private final BooleanSupplier selected;
-    private final Consumer<LemegetonUpgrade> onSelect;
+    private final Consumer<LemegetonComponent.Upgrade> onSelect;
     private long flashedAt;
 
-    SealButton(int x, int y, LemegetonUpgrade upgrade, LemegetonMenu menu, ResourceLocation engraving, long appearsAt,
-               BooleanSupplier selected, Consumer<LemegetonUpgrade> onSelect) {
+    SealButton(int x, int y, LemegetonComponent.Upgrade upgrade, LemegetonMenu menu, ResourceLocation engraving, long appearsAt,
+               BooleanSupplier selected, Consumer<LemegetonComponent.Upgrade> onSelect) {
         super(x, y, SIZE, SIZE, Component.translatable(upgrade.translationKey()));
         this.upgrade = upgrade;
         this.menu = menu;

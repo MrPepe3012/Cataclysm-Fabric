@@ -17,7 +17,7 @@ public record CustomNameProperty(String name) implements ConditionalItemModelPro
             .xmap(CustomNameProperty::new, CustomNameProperty::name);
 
     public static void register() {
-        ConditionalItemModelProperties.ID_MAPPER.put(Cataclysm.createNamespacedKey("custom_name"), CODEC);
+        ConditionalItemModelProperties.ID_MAPPER.put(Cataclysm.resourceLocation("custom_name"), CODEC);
     }
 
     @Override

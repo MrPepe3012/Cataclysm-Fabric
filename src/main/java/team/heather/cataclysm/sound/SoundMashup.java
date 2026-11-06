@@ -36,9 +36,11 @@ public final class SoundMashup {
     public static final SoundMashup MIRAGE_HOOK_MODE = new SoundMashup(SoundSource.PLAYERS,
             new SoundContext(SoundEvents.END_PORTAL_FRAME_FILL, 0.8F, 0.6F),
             new SoundContext(SoundEvents.MACE_SMASH_GROUND_HEAVY, 0.5F, 0.6F));
+
     public static final SoundMashup MIRAGE_NORMAL_MODE = new SoundMashup(SoundSource.PLAYERS,
             new SoundContext(SoundEvents.END_PORTAL_FRAME_FILL, 0.8F, 1.55F),
             new SoundContext(SoundEvents.MACE_SMASH_GROUND_HEAVY, 0.5F, 0.6F));
+
     public static final SoundMashup MIRAGE_HOOK = new SoundMashup(SoundSource.PLAYERS,
             new SoundContext(SoundEvents.FISHING_BOBBER_THROW, 0.85F, 1.15F),
             new SoundContext(SoundEvents.TRIDENT_RIPTIDE_1.value(), 0.85F, 1.15F),
@@ -51,20 +53,15 @@ public final class SoundMashup {
         this(SoundSource.MASTER, contexts);
     }
 
-    private SoundMashup(SoundSource source,
-                        SoundContext... contexts) {
+    private SoundMashup(SoundSource source, SoundContext... contexts) {
         this.source = source;
         this.contexts = contexts;
     }
 
     public void playAtEntity(Entity entity) {
+        var level = entity.level();
         for (SoundContext context : this.contexts) {
-            try (var level = entity.level()) {
-                level.playSound(null, entity.blockPosition(), context.sound(), this.source, context.volume(), context.pitch());
-            }
-            catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            level.playSound(null, entity.blockPosition(), context.sound(), this.source, context.volume(), context.pitch());
         }
     }
 

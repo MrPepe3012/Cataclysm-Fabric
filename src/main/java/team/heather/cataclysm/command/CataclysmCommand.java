@@ -1,12 +1,9 @@
-
 package team.heather.cataclysm.command;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.contents.TranslatableContents;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,15 +15,6 @@ public abstract class CataclysmCommand {
 
     public static CommandRegistration registration() {
         return new CommandRegistration();
-    }
-
-    static Component withArguments(Component template,
-                                   Object... arguments) {
-        if (template.getContents() instanceof TranslatableContents contents) {
-            return Component.translatable(contents.getKey(), arguments).withStyle(template.getStyle());
-        }
-
-        throw new IllegalArgumentException("Expected a translatable component");
     }
 
     public static final class CommandRegistration {

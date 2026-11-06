@@ -7,8 +7,8 @@ import net.minecraft.world.entity.projectile.ThrownEnderpearl;
 import net.minecraft.world.level.portal.TeleportTransition;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import team.heather.cataclysm.registry.CataclysmRegistry;
-import team.heather.cataclysm.item.paragon.ParagonEffects;
+import team.heather.cataclysm.item.CataclysmItems;
+import team.heather.cataclysm.item.feature.paragon.ParagonProcessor;
 
 @Mixin(ThrownEnderpearl.class)
 public abstract class ThrownEnderpearlMixin {
@@ -20,7 +20,7 @@ public abstract class ThrownEnderpearlMixin {
         ThrownEnderpearl pearl = (ThrownEnderpearl) (Object) this;
         ServerPlayer teleported = original.call(player, transition);
 
-        if (teleported != null && pearl.getItem().is(CataclysmRegistry.ITEMS.PARAGON_PEARL)) ParagonEffects.onPearlTeleport(teleported);
+        if (teleported != null && pearl.getItem().is(CataclysmItems.PARAGON_PEARL)) ParagonProcessor.onPearlTeleport(teleported);
 
         return teleported;
     }

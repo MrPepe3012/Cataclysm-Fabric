@@ -9,8 +9,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import team.heather.cataclysm.registry.CataclysmRegistry;
 import team.heather.cataclysm.client.model.MirageElytraModel;
+import team.heather.cataclysm.item.CataclysmItems;
 
 @Mixin(WingsLayer.class)
 public abstract class WingsLayerMixin {
@@ -22,7 +22,7 @@ public abstract class WingsLayerMixin {
             at = @At("STORE"), ordinal = 0)
     private ElytraModel render$0(ElytraModel vanilla, PoseStack pose, MultiBufferSource buffers, int light,
                                  HumanoidRenderState state, float yaw, float pitch) {
-        if (!state.chestEquipment.is(CataclysmRegistry.ITEMS.MIRAGE_ELYTRA)) {
+        if (!state.chestEquipment.is(CataclysmItems.MIRAGE_ELYTRA)) {
             return vanilla;
         }
         if (state.isBaby) {

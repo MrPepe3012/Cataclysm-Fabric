@@ -38,7 +38,9 @@
   },
   "custom": {
     "cardinal-components": [
-      "cataclysm:mortality"
+      "cataclysm:mortality",
+      "cataclysm:phase",
+      "cataclysm:ragnarok"
     ]
   }
 }

@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import team.heather.cataclysm.registry.CataclysmRegistry;
+import team.heather.cataclysm.item.CataclysmItems;
 import team.heather.cataclysm.sound.SoundMashup;
 
 @Mixin(TridentItem.class)
@@ -23,7 +23,7 @@ public abstract class TridentItemMixin {
                                 int remainingTicks,
                                 CallbackInfoReturnable<Boolean> callback) {
         boolean riptide = EnchantmentHelper.getTridentSpinAttackStrength(stack, user) > 0.0F;
-        if (callback.getReturnValue() && level instanceof ServerLevel && stack.is(CataclysmRegistry.ITEMS.ARCANE_TRIDENT) && riptide) {
+        if (callback.getReturnValue() && level instanceof ServerLevel && stack.is(CataclysmItems.ARCANE_TRIDENT) && riptide) {
             SoundMashup.ARCANE_TRIDENT.playAtEntity(user);
         }
     }

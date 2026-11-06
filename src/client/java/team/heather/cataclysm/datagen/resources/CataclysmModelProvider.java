@@ -8,7 +8,7 @@ import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.renderer.item.ItemModels;
 import net.minecraft.core.registries.BuiltInRegistries;
-import team.heather.cataclysm.registry.CataclysmRegistry;
+import team.heather.cataclysm.item.CataclysmItems;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -28,7 +28,7 @@ public class CataclysmModelProvider extends FabricModelProvider {
     @Override
     public void generateItemModels(ItemModelGenerators generator) {
         // Decode the imported definitions so datagen validates animations and custom properties too.
-        CataclysmRegistry.ITEMS.contentOf().forEach(item -> {
+        CataclysmItems.getContent().forEach(item -> {
             String path = "/cataclysm/datagen/items/" + BuiltInRegistries.ITEM.getKey(item).getPath() + ".json";
             try (var reader = new InputStreamReader(Objects.requireNonNull(
                     this.getClass().getResourceAsStream(path), "Missing item model definition: " + path), StandardCharsets.UTF_8)) {

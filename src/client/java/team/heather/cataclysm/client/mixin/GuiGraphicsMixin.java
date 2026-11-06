@@ -16,11 +16,11 @@ import team.heather.cataclysm.mixin.ItemCooldownsMixin;
 
 import java.util.Locale;
 
-/** Writes the time left on every item in cooldown in the top right corner of its slot, clear of the stack count. */
+/** Writes the time left on every item in cooldown at the top center of its slot. */
 @Mixin(GuiGraphics.class)
 public abstract class GuiGraphicsMixin {
 
-    @Unique private static final int SLOT_RIGHT = 16;
+    @Unique private static final int SLOT_CENTER = 8;
     @Unique private static final int SLOT_MARGIN = 1;
     /** The same layer vanilla uses for the stack count, so the text stays above the item. */
     @Unique private static final float TEXT_DEPTH = 200;
@@ -53,9 +53,9 @@ public abstract class GuiGraphicsMixin {
         float scale = (float) Math.max(guiScale / GUI_SCALE_PER_TEXT_PIXEL, 1) / guiScale;
         var pose = this.pose();
         pose.pushPose();
-        pose.translate(x + SLOT_RIGHT - SLOT_MARGIN, y + SLOT_MARGIN, TEXT_DEPTH);
+        pose.translate(x + SLOT_CENTER, y + SLOT_MARGIN, TEXT_DEPTH);
         pose.scale(scale, scale, 1);
-        this.drawString(font, text, -font.width(text), 0, TEXT_COLOR);
+        this.drawString(font, text, -font.width(text) / 2, 0, TEXT_COLOR);
         pose.popPose();
     }
 

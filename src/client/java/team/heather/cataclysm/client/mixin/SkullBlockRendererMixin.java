@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import team.heather.cataclysm.client.model.GolemSkullModel;
-import team.heather.cataclysm.block.GolemSkullType;
+import team.heather.cataclysm.block.CataclysmBlocks;
 
 @Mixin(SkullBlockRenderer.class)
 public abstract class SkullBlockRendererMixin {
@@ -20,7 +20,7 @@ public abstract class SkullBlockRendererMixin {
     @Inject(method = "createModel", at = @At("HEAD"), cancellable = true)
     private static void createModel$0(EntityModelSet models, SkullBlock.Type type,
                                       CallbackInfoReturnable<SkullModelBase> callback) {
-        if (type == GolemSkullType.GOLEM) {
+        if (type == CataclysmBlocks.GOLEM_HEAD.type()) {
             callback.setReturnValue(new GolemSkullModel(models));
         }
     }
@@ -29,7 +29,7 @@ public abstract class SkullBlockRendererMixin {
             at = @At("HEAD"), cancellable = true)
     private static void getRenderType$0(SkullBlock.Type type, ResolvableProfile profile, ResourceLocation override,
                                         CallbackInfoReturnable<RenderType> callback) {
-        if (type == GolemSkullType.GOLEM) {
+        if (type == CataclysmBlocks.GOLEM_HEAD.type()) {
             ResourceLocation texture = override != null
                     ? override
                     : ResourceLocation.withDefaultNamespace("textures/entity/iron_golem/iron_golem.png");

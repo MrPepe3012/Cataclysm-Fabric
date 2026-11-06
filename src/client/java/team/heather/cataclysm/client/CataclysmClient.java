@@ -2,10 +2,11 @@ package team.heather.cataclysm.client;
 
 import net.fabricmc.api.ClientModInitializer;
 import team.heather.cataclysm.client.armor.ResourcePackArmorRenderer;
-import team.heather.cataclysm.client.item.UpgradeTierProperty;
-import team.heather.cataclysm.client.item.PickaxeModeProperty;
 import team.heather.cataclysm.client.item.CustomNameProperty;
 import team.heather.cataclysm.client.item.MaceModeProperty;
+import team.heather.cataclysm.client.item.PickaxeModeProperty;
+import team.heather.cataclysm.client.item.UpgradeTierProperty;
+import team.heather.cataclysm.client.network.receiver.ClientReceiver;
 import team.heather.cataclysm.client.screen.lemegeton.LemegetonScreen;
 
 public class CataclysmClient implements ClientModInitializer {
@@ -18,5 +19,6 @@ public class CataclysmClient implements ClientModInitializer {
         MaceModeProperty.register();
         ResourcePackArmorRenderer.register();
         LemegetonScreen.register();
+        ClientReceiver.initialize();
     }
 }

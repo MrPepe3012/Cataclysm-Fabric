@@ -1,11 +1,11 @@
 package team.heather.cataclysm.util;
 
-import team.heather.cataclysm.Cataclysm;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.server.level.ServerPlayer;
+import team.heather.cataclysm.server.CataclysmServer;
 
 public final class CataclysmBroadcast {
     public static final String TOTEM_USE = key("totem_use");
@@ -21,7 +21,7 @@ public final class CataclysmBroadcast {
     private CataclysmBroadcast() {}
 
     public static void broadcast(String key, Object... args) {
-        Cataclysm.minecraftServer().getPlayerList().getPlayers().forEach(player -> player.sendSystemMessage(build(key, args)));
+        CataclysmServer.getInstance().getServer().getPlayerList().getPlayers().forEach(player -> player.sendSystemMessage(build(key, args)));
     }
 
     public static void send(ServerPlayer player, String key, Object... args) {

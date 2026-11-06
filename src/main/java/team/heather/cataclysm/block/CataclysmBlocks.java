@@ -1,69 +1,69 @@
 package team.heather.cataclysm.block;
 
+import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.StandingAndWallBlockItem;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.HeavyCoreBlock;
 import net.minecraft.world.level.block.SkullBlock;
-import net.minecraft.world.level.block.WallSkullBlock;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.WallSkullBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
-import net.minecraft.world.level.material.MapColor;
-import net.minecraft.world.level.material.PushReaction;
 import team.heather.cataclysm.Cataclysm;
-import team.heather.cataclysm.registry.CataclysmRegistry;
 
 import java.util.function.Function;
 
-public interface CataclysmBlocks extends CataclysmRegistry {
+public interface CataclysmBlocks {
 
-    Block ARCANE_CORE = register("arcane_core", HeavyCoreBlock::new, BlockBehaviour.Properties.of()
-        .mapColor(MapColor.METAL)
-        .instrument(NoteBlockInstrument.SNARE)
-        .sound(withPitch(SoundType.HEAVY_CORE, 0.9F))
-        .strength(10)
-        .pushReaction(PushReaction.NORMAL)
-        .explosionResistance(1200));
+    SoundType ARCANE_CORE_SOUND = new SoundType(1, 0.9F, SoundEvents.HEAVY_CORE_BREAK, SoundEvents.HEAVY_CORE_STEP, SoundEvents.HEAVY_CORE_PLACE, SoundEvents.HEAVY_CORE_HIT, SoundEvents.HEAVY_CORE_FALL);
 
-    Block GOLEM_HEAD = register("golem_head", properties -> new SkullBlock(GolemSkullType.GOLEM, properties));
-    Block GOLEM_WALL_HEAD = register("golem_wall_head", properties -> new WallSkullBlock(GolemSkullType.GOLEM, properties));
+    Block ARCANE_CORE = register("arcane_core", HeavyCoreBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.HEAVY_CORE).sound(ARCANE_CORE_SOUND));
+    Head GOLEM_HEAD = registerHead("golem");
 
-    @Override
-    default void onBootstrap() {
-        BlockEntityType.SKULL.addSupportedBlock(GOLEM_HEAD);
-        BlockEntityType.SKULL.addSupportedBlock(GOLEM_WALL_HEAD);
-    }
-
-    private static Block register(String path,
-                                  Function<BlockBehaviour.Properties, Block> factory) {
-        return register(path, factory, BlockBehaviour.Properties.of()
-            .strength(1)
-            .noOcclusion()
-            .sound(SoundType.STONE)
-            .instrument(NoteBlockInstrument.CUSTOM_HEAD));
-    }
+    static void initialize() {}
 
     private static Block register(String path,
                                   Function<BlockBehaviour.Properties, Block> factory,
                                   BlockBehaviour.Properties properties) {
-        var key = ResourceKey.create(Registries.BLOCK, Cataclysm.createNamespacedKey(path));
+        var key = ResourceKey.create(Registries.BLOCK, Cataclysm.resourceLocation(path));
         return Registry.register(BuiltInRegistries.BLOCK, key, factory.apply(properties.setId(key)));
     }
 
-    private static SoundType withPitch(SoundType sound,
-                                       float multiplier) {
-        return new SoundType(
-                sound.getVolume(),
-                sound.getPitch() * multiplier,
-                sound.getBreakSound(),
-                sound.getStepSound(),
-                sound.getPlaceSound(),
-                sound.getHitSound(),
-                sound.getFallSound()
-        );
+    private static Head registerHead(String name) {
+        var id = Cataclysm.resourceLocation(name).toString();
+        SkullBlock.Type type = () -> id;
+        SkullBlock.Type.TYPES.put(id, type);
+
+        var block = register(name + "_head", properties -> new SkullBlock(type, properties), headProperties());
+        var wallBlock = register(name + "_wall_head", properties -> new WallSkullBlock(type, properties), headProperties());
+        BlockEntityType.SKULL.addSupportedBlock(block);
+        BlockEntityType.SKULL.addSupportedBlock(wallBlock);
+
+        return new Head(type, block, wallBlock);
+    }
+
+    private static BlockBehaviour.Properties headProperties() {
+        return BlockBehaviour.Properties.of()
+            .strength(1)
+            .noOcclusion()
+            .sound(SoundType.STONE)
+            .instrument(NoteBlockInstrument.CUSTOM_HEAD);
+    }
+
+    record Head(SkullBlock.Type type,
+                Block block,
+                Block wallBlock) {
+
+        public Item toItem(Item.Properties properties) {
+            return new StandingAndWallBlockItem(this.block, this.wallBlock, Direction.DOWN, properties);
+        }
     }
 }

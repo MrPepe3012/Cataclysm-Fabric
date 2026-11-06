@@ -14,7 +14,8 @@
     "BlockMixin",
     "ItemPropertiesMixin",
     "FoodDataMixin",
-    "ItemCooldownsMixin"
+    "ItemCooldownsMixin",
+    "MobEffectInstanceMixin"
   ],
   "injectors": {
     "defaultRequire": 1

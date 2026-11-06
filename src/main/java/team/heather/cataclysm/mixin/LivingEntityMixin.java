@@ -12,23 +12,33 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.BlocksAttacks;
 import net.minecraft.world.item.component.DeathProtection;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import team.heather.cataclysm.effect.effect.harmful.MortemMobEffect;
-import team.heather.cataclysm.item.arcane.ArcaneEffects;
-import team.heather.cataclysm.item.armor.ArmorSetEffects;
-import team.heather.cataclysm.item.effect.PassiveItemEffects;
-import team.heather.cataclysm.item.totem.UseTotemCallback;
+import team.heather.cataclysm.effect.CataclysmMobEffects;
+import team.heather.cataclysm.effect.beneficial.CleansingMobEffect;
+import team.heather.cataclysm.effect.callback.AllowMobEffectCallback;
+import team.heather.cataclysm.effect.callback.MobEffectChangedCallback;
+import team.heather.cataclysm.effect.harmful.MortemMobEffect;
+import team.heather.cataclysm.effect.harmful.PaleCorrosionMobEffect;
+import team.heather.cataclysm.item.behavior.PassiveItemProcessor;
+import team.heather.cataclysm.item.feature.arcane.ArcaneProcessor;
+import team.heather.cataclysm.item.feature.armor.ArmorSetProcessor;
+import team.heather.cataclysm.item.feature.totem.UseTotemCallback;
+
+import java.util.Collection;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin {
@@ -38,15 +48,79 @@ public abstract class LivingEntityMixin {
                                ServerLevel level,
                                DamageSource damageSource) {
         LivingEntity self = (LivingEntity) (Object) this;
-        return PassiveItemEffects.modifyDamage(self, damageSource, ArmorSetEffects.modifyDamage(self, damageSource, amount));
+        return PassiveItemProcessor.modifyDamage(self, damageSource, ArmorSetProcessor.modifyDamage(self, damageSource, amount));
     }
 
     @Inject(method = "canBeAffected", at = @At("HEAD"), cancellable = true)
     private void canBeAffected$0(MobEffectInstance effect,
                                  CallbackInfoReturnable<Boolean> callback) {
         LivingEntity self = (LivingEntity) (Object) this;
-        if (ArmorSetEffects.isImmuneTo(self, effect.getEffect()) || PassiveItemEffects.isImmuneTo(self, effect.getEffect())) {
+        boolean cleansed = !self.level().isClientSide && CleansingMobEffect.blocks(self, effect);
+        if (cleansed || ArmorSetProcessor.isImmuneTo(self, effect.getEffect()) || PassiveItemProcessor.isImmuneTo(self, effect.getEffect())) {
             callback.setReturnValue(false);
+        }
+    }
+
+    @Inject(method = "onEffectsRemoved", at = @At("HEAD"))
+    private void onEffectsRemoved$0(Collection<MobEffectInstance> effects,
+                                    CallbackInfo callback) {
+        LivingEntity self = (LivingEntity) (Object) this;
+        for (MobEffectInstance effect : effects) {
+            if (effect.is(CataclysmMobEffects.PALE_CORROSION)) {
+                PaleCorrosionMobEffect.restoreHearts(self);
+            }
+        }
+    }
+
+    @Inject(method = "onEffectsRemoved", at = @At("TAIL"))
+    private void onEffectsRemoved$1(Collection<MobEffectInstance> effects,
+                                    CallbackInfo callback) {
+        LivingEntity self = (LivingEntity) (Object) this;
+        if (self.level().isClientSide) return;
+
+        for (MobEffectInstance effect : effects) {
+            var change = effect.getDuration() == 0 ? MobEffectChangedCallback.Change.EXPIRED : MobEffectChangedCallback.Change.REMOVED;
+            MobEffectChangedCallback.EVENT.invoker().onEffectChanged(self, effect, change, null);
+        }
+    }
+
+    @Inject(method = "tickEffects", at = @At("HEAD"))
+    private void tickEffects$0(CallbackInfo callback) {
+        LivingEntity self = (LivingEntity) (Object) this;
+        if (self.level() instanceof ServerLevel level) {
+            CleansingMobEffect.cleanseEffects(level, self);
+        }
+    }
+
+    @Inject(method = "addEffect(Lnet/minecraft/world/effect/MobEffectInstance;Lnet/minecraft/world/entity/Entity;)Z", at = @At("HEAD"), cancellable = true)
+    private void addEffect$0(MobEffectInstance effect,
+                             @Nullable Entity source,
+                             CallbackInfoReturnable<Boolean> callback) {
+        LivingEntity self = (LivingEntity) (Object) this;
+        if (!self.level().isClientSide && !AllowMobEffectCallback.EVENT.invoker().allowEffect(self, effect, source)) {
+            callback.setReturnValue(false);
+        }
+    }
+
+    @Inject(method = "onEffectAdded", at = @At("TAIL"))
+    private void onEffectAdded$0(MobEffectInstance effect,
+                                 @Nullable Entity source,
+                                 CallbackInfo callback) {
+        LivingEntity self = (LivingEntity) (Object) this;
+        if (!self.level().isClientSide) {
+            MobEffectChangedCallback.EVENT.invoker().onEffectChanged(self, effect, MobEffectChangedCallback.Change.ADDED, source);
+        }
+    }
+
+    /** Vanilla also calls this every 30 seconds to resync effects that did not change. */
+    @Inject(method = "onEffectUpdated", at = @At("TAIL"))
+    private void onEffectUpdated$0(MobEffectInstance effect,
+                                   boolean changed,
+                                   @Nullable Entity source,
+                                   CallbackInfo callback) {
+        LivingEntity self = (LivingEntity) (Object) this;
+        if (changed && !self.level().isClientSide) {
+            MobEffectChangedCallback.EVENT.invoker().onEffectChanged(self, effect, MobEffectChangedCallback.Change.UPDATED, source);
         }
     }
 
@@ -60,7 +134,7 @@ public abstract class LivingEntityMixin {
                                      Operation<Void> original,
                                      @Local(argsOnly = true) DamageSource source) {
         original.call(blocking, level, stack, defender, hand, blocked);
-        ArcaneEffects.onBlockedDamage(defender, stack, source, blocked);
+        ArcaneProcessor.onBlockedDamage(defender, stack, source, blocked);
     }
 
     @Inject(method = "checkTotemDeathProtection", at = @At("HEAD"), cancellable = true)
@@ -96,8 +170,7 @@ public abstract class LivingEntityMixin {
 
     /**
      * Consumes one totem from the first hand holding one and returns a copy of it, or {@code null} when none
-     * is held or Mortem blocks it. Both mods replace the vanilla method at HEAD; asking here keeps Mortem
-     * working whichever runs first.
+     * is held or Mortem blocks it.
      */
     @Unique
     private ItemStack takeTotem$0(DamageSource damageSource) {

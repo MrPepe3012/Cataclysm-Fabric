@@ -6,11 +6,15 @@ import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import team.heather.cataclysm.registry.CataclysmRegistry;
-import team.heather.cataclysm.component.data.lemegeton.LemegetonUpgrade;
-import team.heather.cataclysm.item.lemegeton.LemegetonMenu;
+import team.heather.cataclysm.item.CataclysmItems;
+import team.heather.cataclysm.item.data.CataclysmDataComponents;
+import team.heather.cataclysm.item.data.LemegetonComponent;
+import team.heather.cataclysm.item.data.UpgradeTierComponent;
+import team.heather.cataclysm.menu.CataclysmMenus;
+import team.heather.cataclysm.menu.lemegeton.LemegetonMenu;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -23,7 +27,7 @@ import java.util.Map;
  */
 public final class LemegetonScreen extends AbstractContainerScreen<LemegetonMenu> {
 
-    private static final LemegetonUpgrade[] UPGRADES = LemegetonUpgrade.values();
+    private static final LemegetonComponent.Upgrade[] UPGRADES = LemegetonComponent.Upgrade.values();
 
     private static final int BOOK_WIDTH = 352;
     private static final int BOOK_HEIGHT = 192;
@@ -44,20 +48,20 @@ public final class LemegetonScreen extends AbstractContainerScreen<LemegetonMenu
     private static final int DESCRIPTION_Y = 120;
     private static final int TEXT_WIDTH = 140;
     private static final int PACT_Y = 140;
-    private static final int HINT_Y = 160;
+    private static final int HINT_CENTER_Y = 169;
     private static final int HINT_WIDTH = 132;
     private static final int ICON_SIZE = 16;
     private static final int ICON_GAP = 4;
     private static final float PAGE_FADE_MILLIS = 250;
 
-    private final Map<LemegetonUpgrade, ResourceLocation> engravings = new EnumMap<>(LemegetonUpgrade.class);
+    private final Map<LemegetonComponent.Upgrade, ResourceLocation> engravings = new EnumMap<>(LemegetonComponent.Upgrade.class);
     private final List<SealButton> seals = new ArrayList<>();
     private final Embers embers = new Embers();
     private final long openedAt = Util.getMillis();
-    private LemegetonUpgrade selected = UPGRADES[0];
-    private LemegetonUpgrade shown = this.selected;
+    private LemegetonComponent.Upgrade selected = UPGRADES[0];
+    private LemegetonComponent.Upgrade shown = this.selected;
     private long shownAt = this.openedAt;
-    private LemegetonUpgrade awaited;
+    private LemegetonComponent.Upgrade awaited;
     private int awaitedLevel;
     private PactButton pactButton;
 
@@ -71,7 +75,7 @@ public final class LemegetonScreen extends AbstractContainerScreen<LemegetonMenu
     }
 
     public static void register() {
-        MenuScreens.register(CataclysmRegistry.MENUS.LEMEGETON, LemegetonScreen::new);
+        MenuScreens.register(CataclysmMenus.LEMEGETON, LemegetonScreen::new);
     }
 
     @Override
@@ -117,7 +121,7 @@ public final class LemegetonScreen extends AbstractContainerScreen<LemegetonMenu
         this.renderHint(graphics, ink);
     }
 
-    private SealButton createSeal(LemegetonUpgrade upgrade) {
+    private SealButton createSeal(LemegetonComponent.Upgrade upgrade) {
         double angle = Math.toRadians(-90 + upgrade.ordinal() * 360.0 / UPGRADES.length);
         int x = CIRCLE_X + (int) Math.round(Math.cos(angle) * ORBIT_RADIUS) - SealButton.SIZE / 2;
         int y = CIRCLE_Y + (int) Math.round(Math.sin(angle) * ORBIT_RADIUS) - SealButton.SIZE / 2;
@@ -126,11 +130,11 @@ public final class LemegetonScreen extends AbstractContainerScreen<LemegetonMenu
             () -> this.selected == upgrade, this::select);
     }
 
-    private void select(LemegetonUpgrade upgrade) {
+    private void select(LemegetonComponent.Upgrade upgrade) {
         this.selected = upgrade;
     }
 
-    private LemegetonUpgrade hoveredUpgrade() {
+    private LemegetonComponent.Upgrade hoveredUpgrade() {
         for (var seal : this.seals) {
             if (seal.isHovered()) {
                 return seal.getUpgrade();
@@ -139,7 +143,7 @@ public final class LemegetonScreen extends AbstractContainerScreen<LemegetonMenu
         return this.selected;
     }
 
-    private void showPage(LemegetonUpgrade upgrade) {
+    private void showPage(LemegetonComponent.Upgrade upgrade) {
         if (upgrade != this.shown) {
             this.shown = upgrade;
             this.shownAt = Util.getMillis();
@@ -166,7 +170,7 @@ public final class LemegetonScreen extends AbstractContainerScreen<LemegetonMenu
         this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, this.selected.ordinal());
     }
 
-    private void celebrate(LemegetonUpgrade upgrade) {
+    private void celebrate(LemegetonComponent.Upgrade upgrade) {
         var seal = this.seals.get(upgrade.ordinal());
         seal.flash();
         this.embers.burst(seal.getX() + SealButton.SIZE / 2, seal.getY() + SealButton.SIZE / 2);
@@ -231,21 +235,32 @@ public final class LemegetonScreen extends AbstractContainerScreen<LemegetonMenu
         var hint = denial.orElseGet(() -> Component.translatable("menu.cataclysm.lemegeton.ready"));
         int color = LemegetonTheme.faded(denial.isPresent() ? LemegetonTheme.RUBRIC : LemegetonTheme.FADED_INK, ink);
         boolean showsCost = this.menu.level(this.selected) < this.selected.maxLevel();
-        int x = PAGE_X - HINT_WIDTH / 2;
+        var lines = this.font.split(hint, HINT_WIDTH);
+        int textWidth = this.widestLine(lines);
+        int iconWidth = showsCost ? ICON_SIZE + ICON_GAP : 0;
+        int left = PAGE_X - (iconWidth + textWidth) / 2;
         if (showsCost) {
-            x += (ICON_SIZE + ICON_GAP) / 2;
-            graphics.renderItem(this.costIcon(), x - ICON_SIZE - ICON_GAP, HINT_Y);
+            graphics.renderItem(this.costIcon(), left, HINT_CENTER_Y - ICON_SIZE / 2);
         }
-        int y = HINT_Y + (showsCost ? 0 : 1);
-        for (var line : this.font.split(hint, HINT_WIDTH)) {
+        int y = HINT_CENTER_Y - lines.size() * this.font.lineHeight / 2;
+        for (var line : lines) {
+            int x = showsCost ? left + iconWidth : PAGE_X - this.font.width(line) / 2;
             graphics.drawString(this.font, line, x, y, color, false);
             y += this.font.lineHeight;
         }
     }
 
+    private int widestLine(List<FormattedCharSequence> lines) {
+        int widest = 0;
+        for (var line : lines) {
+            widest = Math.max(widest, this.font.width(line));
+        }
+        return widest;
+    }
+
     private ItemStack costIcon() {
-        var stack = new ItemStack(CataclysmRegistry.ITEMS.CATACLYSM_UPGRADE);
-        stack.set(CataclysmRegistry.DATA_COMPONENTS.UPGRADE_TIER, Math.max(this.menu.requiredTier(), CataclysmRegistry.DATA_COMPONENTS.MIN_UPGRADE_TIER));
+        var stack = new ItemStack(CataclysmItems.CATACLYSM_UPGRADE);
+        stack.set(CataclysmDataComponents.UPGRADE_TIER, UpgradeTierComponent.of(this.menu.requiredTier()));
         return stack;
     }
 

@@ -8,8 +8,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import team.heather.cataclysm.item.lemegeton.LemegetonItem;
-import team.heather.cataclysm.item.lemegeton.OpenLemegetonPayload;
+import team.heather.cataclysm.item.feature.lemegeton.LemegetonItem;
+import team.heather.cataclysm.network.payload.OpenLemegetonPayload;
 
 @Mixin(Minecraft.class)
 public abstract class MinecraftMixin {
@@ -35,6 +35,6 @@ public abstract class MinecraftMixin {
         return client.player != null
                 && client.player.isShiftKeyDown()
                 && client.player.getMainHandItem().getItem() instanceof LemegetonItem
-                && ClientPlayNetworking.canSend(OpenLemegetonPayload.TYPE);
+                && ClientPlayNetworking.canSend(OpenLemegetonPayload.PAYLOAD_TYPE);
     }
 }

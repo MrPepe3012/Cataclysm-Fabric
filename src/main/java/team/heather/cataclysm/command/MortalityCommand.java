@@ -1,7 +1,5 @@
-
 package team.heather.cataclysm.command;
 
-import team.heather.cataclysm.component.CataclysmCardinalComponents;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -11,13 +9,12 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
+import team.heather.cataclysm.component.CataclysmCardinalComponents;
 
 public final class MortalityCommand extends CataclysmCommand {
 
-    public static final String ALIAS = "mortality";
-
-    private static final Component MESSAGE_GET = Component.translatable("commands.cataclysm.mortality.get");
-    private static final Component MESSAGE_SET = Component.translatable("commands.cataclysm.mortality.set");
+    private static final String MESSAGE_GET = "%s's mortality: %s%%";
+    private static final String MESSAGE_SET = "%s's mortality changed from %s%% to %s%%";
 
     private static final String KEY_PLAYER = "player";
     private static final String KEY_VALUE = "value";
@@ -35,7 +32,7 @@ public final class MortalityCommand extends CataclysmCommand {
         var mortality = CataclysmCardinalComponents.MORTALITY.get(player).get();
 
         context.getSource().sendSuccess(() ->
-                withArguments(MESSAGE_GET, player.getName().getString(), mortality * 100), false);
+                Component.literal(MESSAGE_GET.formatted(player.getName().getString(), mortality * 100)), false);
 
         return Command.SINGLE_SUCCESS;
     }
@@ -49,7 +46,7 @@ public final class MortalityCommand extends CataclysmCommand {
         mortality.set(value);
 
         context.getSource().sendSuccess(() ->
-                withArguments(MESSAGE_SET, player.getName().getString(), previous * 100, value * 100), false);
+                Component.literal(MESSAGE_SET.formatted(player.getName().getString(), previous * 100, value * 100)), false);
 
         return Command.SINGLE_SUCCESS;
     }

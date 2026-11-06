@@ -1,0 +1,24 @@
+{
+  "art": "void_lord",
+  "title": "Void Lord",
+  "subtitle": "God of the Void. Pale Heart. 7,500 hp",
+  "notes": [
+    { "y": 30, "width": 70, "lines": ["!RAID COMPLETE"] },
+    {
+      "y": 40, "width": 74,
+      "lines": [
+        "We cheered. Then his bar filled again.",
+        "Twice his size now, and no longer a king.",
+        "His blade breaks shields. 30 damage, and it slows you."
+      ]
+    },
+    {
+      "y": 114,
+      "lines": [
+        "DREAM NO MORE, HEART OF THE ABYSS: he heals through both trials.",
+        "HEART DASH: 40 damage.",
+        "HEART SCOURAGE: a forward slash."
+      ]
+    }
+  ]
+}

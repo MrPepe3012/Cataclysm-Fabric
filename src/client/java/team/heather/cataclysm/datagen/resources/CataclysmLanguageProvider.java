@@ -66,11 +66,6 @@ public class CataclysmLanguageProvider extends FabricLanguageProvider {
         this.builder.add("menu.cataclysm.lemegeton.title", "Lemegeton");
         this.builder.add("menu.cataclysm.lemegeton.journal", "Journal");
         this.builder.add("menu.cataclysm.lemegeton.seals", "Seals");
-        this.builder.add("menu.cataclysm.lemegeton.journal.twisted_warden", "Twisted Warden");
-        this.builder.add("menu.cataclysm.lemegeton.journal.calamity_hydra", "Calamity Hydra");
-        this.builder.add("menu.cataclysm.lemegeton.journal.pale_king", "Pale King");
-        this.builder.add("menu.cataclysm.lemegeton.journal.void_lord", "Void Lord");
-        this.builder.add("menu.cataclysm.lemegeton.journal.cataclysm", "Cataclysm");
         this.builder.add("menu.cataclysm.lemegeton.unlock", "Unlock");
         this.builder.add("menu.cataclysm.lemegeton.upgrade", "Upgrade");
         this.builder.add("menu.cataclysm.lemegeton.complete", "Complete");

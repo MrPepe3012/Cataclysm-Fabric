@@ -5,6 +5,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
@@ -19,6 +21,9 @@ final class LemegetonTheme {
     static final int PARCHMENT = 0xFFDCCEAD;
     static final int INK = 0xFF2A1F18;
     static final int FADED_INK = 0x802A1F18;
+    static final int PENCIL = 0xFF6F5C47;
+    static final int ASH = 0xFFB3A285;
+    static final int EMBER = 0xFFD9542E;
     static final int RUBRIC = 0xFF8E1F1A;
     static final int BRIGHT_RUBRIC = 0xFFB02A22;
 
@@ -26,6 +31,9 @@ final class LemegetonTheme {
     private static final ResourceLocation SEALS = Cataclysm.resourceLocation("textures/gui/lemegeton/seals.png");
     private static final ResourceLocation JOURNAL = Cataclysm.resourceLocation("textures/gui/lemegeton/journal.png");
     private static final ResourceLocation JOURNAL_ICONS = Cataclysm.resourceLocation("textures/gui/lemegeton/journal_icons.png");
+    private static final ResourceLocation SCRIPT = Cataclysm.resourceLocation("journal_hand");
+    private static final ResourceLocation SMALL_SCRIPT = Cataclysm.resourceLocation("journal_small");
+    private static final ResourceLocation LETTERING = Cataclysm.resourceLocation("journal_title");
     private static final int BOOK_WIDTH = 352;
     private static final int BOOK_HEIGHT = 192;
     private static final int PLATE_WIDTH = 156;
@@ -50,6 +58,30 @@ final class LemegetonTheme {
     static int faded(int color, float opacity) {
         int alpha = (int) ((color >>> 24) * Math.max(opacity, MIN_OPACITY));
         return alpha << 24 | color & 0xFFFFFF;
+    }
+
+    /** The journal's small, even script. */
+    static Component written(MutableComponent text) {
+        return text.withStyle(style -> style.withFont(SCRIPT));
+    }
+
+    /** An attack is a note that opens with its name, as in "NAME: what it does". */
+    static boolean isAttack(String note) {
+        return note.indexOf(':') >= 0;
+    }
+
+    /** Writes an attack in small script, with its name in red the way a manuscript marks what matters. */
+    static Component rubricated(String attack, int nameColor) {
+        int nameEnd = attack.indexOf(':') + 1;
+        return Component.empty()
+            .append(Component.literal(attack.substring(0, nameEnd)).withColor(nameColor))
+            .append(attack.substring(nameEnd))
+            .withStyle(style -> style.withFont(SMALL_SCRIPT));
+    }
+
+    /** The journal's page titles, always in capitals. */
+    static Component lettered(MutableComponent text) {
+        return text.withStyle(style -> style.withFont(LETTERING));
     }
 
     static void drawBook(GuiGraphics graphics, int x, int y) {

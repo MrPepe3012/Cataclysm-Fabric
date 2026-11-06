@@ -1,0 +1,24 @@
+{
+  "art": "pale_king",
+  "title": "Pale King",
+  "subtitle": "Pale Palace. 20,000 hp",
+  "notes": [
+    {
+      "x": 54, "y": 29, "width": 98,
+      "lines": [
+        "A dead king. Something older lies sealed inside him.",
+        "PALE CORROSION: takes your hearts until it fades.",
+        "KINGSOUL: he stands still, then 25 blasts bloom.",
+        "BLASAROSA: elytra break. Gone 12 seconds, back as a blast."
+      ]
+    },
+    { "x": 54, "y": 110, "width": 70, "lines": ["!Do not celebrate."] },
+    {
+      "y": 122,
+      "lines": [
+        "TERRACISMA: above 6 blocks, you fall.",
+        "EMBRACE THE VOID: three waves of 120. Only Disper spares you."
+      ]
+    }
+  ]
+}

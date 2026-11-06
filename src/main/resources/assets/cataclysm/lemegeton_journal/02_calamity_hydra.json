@@ -1,0 +1,22 @@
+{
+  "art": "calamity_hydra",
+  "title": "Calamity Hydra",
+  "subtitle": "God of Fury. Hydra's Dungeon. 30,000 hp",
+  "notes": [
+    { "x": 98, "y": 32, "width": 52, "lines": ["!Let it sleep."] },
+    {
+      "x": 92, "y": 45, "width": 58,
+      "lines": ["One head, then three, then five. It grows each phase."]
+    },
+    {
+      "y": 82,
+      "lines": [
+        "In the last phase its life splits among five heads. Break them one by one.",
+        "HYDRA BREATH: a blast per living head.",
+        "HELLQUAKE: it leaps, lands in lightning, and shockwaves roll outward.",
+        "HYDRAZER: 7 seconds of explosions.",
+        "!Its rage feeds Atomic Breath, Meteor Shower and Calamity."
+      ]
+    }
+  ]
+}

@@ -13,11 +13,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.FormattedCharSequence;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import org.lwjgl.glfw.GLFW;
-import team.heather.cataclysm.Cataclysm;
 import team.heather.cataclysm.item.CataclysmItems;
 import team.heather.cataclysm.item.data.CataclysmDataComponents;
 import team.heather.cataclysm.item.data.LemegetonComponent;
@@ -34,13 +32,11 @@ import java.util.function.IntSupplier;
 /**
  * An open grimoire: the Circle of Solomon on the left page, with one seal per
  * spirit, and on the right page everything about the chosen seal. Its other
- * half is a journal of Cataclysm's threats, one spread per threat: the drawing
- * on the left page and, on the right, a ruled page waiting for notes.
+ * half is {@link LemegetonJournal}, a field journal of Cataclysm's bosses.
  */
 public final class LemegetonScreen extends AbstractContainerScreen<LemegetonMenu> {
 
     private static final LemegetonComponent.Upgrade[] UPGRADES = LemegetonComponent.Upgrade.values();
-    private static final JournalEntry[] ENTRIES = JournalEntry.values();
 
     private static final int BOOK_WIDTH = 352;
     private static final int BOOK_HEIGHT = 192;
@@ -67,25 +63,20 @@ public final class LemegetonScreen extends AbstractContainerScreen<LemegetonMenu
     private static final int ICON_GAP = 4;
     private static final float PAGE_FADE_MILLIS = 250;
 
-    private static final int PLATE_X = 10;
-    private static final int PLATE_Y = 10;
-    private static final int PLATE_CENTER_X = 88;
-    private static final int PLATE_CENTER_Y = 76;
     private static final int TOGGLE_X = 326;
     private static final int TOGGLE_Y = 12;
-    private static final int PREVIOUS_X = 196;
-    private static final int NEXT_X = 316;
-    private static final int TURN_Y = 166;
-    private static final int PAGE_NUMBER_Y = 168;
+    private static final int PREVIOUS_X = 14;
+    private static final int NEXT_X = 326;
+    private static final int TURN_Y = 170;
     private static final int PREVIOUS_ICON = 0;
     private static final int NEXT_ICON = 1;
     private static final int JOURNAL_ICON = 2;
     private static final int SEALS_ICON = 3;
-    private static final int PLATE_COLOR = 0xFFFFFFFF;
 
     private final Map<LemegetonComponent.Upgrade, ResourceLocation> engravings = new EnumMap<>(LemegetonComponent.Upgrade.class);
     private final List<SealButton> seals = new ArrayList<>();
     private final Embers embers = new Embers();
+    private final LemegetonJournal journal = new LemegetonJournal();
     private final long openedAt = Util.getMillis();
     private LemegetonComponent.Upgrade selected = UPGRADES[0];
     private LemegetonComponent.Upgrade shown = this.selected;
@@ -97,7 +88,6 @@ public final class LemegetonScreen extends AbstractContainerScreen<LemegetonMenu
     private IconButton previousButton;
     private IconButton nextButton;
     private boolean journalOpen;
-    private int entry;
 
     public LemegetonScreen(LemegetonMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
@@ -165,6 +155,7 @@ public final class LemegetonScreen extends AbstractContainerScreen<LemegetonMenu
     protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
         if (this.journalOpen) {
             LemegetonTheme.drawJournal(graphics, this.leftPos, this.topPos);
+            this.journal.drawArt(graphics, this.leftPos, this.topPos, this.pageInk());
         } else {
             LemegetonTheme.drawBook(graphics, this.leftPos, this.topPos);
         }
@@ -172,9 +163,9 @@ public final class LemegetonScreen extends AbstractContainerScreen<LemegetonMenu
 
     @Override
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
-        float ink = Math.min(1, (Util.getMillis() - this.shownAt) / PAGE_FADE_MILLIS);
+        float ink = this.pageInk();
         if (this.journalOpen) {
-            this.renderJournalEntry(graphics, ink);
+            this.journal.drawWriting(graphics, this.font, ink);
             return;
         }
         this.renderCounter(graphics);
@@ -185,6 +176,10 @@ public final class LemegetonScreen extends AbstractContainerScreen<LemegetonMenu
         this.renderHint(graphics, ink);
     }
 
+    private float pageInk() {
+        return Math.min(1, (Util.getMillis() - this.shownAt) / PAGE_FADE_MILLIS);
+    }
+
     private void toggleJournal() {
         this.journalOpen = !this.journalOpen;
         this.shownAt = Util.getMillis();
@@ -192,9 +187,9 @@ public final class LemegetonScreen extends AbstractContainerScreen<LemegetonMenu
     }
 
     private void turnPage(int direction) {
-        this.entry = Mth.clamp(this.entry + direction, 0, ENTRIES.length - 1);
+        this.journal.turn(direction);
         this.shownAt = Util.getMillis();
-        this.embers.burst(this.leftPos + PLATE_CENTER_X, this.topPos + PLATE_CENTER_Y);
+        this.embers.burst(this.leftPos + BOOK_WIDTH / 2, this.topPos + BOOK_HEIGHT / 2);
         this.refreshWidgets();
     }
 
@@ -205,19 +200,10 @@ public final class LemegetonScreen extends AbstractContainerScreen<LemegetonMenu
         this.pactButton.visible = !this.journalOpen;
         this.previousButton.visible = this.journalOpen;
         this.nextButton.visible = this.journalOpen;
-        this.previousButton.active = this.entry > 0;
-        this.nextButton.active = this.entry < ENTRIES.length - 1;
+        this.previousButton.active = this.journal.hasPrevious();
+        this.nextButton.active = this.journal.hasNext();
         String destination = this.journalOpen ? "seals" : "journal";
         this.toggleButton.setTooltip(Tooltip.create(Component.translatable("menu.cataclysm.lemegeton." + destination)));
-    }
-
-    private void renderJournalEntry(GuiGraphics graphics, float ink) {
-        var shownEntry = ENTRIES[this.entry];
-        LemegetonTheme.drawPlate(graphics, shownEntry.plate, PLATE_X, PLATE_Y, LemegetonTheme.faded(PLATE_COLOR, ink));
-        this.drawCentered(graphics, Component.translatable(shownEntry.translationKey), PAGE_X, TITLE_Y,
-            LemegetonTheme.faded(LemegetonTheme.RUBRIC, ink));
-        this.drawCentered(graphics, Component.literal(this.entry + 1 + "/" + ENTRIES.length), PAGE_X, PAGE_NUMBER_Y,
-            LemegetonTheme.FADED_INK);
     }
 
     private SealButton createSeal(LemegetonComponent.Upgrade upgrade) {
@@ -365,23 +351,6 @@ public final class LemegetonScreen extends AbstractContainerScreen<LemegetonMenu
 
     private void drawCentered(GuiGraphics graphics, Component text, int x, int y, int color) {
         graphics.drawString(this.font, text, x - this.font.width(text) / 2, y, color, false);
-    }
-
-    /** One journal spread per threat, in page order. */
-    private enum JournalEntry {
-        TWISTED_WARDEN("twisted_warden"),
-        CALAMITY_HYDRA("calamity_hydra"),
-        PALE_KING("pale_king"),
-        VOID_LORD("void_lord"),
-        CATACLYSM("cataclysm");
-
-        private final ResourceLocation plate;
-        private final String translationKey;
-
-        JournalEntry(String name) {
-            this.plate = Cataclysm.resourceLocation("textures/gui/lemegeton/journal/" + name + ".png");
-            this.translationKey = "menu.cataclysm.lemegeton.journal." + name;
-        }
     }
 
     /** A small inked icon that reddens under the cursor and turns a page when pressed. */

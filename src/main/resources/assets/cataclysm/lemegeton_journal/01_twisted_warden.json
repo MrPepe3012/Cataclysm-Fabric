@@ -1,0 +1,26 @@
+{
+  "art": "twisted_warden",
+  "title": "Twisted Warden",
+  "subtitle": "God of Beasts. Twisted Nest. 15,000 hp",
+  "notes": [
+    {
+      "y": 29, "width": 70,
+      "lines": [
+        "Blind, yet it hears you breathe.",
+        "!Never stand before the jaws."
+      ]
+    },
+    {
+      "y": 81,
+      "lines": [
+        "SHRIEK: 60 damage in a 20 block line.",
+        "DEVOURER: drains all within 5 blocks.",
+        "BULLDOZER: 7 seconds of explosions.",
+        "BONFIRE: resets every cooldown.",
+        "ARMAGEDDON: twenty Twisted rise.",
+        "NIGHTMARE: dark falls, the music dies, and its moves go unseen.",
+        "APPLE SEED: 5 seconds of alarm, then 200 damage out to 20 blocks. RUN."
+      ]
+    }
+  ]
+}

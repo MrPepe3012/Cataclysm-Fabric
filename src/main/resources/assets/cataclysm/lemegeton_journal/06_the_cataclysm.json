@@ -1,0 +1,22 @@
+{
+  "art": "the_cataclysm",
+  "title": "Cataclysm",
+  "title_size": 2,
+  "subtitle": "Mighty God of Destruction",
+  "dark": true,
+  "notes": [
+    { "x": 8, "y": 54, "width": 32, "centered": true, "lines": ["Four gods lie dead."] },
+    { "x": 116, "y": 54, "width": 32, "centered": true, "lines": ["!It needs that skull."] },
+    {
+      "y": 100, "x": 6, "centered": true,
+      "lines": [
+        "NO GOD TO SAVE YOU: blinded, sealed.",
+        "INFERNO: rings of explosions.",
+        "ANNIHILATION: a lethal beam.",
+        "CATACLYSM: calamities rise.",
+        "Its defense must fall to 0.",
+        "!The fallen can still help. Speak a survivor's name to shield them."
+      ]
+    }
+  ]
+}

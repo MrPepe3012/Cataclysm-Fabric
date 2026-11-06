@@ -1,25 +1,18 @@
 {
   "art": "twisted_warden",
   "title": "Twisted Warden",
-  "subtitle": "God of Beasts. Twisted Nest. 15,000 hp",
+  "subtitle": "Entrada I. Dios de las bestias",
   "notes": [
     {
-      "y": 29, "width": 70,
+      "y": 29, "width": 64,
       "lines": [
-        "Blind, yet it hears you breathe.",
-        "!Never stand before the jaws."
+        "Antes que las bestias tuvieran nombre, ya esta las regía. Mora en el Twisted Nest, y cuanto vive a su lado se tuerce a su semejanza."
       ]
     },
     {
-      "y": 81,
+      "y": 116,
       "lines": [
-        "SHRIEK: 60 damage in a 20 block line.",
-        "DEVOURER: drains all within 5 blocks.",
-        "BULLDOZER: 7 seconds of explosions.",
-        "BONFIRE: resets every cooldown.",
-        "ARMAGEDDON: twenty Twisted rise.",
-        "NIGHTMARE: dark falls, the music dies, and its moves go unseen.",
-        "APPLE SEED: 5 seconds of alarm, then 200 damage out to 20 blocks. RUN."
+        "No tiene ojos, que nunca los hubo menester, pues oye el aliento de quien se acerca y por él lo halla. Entramos siete, callando, y el silencio no nos valió."
       ]
     }
   ]

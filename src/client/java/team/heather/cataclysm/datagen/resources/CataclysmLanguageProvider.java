@@ -64,8 +64,6 @@ public class CataclysmLanguageProvider extends FabricLanguageProvider {
         this.addUpgrade(LemegetonComponent.Upgrade.CLEANSING, "Cleansing", "Removes bad effects and blocks new ones.");
 
         this.builder.add("menu.cataclysm.lemegeton.title", "Lemegeton");
-        this.builder.add("menu.cataclysm.lemegeton.journal", "Journal");
-        this.builder.add("menu.cataclysm.lemegeton.seals", "Seals");
         this.builder.add("menu.cataclysm.lemegeton.unlock", "Unlock");
         this.builder.add("menu.cataclysm.lemegeton.upgrade", "Upgrade");
         this.builder.add("menu.cataclysm.lemegeton.complete", "Complete");

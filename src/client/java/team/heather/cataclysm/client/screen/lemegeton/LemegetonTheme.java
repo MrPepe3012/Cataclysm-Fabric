@@ -92,6 +92,16 @@ final class LemegetonTheme {
         graphics.blit(RenderType::guiTextured, JOURNAL, x, y, 0, 0, BOOK_WIDTH, BOOK_HEIGHT, BOOK_WIDTH, BOOK_HEIGHT);
     }
 
+    /** Draws one bare page of the journal, cut from the book at (u, v), so a leaf can carry it. */
+    static void drawJournalPage(GuiGraphics graphics, int x, int y, int u, int v, int width, int height) {
+        graphics.blit(RenderType::guiTextured, JOURNAL, x, y, u, v, width, height, BOOK_WIDTH, BOOK_HEIGHT);
+    }
+
+    /** Draws one bare page of the seals where it lies in the book, for a leaf that has been lifted off it. */
+    static void drawBookPage(GuiGraphics graphics, int x, int y, int width, int height) {
+        graphics.blit(RenderType::guiTextured, BOOK, x, y, x, y, width, height, BOOK_WIDTH, BOOK_HEIGHT);
+    }
+
     /** Draws a full journal plate, faded by the color's alpha. */
     static void drawPlate(GuiGraphics graphics, ResourceLocation plate, int x, int y, int color) {
         graphics.blit(RenderType::guiTextured, plate, x, y, 0, 0, PLATE_WIDTH, PLATE_HEIGHT, PLATE_WIDTH, PLATE_HEIGHT, color);

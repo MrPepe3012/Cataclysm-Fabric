@@ -1,21 +1,17 @@
 {
   "art": "calamity_hydra",
   "title": "Calamity Hydra",
-  "subtitle": "God of Fury. Hydra's Dungeon. 30,000 hp",
+  "subtitle": "Entrada II. Dios de la furia",
   "notes": [
-    { "x": 98, "y": 32, "width": 52, "lines": ["!Let it sleep."] },
+    { "x": 98, "y": 32, "width": 52, "lines": ["!Que duerma."] },
     {
-      "x": 92, "y": 45, "width": 58,
-      "lines": ["One head, then three, then five. It grows each phase."]
+      "x": 88, "y": 46, "width": 62,
+      "lines": ["Durmió en el Hydra's Dungeon más años de los que tiene el mundo, y con una sola cabeza despertó."]
     },
     {
-      "y": 82,
+      "y": 116,
       "lines": [
-        "In the last phase its life splits among five heads. Break them one by one.",
-        "HYDRA BREATH: a blast per living head.",
-        "HELLQUAKE: it leaps, lands in lightning, and shockwaves roll outward.",
-        "HYDRAZER: 7 seconds of explosions.",
-        "!Its rage feeds Atomic Breath, Meteor Shower and Calamity."
+        "Las otras le nacieron de la furia, tres primero y cinco al cabo, y con cada una creció su cuerpo. En ellas guarda la vida, y cabeza a cabeza ha de apagarse. Mejor fuera no despertarla."
       ]
     }
   ]

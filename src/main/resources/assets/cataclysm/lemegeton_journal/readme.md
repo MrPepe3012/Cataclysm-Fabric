@@ -4,6 +4,10 @@ Cada archivo `.json` de esta carpeta es una página. Se ordenan por nombre, así
 el número del principio decide su lugar en el libro. Para añadir una página basta
 con crear un archivo nuevo; el libro hace sitio solo, dos páginas por doble hoja.
 
+Estas páginas van después de los sellos, que son la primera doble página del libro.
+El texto de `05_torn_page` está dibujado en su imagen y no se edita aquí, para que
+los archivos del mod no digan de qué trata esa página.
+
 ## Página de ejemplo
 
 ```json
@@ -51,6 +55,8 @@ con crear un archivo nuevo; el libro hace sitio solo, dos páginas por doble hoj
 - Una línea normal va en tinta negra.
 - Una línea que empieza por `!` va en rojo.
 - Una línea con `:` es un ataque: va en letra pequeña y lo que hay antes de `:` va en rojo.
+  Hoy el diario solo lleva notas de un superviviente, así que no uses `:` en una nota normal.
+  El formato sigue disponible para cuando quieras mostrar los ataques.
 - Una línea también puede ser una clave de traducción del lang.
 
 ## Probar un cambio sin reiniciar el juego

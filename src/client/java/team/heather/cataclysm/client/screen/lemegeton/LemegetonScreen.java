@@ -3,7 +3,6 @@ package team.heather.cataclysm.client.screen.lemegeton;
 import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
-import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -30,9 +29,9 @@ import java.util.Map;
 import java.util.function.IntSupplier;
 
 /**
- * An open grimoire: the Circle of Solomon on the left page, with one seal per
- * spirit, and on the right page everything about the chosen seal. Its other
- * half is {@link LemegetonJournal}, a field journal of Cataclysm's bosses.
+ * An open grimoire. Its first spread is the Circle of Solomon on the left page, with one
+ * seal per spirit, and everything about the chosen seal on the right. The pages that
+ * follow are {@link LemegetonJournal}, a field journal of Cataclysm's bosses.
  */
 public final class LemegetonScreen extends AbstractContainerScreen<LemegetonMenu> {
 
@@ -63,20 +62,16 @@ public final class LemegetonScreen extends AbstractContainerScreen<LemegetonMenu
     private static final int ICON_GAP = 4;
     private static final float PAGE_FADE_MILLIS = 250;
 
-    private static final int TOGGLE_X = 326;
-    private static final int TOGGLE_Y = 12;
     private static final int PREVIOUS_X = 14;
     private static final int NEXT_X = 326;
     private static final int TURN_Y = 170;
     private static final int PREVIOUS_ICON = 0;
     private static final int NEXT_ICON = 1;
-    private static final int JOURNAL_ICON = 2;
-    private static final int SEALS_ICON = 3;
 
     private final Map<LemegetonComponent.Upgrade, ResourceLocation> engravings = new EnumMap<>(LemegetonComponent.Upgrade.class);
     private final List<SealButton> seals = new ArrayList<>();
     private final Embers embers = new Embers();
-    private final LemegetonJournal journal = new LemegetonJournal();
+    private final LemegetonJournal journal = new LemegetonJournal(this::renderSealPage);
     private final long openedAt = Util.getMillis();
     private LemegetonComponent.Upgrade selected = UPGRADES[0];
     private LemegetonComponent.Upgrade shown = this.selected;
@@ -84,10 +79,8 @@ public final class LemegetonScreen extends AbstractContainerScreen<LemegetonMenu
     private LemegetonComponent.Upgrade awaited;
     private int awaitedLevel;
     private PactButton pactButton;
-    private IconButton toggleButton;
     private IconButton previousButton;
     private IconButton nextButton;
-    private boolean journalOpen;
 
     public LemegetonScreen(LemegetonMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
@@ -112,8 +105,6 @@ public final class LemegetonScreen extends AbstractContainerScreen<LemegetonMenu
         this.pactButton = this.addRenderableWidget(new PactButton(
             this.leftPos + PAGE_X, this.topPos + PACT_Y,
             this::pactLabel, this::canBuySelected, this::requestPact));
-        this.toggleButton = this.addRenderableWidget(new IconButton(this.leftPos + TOGGLE_X, this.topPos + TOGGLE_Y,
-            () -> this.journalOpen ? SEALS_ICON : JOURNAL_ICON, this::toggleJournal));
         this.previousButton = this.addRenderableWidget(new IconButton(this.leftPos + PREVIOUS_X, this.topPos + TURN_Y,
             () -> PREVIOUS_ICON, () -> this.turnPage(-1)));
         this.nextButton = this.addRenderableWidget(new IconButton(this.leftPos + NEXT_X, this.topPos + TURN_Y,
@@ -123,15 +114,22 @@ public final class LemegetonScreen extends AbstractContainerScreen<LemegetonMenu
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (this.journalOpen && keyCode == GLFW.GLFW_KEY_LEFT) {
-            this.previousButton.onPress();
+        if (keyCode == GLFW.GLFW_KEY_LEFT) {
+            this.pressTurnButton(this.previousButton);
             return true;
         }
-        if (this.journalOpen && keyCode == GLFW.GLFW_KEY_RIGHT) {
-            this.nextButton.onPress();
+        if (keyCode == GLFW.GLFW_KEY_RIGHT) {
+            this.pressTurnButton(this.nextButton);
             return true;
         }
         return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    private void pressTurnButton(IconButton button) {
+        if (button.active) {
+            button.playDownSound(this.minecraft.getSoundManager());
+            button.onPress();
+        }
     }
 
     @Override
@@ -144,7 +142,8 @@ public final class LemegetonScreen extends AbstractContainerScreen<LemegetonMenu
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        if (!this.journalOpen) {
+        this.refreshWidgets();
+        if (this.journal.isOnSeals()) {
             this.showPage(this.hoveredUpgrade());
         }
         super.render(graphics, mouseX, mouseY, partialTick);
@@ -153,22 +152,24 @@ public final class LemegetonScreen extends AbstractContainerScreen<LemegetonMenu
 
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
-        if (this.journalOpen) {
-            LemegetonTheme.drawJournal(graphics, this.leftPos, this.topPos);
-            this.journal.drawArt(graphics, this.leftPos, this.topPos, this.pageInk());
-        } else {
-            LemegetonTheme.drawBook(graphics, this.leftPos, this.topPos);
-        }
+        this.journal.drawBook(graphics, this.leftPos, this.topPos);
+        this.journal.drawArt(graphics, this.leftPos, this.topPos, this.pageInk());
     }
 
     @Override
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
         float ink = this.pageInk();
-        if (this.journalOpen) {
-            this.journal.drawWriting(graphics, this.font, ink);
-            return;
+        if (this.journal.showsCircle()) {
+            this.renderCounter(graphics);
         }
-        this.renderCounter(graphics);
+        if (this.journal.isOnSeals()) {
+            this.renderSealDetails(graphics, ink);
+        } else {
+            this.journal.drawWriting(graphics, this.font, ink);
+        }
+    }
+
+    private void renderSealDetails(GuiGraphics graphics, float ink) {
         this.renderTitle(graphics, ink);
         this.renderLargeSeal(graphics, ink);
         this.renderLevels(graphics, ink);
@@ -176,34 +177,33 @@ public final class LemegetonScreen extends AbstractContainerScreen<LemegetonMenu
         this.renderHint(graphics, ink);
     }
 
+    /** Paints the seal page onto a turning leaf, with its button, since widgets stay out of a moving page. */
+    private void renderSealPage(GuiGraphics graphics) {
+        this.renderSealDetails(graphics, 1);
+        graphics.pose().pushPose();
+        graphics.pose().translate(-this.leftPos, -this.topPos, 0);
+        this.pactButton.visible = true;
+        this.pactButton.render(graphics, -1, -1, 0);
+        this.pactButton.visible = false;
+        graphics.pose().popPose();
+    }
+
     private float pageInk() {
         return Math.min(1, (Util.getMillis() - this.shownAt) / PAGE_FADE_MILLIS);
     }
 
-    private void toggleJournal() {
-        this.journalOpen = !this.journalOpen;
-        this.shownAt = Util.getMillis();
-        this.refreshWidgets();
-    }
-
     private void turnPage(int direction) {
         this.journal.turn(direction);
-        this.shownAt = Util.getMillis();
-        this.embers.burst(this.leftPos + BOOK_WIDTH / 2, this.topPos + BOOK_HEIGHT / 2);
         this.refreshWidgets();
     }
 
     private void refreshWidgets() {
         for (var seal : this.seals) {
-            seal.visible = !this.journalOpen;
+            seal.visible = this.journal.showsCircle();
         }
-        this.pactButton.visible = !this.journalOpen;
-        this.previousButton.visible = this.journalOpen;
-        this.nextButton.visible = this.journalOpen;
-        this.previousButton.active = this.journal.hasPrevious();
+        this.pactButton.visible = this.journal.isOnSeals();
+        this.previousButton.visible = this.journal.hasPrevious();
         this.nextButton.active = this.journal.hasNext();
-        String destination = this.journalOpen ? "seals" : "journal";
-        this.toggleButton.setTooltip(Tooltip.create(Component.translatable("menu.cataclysm.lemegeton." + destination)));
     }
 
     private SealButton createSeal(LemegetonComponent.Upgrade upgrade) {

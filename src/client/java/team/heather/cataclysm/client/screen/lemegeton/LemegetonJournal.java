@@ -4,6 +4,7 @@ import com.google.gson.JsonParser;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -20,18 +21,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
+import java.util.function.Consumer;
 
 /**
  * The journal half of the Lemegeton. Its pages are data, not code: each one is a
  * JSON file in {@code assets/cataclysm/lemegeton_journal}, read in filename order
- * every time the book opens. The readme in that folder explains the format.
+ * every time the book opens. The readme in that folder explains the format. They follow
+ * the seals, which are the book's first spread.
  */
 final class LemegetonJournal {
 
     private static final String FOLDER = "lemegeton_journal";
     private static final int PAGES_PER_SPREAD = 2;
     private static final int[] PAGE_X = {10, 186};
-    private static final int[] PAGE_NUMBER_X = {137, 14};
+    private static final int[] PAGE_NUMBER_X = {137, 10};
     private static final int PAGE_Y = 10;
     private static final int PAGE_CENTER_X = 78;
     private static final int PAGE_NUMBER_Y = 161;
@@ -45,11 +48,33 @@ final class LemegetonJournal {
     private static final int PLATE_COLOR = 0xFFFFFFFF;
     private static final String RED_MARK = "!";
 
+    private static final float TURN_MILLIS = 260;
+    private static final int SPINE_X = 176;
+    private static final int GUTTER = 6;
+    private static final int[] LEAF_X = {8, 182};
+    private static final int LEAF_Y = 8;
+    private static final int LEAF_WIDTH = 162;
+    private static final int LEAF_HEIGHT = 176;
+    private static final int LEAF_STRIPS = 18;
+    private static final float LEAF_BEND = 1.1F;
+    private static final float LEAF_PERSPECTIVE = 0.16F;
+    private static final float LEAF_SHADE = 0.3F;
+    private static final int SHADOW_STEPS = 5;
+    private static final int SHADOW_REACH = 26;
+    private static final float SHADOW_STRENGTH = 0.28F;
+    private static final int SHEETS_PER_SPREAD = 2;
+    private static final int SHEET_LIGHT = 0xFFCFBF9A;
+    private static final int SHEET_DARK = 0xFF8F7D5C;
+
+    private final Consumer<GuiGraphics> sealPage;
     private final List<Page> pages = new ArrayList<>();
     private final Map<String, Page> pagesById = new HashMap<>();
     private int spread;
+    private int turningFrom = -1;
+    private long turnStartedAt;
 
-    LemegetonJournal() {
+    LemegetonJournal(Consumer<GuiGraphics> sealPage) {
+        this.sealPage = sealPage;
         var files = Minecraft.getInstance().getResourceManager()
             .listResources(FOLDER, file -> file.getPath().endsWith(".json"));
         for (var file : new TreeMap<>(files).entrySet()) {
@@ -65,7 +90,12 @@ final class LemegetonJournal {
     }
 
     void turn(int direction) {
-        this.spread = Mth.clamp(this.spread + direction, 0, this.lastSpread());
+        int target = Mth.clamp(this.spread + direction, 0, this.lastSpread());
+        if (target != this.spread) {
+            this.turningFrom = this.spread;
+            this.spread = target;
+            this.turnStartedAt = Util.getMillis();
+        }
     }
 
     boolean hasPrevious() {
@@ -77,36 +107,194 @@ final class LemegetonJournal {
     }
 
     private int lastSpread() {
-        return Math.max(this.pages.size() - 1, 0) / PAGES_PER_SPREAD;
+        return (this.pages.size() + 1) / PAGES_PER_SPREAD;
     }
 
-    /** Draws the art of the open spread, under the book's buttons. */
+    boolean isOnSeals() {
+        return this.spread == 0 && !this.isTurning();
+    }
+
+    /** Whether the circle of seals is showing, which it still is while the first leaf turns. */
+    boolean showsCircle() {
+        return this.isTurning() ? Math.min(this.turningFrom, this.spread) == 0 : this.spread == 0;
+    }
+
+    /** The page on one side of a spread. The seals come first, so they are before page zero. */
+    private static int pageAt(int spread, int side) {
+        return (spread - 1) * PAGES_PER_SPREAD + side;
+    }
+
+    private boolean isTurning() {
+        if (this.turningFrom >= 0 && Util.getMillis() - this.turnStartedAt >= TURN_MILLIS) {
+            this.turningFrom = -1;
+        }
+        return this.turningFrom >= 0;
+    }
+
+    /** The pages lying open: while a leaf turns, the two pages that are not on that leaf. */
+    private int[] openPages() {
+        if (this.isTurning()) {
+            int firstSpread = Math.min(this.turningFrom, this.spread);
+            return new int[] {pageAt(firstSpread, 0), pageAt(firstSpread + 1, 1)};
+        }
+        return new int[] {pageAt(this.spread, 0), pageAt(this.spread, 1)};
+    }
+
+    /** Draws the bare book, with the sheets already read stacked on the left and the rest on the right. */
+    void drawBook(GuiGraphics graphics, int bookX, int bookY) {
+        if (this.showsCircle()) {
+            LemegetonTheme.drawBook(graphics, bookX, bookY);
+            if (!this.isOnSeals()) {
+                LemegetonTheme.drawJournalPage(graphics, bookX + LEAF_X[1], bookY + LEAF_Y, LEAF_X[1], LEAF_Y, LEAF_WIDTH, LEAF_HEIGHT);
+            }
+        } else {
+            LemegetonTheme.drawJournal(graphics, bookX, bookY);
+        }
+        boolean landed = !this.isTurning() || Util.getMillis() - this.turnStartedAt > TURN_MILLIS / 2;
+        int read = landed ? this.spread : this.turningFrom;
+        drawSheets(graphics, bookX, bookY, 1 + read * SHEETS_PER_SPREAD, -1);
+        drawSheets(graphics, bookX, bookY, 1 + (this.lastSpread() - read) * SHEETS_PER_SPREAD, 1);
+    }
+
+    /** Draws the edges of a pile of sheets, each one lying a little further out and lower than the last. */
+    private static void drawSheets(GuiGraphics graphics, int bookX, int bookY, int sheets, int direction) {
+        int outer = direction < 0 ? LEAF_X[0] - 1 : LEAF_X[1] + LEAF_WIDTH;
+        int inner = direction < 0 ? LEAF_X[0] + LEAF_WIDTH : LEAF_X[1];
+        for (int sheet = 0; sheet < sheets; sheet++) {
+            int color = sheet % 2 == 0 ? SHEET_LIGHT : SHEET_DARK;
+            int x = bookX + outer + direction * sheet;
+            int bottom = bookY + LEAF_Y + LEAF_HEIGHT + sheet;
+            graphics.fill(x, bookY + LEAF_Y + sheet, x + 1, bottom + 1, color);
+            graphics.fill(Math.min(x, bookX + inner), bottom, Math.max(x + 1, bookX + inner), bottom + 1, color);
+        }
+    }
+
+    /** Draws the art of the open pages, under the book's buttons. */
     void drawArt(GuiGraphics graphics, int bookX, int bookY, float ink) {
+        int[] open = this.openPages();
         for (int side = 0; side < PAGES_PER_SPREAD; side++) {
-            int index = this.spread * PAGES_PER_SPREAD + side;
-            if (index < this.pages.size()) {
-                var page = this.pages.get(index);
+            if (open[side] >= 0 && open[side] < this.pages.size()) {
+                var page = this.pages.get(open[side]);
                 var bottom = page.behind.map(this.pagesById::get).orElse(page);
                 drawPlate(graphics, bottom, bookX + PAGE_X[side], bookY + PAGE_Y, ink);
             }
         }
     }
 
-    /** Draws the writing of the open spread. A page torn over another one goes on top of that page's writing. */
+    /** Draws the writing of the open pages and, over them, the leaf being turned. */
     void drawWriting(GuiGraphics graphics, Font font, float ink) {
+        int[] open = this.openPages();
         for (int side = 0; side < PAGES_PER_SPREAD; side++) {
-            int index = this.spread * PAGES_PER_SPREAD + side;
-            if (index >= this.pages.size()) {
-                continue;
+            if (open[side] >= 0 && open[side] < this.pages.size()) {
+                this.drawOpenPage(graphics, font, open[side], side, ink);
             }
-            var page = this.pages.get(index);
-            var below = page.behind.map(this.pagesById::get);
-            if (below.isPresent()) {
-                drawWriting(graphics, font, below.get(), this.pages.indexOf(below.get()), side, ink);
-                drawPlate(graphics, page, PAGE_X[side], PAGE_Y, ink);
-            } else {
-                drawWriting(graphics, font, page, index, side, ink);
-            }
+        }
+        if (this.isTurning()) {
+            this.drawLeaf(graphics, font);
+        }
+    }
+
+    /** A page torn over another one goes on top of that page's writing. */
+    private void drawOpenPage(GuiGraphics graphics, Font font, int index, int side, float ink) {
+        var page = this.pages.get(index);
+        var below = page.behind.map(this.pagesById::get);
+        if (below.isPresent()) {
+            drawWriting(graphics, font, below.get(), this.pages.indexOf(below.get()), side, ink);
+            drawPlate(graphics, page, PAGE_X[side], PAGE_Y, ink);
+        } else {
+            drawWriting(graphics, font, page, index, side, ink);
+        }
+    }
+
+    /**
+     * Turns the leaf between two spreads around the spine. The leaf is cut into vertical strips
+     * that each lean at their own angle, so the paper bows as it travels; every strip shows the
+     * front or the back of the leaf, with its real page on it, and grows as it rises off the book.
+     */
+    private void drawLeaf(GuiGraphics graphics, Font font) {
+        float time = Mth.clamp((Util.getMillis() - this.turnStartedAt) / TURN_MILLIS, 0, 1);
+        float eased = time * time * (3 - 2 * time);
+        float turn = Mth.PI * (this.spread > this.turningFrom ? eased : 1 - eased);
+        float bend = LEAF_BEND * Mth.sin(turn);
+        float[] angle = new float[LEAF_STRIPS];
+        float[] across = new float[LEAF_STRIPS + 1];
+        float[] lift = new float[LEAF_STRIPS + 1];
+        float[] screenX = new float[LEAF_STRIPS + 1];
+        screenX[0] = SPINE_X + GUTTER * Mth.cos(turn);
+        for (int strip = 0; strip < LEAF_STRIPS; strip++) {
+            float along = (strip + 0.5F) / LEAF_STRIPS;
+            angle[strip] = Mth.clamp(turn + bend * (along - 0.5F), 0, Mth.PI);
+            across[strip + 1] = across[strip] + Mth.cos(angle[strip]) / LEAF_STRIPS;
+            lift[strip + 1] = lift[strip] + Mth.sin(angle[strip]) / LEAF_STRIPS;
+            screenX[strip + 1] = SPINE_X + (GUTTER * Mth.cos(turn) + LEAF_WIDTH * across[strip + 1]) * (1 + lift[strip + 1] * LEAF_PERSPECTIVE);
+        }
+        drawLeafShadow(graphics, screenX[LEAF_STRIPS], Mth.sin(turn));
+        int firstPage = pageAt(Math.min(this.turningFrom, this.spread), 1);
+        for (int strip = 0; strip < LEAF_STRIPS; strip++) {
+            boolean front = angle[strip] < Mth.HALF_PI;
+            float height = 1 + (lift[strip] + lift[strip + 1]) / 2 * LEAF_PERSPECTIVE;
+            this.drawLeafStrip(graphics, font, strip, front, front ? firstPage : firstPage + 1,
+                screenX[strip], screenX[strip + 1], height, angle[strip]);
+        }
+    }
+
+    private void drawLeafStrip(GuiGraphics graphics, Font font, int strip, boolean front, int index,
+                               float fromX, float toX, float height, float angle) {
+        if (Math.abs(toX - fromX) < 0.5F) {
+            return;
+        }
+        float start = strip / (float) LEAF_STRIPS;
+        float end = (strip + 1) / (float) LEAF_STRIPS;
+        int side = front ? 1 : 0;
+        float pageFrom = LEAF_X[side] + LEAF_WIDTH * (front ? start : 1 - start);
+        float pageTo = LEAF_X[side] + LEAF_WIDTH * (front ? end : 1 - end);
+        int left = Mth.floor(Math.min(fromX, toX));
+        int right = Mth.ceil(Math.max(fromX, toX));
+        float centerY = LEAF_Y + LEAF_HEIGHT / 2F;
+        graphics.enableScissor(left, -LEAF_Y * 4, right, LEAF_HEIGHT + LEAF_Y * 6);
+        graphics.pose().pushPose();
+        graphics.pose().translate(fromX, centerY, 0);
+        graphics.pose().scale((toX - fromX) / (pageTo - pageFrom), height, 1);
+        graphics.pose().translate(-pageFrom, -centerY, 0);
+        boolean paper = this.drawLeafFace(graphics, font, index, side);
+        graphics.pose().popPose();
+        if (paper) {
+            int shade = (int) (LEAF_SHADE * (1 - Math.abs(Mth.cos(angle))) * 255);
+            int halfHeight = Mth.ceil(LEAF_HEIGHT / 2F * height);
+            graphics.fill(left, (int) centerY - halfHeight, right, (int) centerY + halfHeight, shade << 24 | LemegetonTheme.INK & 0xFFFFFF);
+        }
+        graphics.disableScissor();
+    }
+
+    /** Draws one side of the leaf, and says whether it is whole paper. A torn page is only its stub. */
+    private boolean drawLeafFace(GuiGraphics graphics, Font font, int index, int side) {
+        if (index < 0) {
+            LemegetonTheme.drawBookPage(graphics, LEAF_X[side], LEAF_Y, LEAF_WIDTH, LEAF_HEIGHT);
+            this.sealPage.accept(graphics);
+            return true;
+        }
+        if (index < this.pages.size() && this.pages.get(index).behind.isPresent()) {
+            drawPlate(graphics, this.pages.get(index), PAGE_X[side], PAGE_Y, 1);
+            return false;
+        }
+        LemegetonTheme.drawJournalPage(graphics, LEAF_X[side], LEAF_Y, LEAF_X[side], LEAF_Y, LEAF_WIDTH, LEAF_HEIGHT);
+        if (index < this.pages.size()) {
+            drawPlate(graphics, this.pages.get(index), PAGE_X[side], PAGE_Y, 1);
+            drawWriting(graphics, font, this.pages.get(index), index, side, 1);
+        }
+        return true;
+    }
+
+    /** The shadow the raised leaf throws on the page beyond its free edge. */
+    private static void drawLeafShadow(GuiGraphics graphics, float edgeX, float height) {
+        int direction = edgeX > SPINE_X ? 1 : -1;
+        for (int step = 0; step < SHADOW_STEPS; step++) {
+            int near = (int) (edgeX + direction * SHADOW_REACH * height * step / SHADOW_STEPS);
+            int far = (int) (edgeX + direction * SHADOW_REACH * height * (step + 1) / SHADOW_STEPS);
+            int alpha = (int) (SHADOW_STRENGTH * height * (SHADOW_STEPS - step) / SHADOW_STEPS * 255);
+            int left = Mth.clamp(Math.min(near, far), LEAF_X[0], LEAF_X[1] + LEAF_WIDTH);
+            int right = Mth.clamp(Math.max(near, far), LEAF_X[0], LEAF_X[1] + LEAF_WIDTH);
+            graphics.fill(left, LEAF_Y, right, LEAF_Y + LEAF_HEIGHT, alpha << 24 | LemegetonTheme.INK & 0xFFFFFF);
         }
     }
 

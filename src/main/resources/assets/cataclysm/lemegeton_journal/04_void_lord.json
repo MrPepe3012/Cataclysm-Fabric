@@ -1,23 +1,17 @@
 {
   "art": "void_lord",
   "title": "Void Lord",
-  "subtitle": "God of the Void. Pale Heart. 7,500 hp",
+  "subtitle": "Entrada IV. Dios de la nada",
   "notes": [
-    { "y": 30, "width": 70, "lines": ["!RAID COMPLETE"] },
+    { "y": 30, "width": 60, "lines": ["!Ha terminado."] },
     {
-      "y": 40, "width": 74,
-      "lines": [
-        "We cheered. Then his bar filled again.",
-        "Twice his size now, and no longer a king.",
-        "His blade breaks shields. 30 damage, and it slows you."
-      ]
+      "y": 40, "width": 64,
+      "lines": ["Eso escribí la noche en que cayó el rey, y se cantó victoria en la sala. Mas luego el muerto se alzó, y su nombre no era ya el suyo."]
     },
     {
-      "y": 114,
+      "y": 116,
       "lines": [
-        "DREAM NO MORE, HEART OF THE ABYSS: he heals through both trials.",
-        "HEART DASH: 40 damage.",
-        "HEART SCOURAGE: a forward slash."
+        "Era el dios de la nada, sellado en él, que gastó su carne hasta dejarle sólo la forma, y se irguió al doble de su altura. Escribo su nombre para que se sepa, y temo que sea yerro."
       ]
     }
   ]

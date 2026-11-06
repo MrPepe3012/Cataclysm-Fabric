@@ -2,13 +2,22 @@ package team.heather.cataclysm.client.screen.lemegeton;
 
 import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractButton;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+import org.lwjgl.glfw.GLFW;
+import team.heather.cataclysm.Cataclysm;
 import team.heather.cataclysm.item.CataclysmItems;
 import team.heather.cataclysm.item.data.CataclysmDataComponents;
 import team.heather.cataclysm.item.data.LemegetonComponent;
@@ -20,14 +29,18 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.IntSupplier;
 
 /**
  * An open grimoire: the Circle of Solomon on the left page, with one seal per
- * spirit, and on the right page everything about the chosen seal.
+ * spirit, and on the right page everything about the chosen seal. Its other
+ * half is a journal of Cataclysm's threats, one spread per threat: the drawing
+ * on the left page and, on the right, a ruled page waiting for notes.
  */
 public final class LemegetonScreen extends AbstractContainerScreen<LemegetonMenu> {
 
     private static final LemegetonComponent.Upgrade[] UPGRADES = LemegetonComponent.Upgrade.values();
+    private static final JournalEntry[] ENTRIES = JournalEntry.values();
 
     private static final int BOOK_WIDTH = 352;
     private static final int BOOK_HEIGHT = 192;
@@ -54,6 +67,22 @@ public final class LemegetonScreen extends AbstractContainerScreen<LemegetonMenu
     private static final int ICON_GAP = 4;
     private static final float PAGE_FADE_MILLIS = 250;
 
+    private static final int PLATE_X = 10;
+    private static final int PLATE_Y = 10;
+    private static final int PLATE_CENTER_X = 88;
+    private static final int PLATE_CENTER_Y = 76;
+    private static final int TOGGLE_X = 326;
+    private static final int TOGGLE_Y = 12;
+    private static final int PREVIOUS_X = 196;
+    private static final int NEXT_X = 316;
+    private static final int TURN_Y = 166;
+    private static final int PAGE_NUMBER_Y = 168;
+    private static final int PREVIOUS_ICON = 0;
+    private static final int NEXT_ICON = 1;
+    private static final int JOURNAL_ICON = 2;
+    private static final int SEALS_ICON = 3;
+    private static final int PLATE_COLOR = 0xFFFFFFFF;
+
     private final Map<LemegetonComponent.Upgrade, ResourceLocation> engravings = new EnumMap<>(LemegetonComponent.Upgrade.class);
     private final List<SealButton> seals = new ArrayList<>();
     private final Embers embers = new Embers();
@@ -64,6 +93,11 @@ public final class LemegetonScreen extends AbstractContainerScreen<LemegetonMenu
     private LemegetonComponent.Upgrade awaited;
     private int awaitedLevel;
     private PactButton pactButton;
+    private IconButton toggleButton;
+    private IconButton previousButton;
+    private IconButton nextButton;
+    private boolean journalOpen;
+    private int entry;
 
     public LemegetonScreen(LemegetonMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
@@ -88,6 +122,26 @@ public final class LemegetonScreen extends AbstractContainerScreen<LemegetonMenu
         this.pactButton = this.addRenderableWidget(new PactButton(
             this.leftPos + PAGE_X, this.topPos + PACT_Y,
             this::pactLabel, this::canBuySelected, this::requestPact));
+        this.toggleButton = this.addRenderableWidget(new IconButton(this.leftPos + TOGGLE_X, this.topPos + TOGGLE_Y,
+            () -> this.journalOpen ? SEALS_ICON : JOURNAL_ICON, this::toggleJournal));
+        this.previousButton = this.addRenderableWidget(new IconButton(this.leftPos + PREVIOUS_X, this.topPos + TURN_Y,
+            () -> PREVIOUS_ICON, () -> this.turnPage(-1)));
+        this.nextButton = this.addRenderableWidget(new IconButton(this.leftPos + NEXT_X, this.topPos + TURN_Y,
+            () -> NEXT_ICON, () -> this.turnPage(1)));
+        this.refreshWidgets();
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (this.journalOpen && keyCode == GLFW.GLFW_KEY_LEFT) {
+            this.previousButton.onPress();
+            return true;
+        }
+        if (this.journalOpen && keyCode == GLFW.GLFW_KEY_RIGHT) {
+            this.nextButton.onPress();
+            return true;
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     @Override
@@ -100,25 +154,70 @@ public final class LemegetonScreen extends AbstractContainerScreen<LemegetonMenu
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        this.showPage(this.hoveredUpgrade());
+        if (!this.journalOpen) {
+            this.showPage(this.hoveredUpgrade());
+        }
         super.render(graphics, mouseX, mouseY, partialTick);
         this.embers.render(graphics);
     }
 
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
-        LemegetonTheme.drawBook(graphics, this.leftPos, this.topPos);
+        if (this.journalOpen) {
+            LemegetonTheme.drawJournal(graphics, this.leftPos, this.topPos);
+        } else {
+            LemegetonTheme.drawBook(graphics, this.leftPos, this.topPos);
+        }
     }
 
     @Override
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
-        this.renderCounter(graphics);
         float ink = Math.min(1, (Util.getMillis() - this.shownAt) / PAGE_FADE_MILLIS);
+        if (this.journalOpen) {
+            this.renderJournalEntry(graphics, ink);
+            return;
+        }
+        this.renderCounter(graphics);
         this.renderTitle(graphics, ink);
         this.renderLargeSeal(graphics, ink);
         this.renderLevels(graphics, ink);
         this.renderDescription(graphics, ink);
         this.renderHint(graphics, ink);
+    }
+
+    private void toggleJournal() {
+        this.journalOpen = !this.journalOpen;
+        this.shownAt = Util.getMillis();
+        this.refreshWidgets();
+    }
+
+    private void turnPage(int direction) {
+        this.entry = Mth.clamp(this.entry + direction, 0, ENTRIES.length - 1);
+        this.shownAt = Util.getMillis();
+        this.embers.burst(this.leftPos + PLATE_CENTER_X, this.topPos + PLATE_CENTER_Y);
+        this.refreshWidgets();
+    }
+
+    private void refreshWidgets() {
+        for (var seal : this.seals) {
+            seal.visible = !this.journalOpen;
+        }
+        this.pactButton.visible = !this.journalOpen;
+        this.previousButton.visible = this.journalOpen;
+        this.nextButton.visible = this.journalOpen;
+        this.previousButton.active = this.entry > 0;
+        this.nextButton.active = this.entry < ENTRIES.length - 1;
+        String destination = this.journalOpen ? "seals" : "journal";
+        this.toggleButton.setTooltip(Tooltip.create(Component.translatable("menu.cataclysm.lemegeton." + destination)));
+    }
+
+    private void renderJournalEntry(GuiGraphics graphics, float ink) {
+        var shownEntry = ENTRIES[this.entry];
+        LemegetonTheme.drawPlate(graphics, shownEntry.plate, PLATE_X, PLATE_Y, LemegetonTheme.faded(PLATE_COLOR, ink));
+        this.drawCentered(graphics, Component.translatable(shownEntry.translationKey), PAGE_X, TITLE_Y,
+            LemegetonTheme.faded(LemegetonTheme.RUBRIC, ink));
+        this.drawCentered(graphics, Component.literal(this.entry + 1 + "/" + ENTRIES.length), PAGE_X, PAGE_NUMBER_Y,
+            LemegetonTheme.FADED_INK);
     }
 
     private SealButton createSeal(LemegetonComponent.Upgrade upgrade) {
@@ -266,5 +365,59 @@ public final class LemegetonScreen extends AbstractContainerScreen<LemegetonMenu
 
     private void drawCentered(GuiGraphics graphics, Component text, int x, int y, int color) {
         graphics.drawString(this.font, text, x - this.font.width(text) / 2, y, color, false);
+    }
+
+    /** One journal spread per threat, in page order. */
+    private enum JournalEntry {
+        TWISTED_WARDEN("twisted_warden"),
+        CALAMITY_HYDRA("calamity_hydra"),
+        PALE_KING("pale_king"),
+        VOID_LORD("void_lord"),
+        CATACLYSM("cataclysm");
+
+        private final ResourceLocation plate;
+        private final String translationKey;
+
+        JournalEntry(String name) {
+            this.plate = Cataclysm.resourceLocation("textures/gui/lemegeton/journal/" + name + ".png");
+            this.translationKey = "menu.cataclysm.lemegeton.journal." + name;
+        }
+    }
+
+    /** A small inked icon that reddens under the cursor and turns a page when pressed. */
+    private static final class IconButton extends AbstractButton {
+
+        private final IntSupplier icon;
+        private final Runnable action;
+
+        private IconButton(int x, int y, IntSupplier icon, Runnable action) {
+            super(x, y, LemegetonTheme.ICON_SIZE, LemegetonTheme.ICON_SIZE, Component.empty());
+            this.icon = icon;
+            this.action = action;
+        }
+
+        @Override
+        public void onPress() {
+            if (this.active) {
+                this.action.run();
+            }
+        }
+
+        @Override
+        public void playDownSound(SoundManager sounds) {
+            sounds.play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1));
+        }
+
+        @Override
+        protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+            int color = !this.active ? LemegetonTheme.FADED_INK
+                : this.isHoveredOrFocused() ? LemegetonTheme.RUBRIC : LemegetonTheme.INK;
+            LemegetonTheme.drawJournalIcon(graphics, this.icon.getAsInt(), this.getX(), this.getY(), color);
+        }
+
+        @Override
+        protected void updateWidgetNarration(NarrationElementOutput output) {
+            this.defaultButtonNarrationText(output);
+        }
     }
 }

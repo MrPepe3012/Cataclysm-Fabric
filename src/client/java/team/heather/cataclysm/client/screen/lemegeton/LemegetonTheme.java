@@ -24,8 +24,14 @@ final class LemegetonTheme {
 
     private static final ResourceLocation BOOK = Cataclysm.resourceLocation("textures/gui/lemegeton/book.png");
     private static final ResourceLocation SEALS = Cataclysm.resourceLocation("textures/gui/lemegeton/seals.png");
+    private static final ResourceLocation JOURNAL = Cataclysm.resourceLocation("textures/gui/lemegeton/journal.png");
+    private static final ResourceLocation JOURNAL_ICONS = Cataclysm.resourceLocation("textures/gui/lemegeton/journal_icons.png");
     private static final int BOOK_WIDTH = 352;
     private static final int BOOK_HEIGHT = 192;
+    private static final int PLATE_WIDTH = 156;
+    private static final int PLATE_HEIGHT = 172;
+    private static final int ICON_COUNT = 4;
+    static final int ICON_SIZE = 12;
     private static final int SEALS_WIDTH = 124;
     private static final int SEALS_HEIGHT = 68;
     private static final int ENGRAVING_SIZE = 16;
@@ -48,6 +54,20 @@ final class LemegetonTheme {
 
     static void drawBook(GuiGraphics graphics, int x, int y) {
         graphics.blit(RenderType::guiTextured, BOOK, x, y, 0, 0, BOOK_WIDTH, BOOK_HEIGHT, BOOK_WIDTH, BOOK_HEIGHT);
+    }
+
+    static void drawJournal(GuiGraphics graphics, int x, int y) {
+        graphics.blit(RenderType::guiTextured, JOURNAL, x, y, 0, 0, BOOK_WIDTH, BOOK_HEIGHT, BOOK_WIDTH, BOOK_HEIGHT);
+    }
+
+    /** Draws a full journal plate, faded by the color's alpha. */
+    static void drawPlate(GuiGraphics graphics, ResourceLocation plate, int x, int y, int color) {
+        graphics.blit(RenderType::guiTextured, plate, x, y, 0, 0, PLATE_WIDTH, PLATE_HEIGHT, PLATE_WIDTH, PLATE_HEIGHT, color);
+    }
+
+    static void drawJournalIcon(GuiGraphics graphics, int icon, int x, int y, int color) {
+        graphics.blit(RenderType::guiTextured, JOURNAL_ICONS, x, y, icon * ICON_SIZE, 0, ICON_SIZE, ICON_SIZE,
+            ICON_COUNT * ICON_SIZE, ICON_SIZE, color);
     }
 
     /** Draws a white region of the seal sheet tinted with one of the colors above. */
